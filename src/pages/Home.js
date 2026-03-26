@@ -35,8 +35,9 @@ function Home() {
     const fetchScreenings = async () => {
         try {
             const response = await getScreenings();
-            setScreenings(response.data);
-            setFiltered(response.data);
+            const screeningData = Array.isArray(response.data) ? response.data : [];
+            setScreenings(screeningData);
+            setFiltered(screeningData);
         } catch (err) {
             setError('Predstav ni bilo mogoče naložiti. Ali strežnik API deluje?');
         } finally {
