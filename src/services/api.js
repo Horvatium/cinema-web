@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-    baseURL: 'cinema-api-production-a533.up.railway.app/api',
+    baseURL: 'https://cinema-api-production-a533.up.railway.app/api',
     //baseURL: 'http://192.168.0.17:5000/api',
 });
 
