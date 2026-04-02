@@ -5,6 +5,7 @@ import { getScreenings } from '../services/api';
 function Home() {
     const [screenings, setScreenings] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [heroIndex, setHeroIndex] = useState(0);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -32,54 +33,101 @@ function Home() {
                 duration_minutes: s.duration_minutes,
                 age_rating: s.age_rating,
                 poster_url: s.poster_url,
+                synopsis: s.synopsis,
                 screenings: [],
             };
         }
         filmMap[s.film_title].screenings.push(s);
     });
     const films = Object.values(filmMap);
-    const featuredFilm = films[0];
+
+    // Auto-cycle hero every 5 seconds
+    useEffect(() => {
+        if (films.length <= 1) return;
+        const interval = setInterval(() => {
+            setHeroIndex(prev => (prev + 1) % films.length);
+        }, 5000);
+        return () => clearInterval(interval);
+    }, [films.length]);
+
+    const featuredFilm = films[heroIndex];
 
     return (
         <div style={styles.page}>
             {/* ── Hero Banner ── */}
-            {!loading && featuredFilm && (
-                <div style={{
-                    ...styles.hero,
-                    backgroundImage: featuredFilm.poster_url
-                        ? `url(${featuredFilm.poster_url})`
-                        : 'none',
-                }}>
-                    <div style={styles.heroOverlay}>
-                        <div style={styles.heroContent}>
-                            <span className="genre-tag">
-                                {featuredFilm.genre}
-                            </span>
-                            <h1 style={styles.heroTitle}>
-                                {featuredFilm.title}
-                            </h1>
-                            <p style={styles.heroMeta}>
-                                {featuredFilm.duration_minutes} min
-                                {'  ·  '}
-                                {featuredFilm.age_rating}
-                            </p>
-                            <button
-                                className="btn btn-primary"
-                                style={styles.heroBtn}
-                                onClick={() => navigate(
-                                    `/films/${featuredFilm.screenings[0].id}`,
-                                    { state: {
-                                        film: featuredFilm,
-                                        screening: featuredFilm.screenings[0]
-                                    }}
-                                )}
-                            >
-                                → Book Tickets
-                            </button>
-                        </div>
-                    </div>
-                </div>
+{!loading && featuredFilm && (
+    <div style={{
+        ...styles.hero,
+        backgroundImage: featuredFilm.poster_url
+            ? `url(${featuredFilm.poster_url})`
+            : 'none',
+    }}>
+        <div style={styles.heroOverlay}>
+            <div style={styles.heroContent}>
+                <span className="genre-tag">{featuredFilm.genre}</span>
+                <h1 style={styles.heroTitle}>{featuredFilm.title}</h1>
+                <p style={styles.heroMeta}>
+                    {featuredFilm.duration_minutes} min
+                    {'  ·  '}
+                    {featuredFilm.age_rating}
+                </p>
+                {featuredFilm.synopsis && (
+                    <p style={styles.heroSynopsis}>
+                        {featuredFilm.synopsis.length > 160
+                            ? featuredFilm.synopsis.substring(0, 160) + '...'
+                            : featuredFilm.synopsis
+                        }
+                    </p>
+                )}
+                <button
+                    className="btn btn-primary"
+                    style={styles.heroBtn}
+                    onClick={() => navigate(
+                        `/films/${featuredFilm.screenings[0].id}`,
+                        { state: {
+                            film: featuredFilm,
+                            screening: featuredFilm.screenings[0]
+                        }}
+                    )}
+                >
+                    → Book Tickets
+                </button>
+            </div>
+        </div>
+
+        {/* Cycling dots */}
+        <div style={styles.heroDots}>
+            {films.map((_, i) => (
+                <button
+                    key={i}
+                    onClick={() => setHeroIndex(i)}
+                    style={{
+                        ...styles.heroDot,
+                        ...(i === heroIndex ? styles.heroDotActive : {})
+                    }}
+                />
+            ))}
+        </div>
+
+        {/* Prev / Next arrows */}
+        <button
+            style={{...styles.heroArrow, left: '20px'}}
+            onClick={() => setHeroIndex(
+                prev => (prev - 1 + films.length) % films.length
             )}
+        >
+            ‹
+        </button>
+        <button
+            style={{...styles.heroArrow, right: '20px'}}
+            onClick={() => setHeroIndex(
+                prev => (prev + 1) % films.length
+            )}
+        >
+            ›
+        </button>
+    </div>
+)}
 
             <div className="container">
                 {/* ── In Cinemas Strip ── */}
@@ -434,6 +482,53 @@ const styles = {
         margin: '0 auto',
         animation: 'spin 0.8s linear infinite',
     },
+    heroSynopsis: {
+    color: 'rgba(255,255,255,0.7)',
+    fontSize: '14px',
+    lineHeight: 1.6,
+    marginBottom: '24px',
+    maxWidth: '460px',
+},
+heroDots: {
+    position: 'absolute',
+    bottom: '20px',
+    left: '50%',
+    transform: 'translateX(-50%)',
+    display: 'flex',
+    gap: '8px',
+},
+heroDot: {
+    width: '8px',
+    height: '8px',
+    borderRadius: '50%',
+    background: 'rgba(255,255,255,0.3)',
+    border: 'none',
+    cursor: 'pointer',
+    padding: 0,
+    transition: 'all 0.2s',
+},
+heroDotActive: {
+    background: '#00c9b1',
+    width: '24px',
+    borderRadius: '4px',
+},
+heroArrow: {
+    position: 'absolute',
+    top: '50%',
+    transform: 'translateY(-50%)',
+    background: 'rgba(0,0,0,0.4)',
+    border: '1px solid rgba(255,255,255,0.2)',
+    color: '#fff',
+    width: '44px',
+    height: '44px',
+    borderRadius: '50%',
+    fontSize: '24px',
+    cursor: 'pointer',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    transition: 'background 0.2s',
+},
 };
 
 export default Home;

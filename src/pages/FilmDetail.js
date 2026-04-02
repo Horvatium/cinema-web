@@ -109,35 +109,63 @@ function FilmDetail() {
     return (
         <div style={styles.wrapper}>
             {/* Film Header */}
-            <div style={styles.header}>
-                <button
-                    onClick={() => navigate('/')}
-                    className="btn btn-secondary"
-                    style={{ marginBottom: '20px' }}
-                >
-                    ← Back
-                </button>
+<div style={styles.header}>
+    <button
+        onClick={() => navigate('/')}
+        className="btn btn-secondary"
+        style={{ marginBottom: '20px' }}
+    >
+        ← Back
+    </button>
 
-                <h1 style={styles.title}>{film?.title}</h1>
-                <p style={styles.meta}>
-                    {film?.genre} · {film?.duration_minutes} min · {film?.age_rating}
-                </p>
-                {screening && (
-                    <p style={styles.screeningInfo}>
-                        📅{' '}
-                        {new Date(screening.start_time).toLocaleDateString('en-GB', {
-                            weekday: 'long', year: 'numeric',
-                            month: 'long', day: 'numeric',
-                        })}
-                        {' '}at{' '}
-                        {new Date(screening.start_time).toLocaleTimeString([], {
-                            hour: '2-digit', minute: '2-digit',
-                        })}
-                        {' '}· 🏛️ {screening.room_name}
-                        {' '}· 🎟️ €{screening.price} per seat
-                    </p>
-                )}
+    <div style={styles.filmHeaderRow}>
+        {/* Poster */}
+        {film?.poster_url && (
+            <img
+                src={film.poster_url}
+                alt={film.title}
+                style={styles.filmPoster}
+            />
+        )}
+
+        {/* Info */}
+        <div style={styles.filmHeaderInfo}>
+            <div style={{ marginBottom: '10px' }}>
+                <span className="genre-tag">{film?.genre}</span>
+                <span className="genre-tag" style={styles.ratingTag}>
+                    {film?.age_rating}
+                </span>
             </div>
+            <h1 style={styles.title}>{film?.title}</h1>
+            <p style={styles.meta}>
+                {film?.duration_minutes} min
+            </p>
+            {film?.synopsis && (
+                <p style={styles.synopsis}>{film.synopsis}</p>
+            )}
+            {screening && (
+                <div style={styles.screeningBadge}>
+                    <span>📅 {new Date(screening.start_time)
+                        .toLocaleDateString('en-GB', {
+                            weekday: 'long',
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric',
+                        })}
+                    </span>
+                    <span> at {new Date(screening.start_time)
+                        .toLocaleTimeString([], {
+                            hour: '2-digit',
+                            minute: '2-digit',
+                        })}
+                    </span>
+                    <span> · 🏛️ {screening.room_name}</span>
+                    <span> · 🎟️ €{screening.price} per seat</span>
+                </div>
+            )}
+        </div>
+    </div>
+</div>
 
             {error && <div className="error">{error}</div>}
             {success && <div className="success">{success}</div>}
@@ -306,6 +334,45 @@ const styles = {
     },
     summary: { marginTop: '10px' },
     center: { textAlign: 'center', padding: '60px', color: '#aaa' },
+    filmHeaderRow: {
+    display: 'flex',
+    gap: '28px',
+    alignItems: 'flex-start',
+    marginBottom: '32px',
+},
+filmPoster: {
+    width: '160px',
+    height: '240px',
+    objectFit: 'cover',
+    borderRadius: '12px',
+    flexShrink: 0,
+    boxShadow: '0 8px 32px rgba(0,0,0,0.5)',
+},
+filmHeaderInfo: { flex: 1 },
+ratingTag: {
+    background: 'rgba(123,97,255,0.15)',
+    color: '#7b61ff',
+    border: '1px solid rgba(123,97,255,0.3)',
+},
+synopsis: {
+    color: 'rgba(255,255,255,0.65)',
+    fontSize: '14px',
+    lineHeight: 1.7,
+    marginBottom: '16px',
+    maxWidth: '600px',
+},
+screeningBadge: {
+    background: 'rgba(0,201,177,0.08)',
+    border: '1px solid rgba(0,201,177,0.2)',
+    borderRadius: '8px',
+    padding: '12px 16px',
+    color: '#ccc',
+    fontSize: '14px',
+    display: 'flex',
+    flexWrap: 'wrap',
+    gap: '4px',
+},
+
 };
 
 export default FilmDetail;
