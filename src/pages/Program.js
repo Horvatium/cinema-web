@@ -48,6 +48,8 @@ function Program() {
                     duration_minutes: s.duration_minutes,
                     age_rating: s.age_rating,
                     poster_url: s.poster_url,
+                    backdrop_url: s.backdrop_url,
+                    synopsis: s.synopsis,
                     screenings: [],
                 };
             }

@@ -33,6 +33,7 @@ function Home() {
                 duration_minutes: s.duration_minutes,
                 age_rating: s.age_rating,
                 poster_url: s.poster_url,
+                backdrop_url: s.backdrop_url,
                 synopsis: s.synopsis,
                 screenings: [],
             };
@@ -57,11 +58,13 @@ function Home() {
             {/* ── Hero Banner ── */}
 {!loading && featuredFilm && (
     <div style={{
-        ...styles.hero,
-        backgroundImage: featuredFilm.poster_url
-            ? `url(${featuredFilm.poster_url})`
-            : 'none',
-    }}>
+    ...styles.hero,
+    backgroundImage: featuredFilm.backdrop_url
+        ? `url(${featuredFilm.backdrop_url})`
+        : featuredFilm.poster_url
+        ? `url(${featuredFilm.poster_url})`
+        : 'none',
+}}>
         <div style={styles.heroOverlay}>
             <div style={styles.heroContent}>
                 <span className="genre-tag">{featuredFilm.genre}</span>
@@ -298,11 +301,12 @@ function Home() {
 const styles = {
     page: { minHeight: '100vh' },
     hero: {
-        height: '480px',
+        height: '520px',
         backgroundSize: 'cover',
-        backgroundPosition: 'center top',
+        backgroundPosition: 'center center',
         position: 'relative',
         backgroundColor: '#1a0a3e',
+        transition: 'background-image 0.5s ease-in-out',
     },
     heroOverlay: {
         position: 'absolute',
