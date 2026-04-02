@@ -12,45 +12,63 @@ function Navbar() {
 
     return (
         <nav style={styles.nav}>
-            <Link to="/" style={styles.logo}>🎬 CinemaApp</Link>
+            <div style={styles.inner}>
+                {/* Logo */}
+                <Link to="/" style={styles.logo}>
+                    <span style={styles.logoIcon}>🎬</span>
+                    <span style={styles.logoText}>KinoPlex</span>
+                </Link>
 
-            <div style={styles.links}>
-                <Link to="/" style={styles.link}>Home</Link>
-
-                {user && (
-                    <Link to="/my-reservations" style={styles.link}>
-                        My Reservations
-                    </Link>
-                )}
-
-                {user?.role === 'admin' && (
-                    <Link to="/admin" style={styles.link}>
-                        Admin Panel
-                    </Link>
-                )}
-
-                {user ? (
-                    <div style={styles.userSection}>
-                        <span style={styles.userName}>
-                            Hi, {user.first_name}!
-                        </span>
-                        <button
-                            onClick={handleLogout}
-                            className="btn btn-secondary"
-                        >
-                            Logout
-                        </button>
-                    </div>
-                ) : (
-                    <div style={styles.userSection}>
-                        <Link to="/login">
-                            <button className="btn btn-secondary">Login</button>
+                {/* Nav Links */}
+                <div style={styles.links}>
+                    <Link to="/" style={styles.link}>Home</Link>
+                    <Link to="/program" style={styles.link}>Program</Link>
+                    {user && (
+                        <Link to="/my-reservations" style={styles.link}>
+                            My Tickets
                         </Link>
-                        <Link to="/register">
-                            <button className="btn btn-primary">Register</button>
-                        </Link>
-                    </div>
-                )}
+                    )}
+                    {user?.role === 'admin' && (
+                        <Link to="/admin" style={styles.link}>Admin</Link>
+                    )}
+                </div>
+
+                {/* Auth */}
+                <div style={styles.auth}>
+                    {user ? (
+                        <>
+                            <span style={styles.greeting}>
+                                Hi, {user.first_name}
+                            </span>
+                            <button
+                                onClick={handleLogout}
+                                className="btn btn-secondary"
+                                style={{ padding: '8px 16px', fontSize: '13px' }}
+                            >
+                                Logout
+                            </button>
+                        </>
+                    ) : (
+                        <>
+                            <Link to="/login">
+                                <button
+                                    className="btn btn-secondary"
+                                    style={{ padding: '8px 16px', fontSize: '13px' }}
+                                >
+                                    Login
+                                </button>
+                            </Link>
+                            <Link to="/register">
+                                <button
+                                    className="btn btn-primary"
+                                    style={{ padding: '8px 16px', fontSize: '13px' }}
+                                >
+                                    Register
+                                </button>
+                            </Link>
+                        </>
+                    )}
+                </div>
             </div>
         </nav>
     );
@@ -58,40 +76,57 @@ function Navbar() {
 
 const styles = {
     nav: {
-        background: '#111111',
-        padding: '14px 30px',
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        borderBottom: '2px solid #e50914',
+        background: 'rgba(8,11,26,0.92)',
+        backdropFilter: 'blur(20px)',
+        borderBottom: '1px solid rgba(255,255,255,0.07)',
         position: 'sticky',
         top: 0,
         zIndex: 100,
     },
+    inner: {
+        maxWidth: '1200px',
+        margin: '0 auto',
+        padding: '0 20px',
+        height: '64px',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+    },
     logo: {
-        color: '#e50914',
-        fontSize: '22px',
-        fontWeight: 'bold',
+        display: 'flex',
+        alignItems: 'center',
+        gap: '10px',
         textDecoration: 'none',
+    },
+    logoIcon: { fontSize: '24px' },
+    logoText: {
+        fontSize: '20px',
+        fontWeight: '700',
+        background: 'linear-gradient(135deg, #00c9b1, #7b61ff)',
+        WebkitBackgroundClip: 'text',
+        WebkitTextFillColor: 'transparent',
+        letterSpacing: '-0.5px',
     },
     links: {
         display: 'flex',
+        gap: '32px',
         alignItems: 'center',
-        gap: '24px',
     },
     link: {
-        color: '#f0f0f0',
+        color: 'rgba(255,255,255,0.75)',
         textDecoration: 'none',
-        fontSize: '15px',
+        fontSize: '14px',
+        fontWeight: '500',
+        transition: 'color 0.2s',
     },
-    userSection: {
+    auth: {
         display: 'flex',
         alignItems: 'center',
         gap: '12px',
     },
-    userName: {
-        color: '#aaa',
-        fontSize: '14px',
+    greeting: {
+        color: 'rgba(255,255,255,0.5)',
+        fontSize: '13px',
     },
 };
 

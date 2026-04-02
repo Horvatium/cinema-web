@@ -4,219 +4,319 @@ import { getScreenings } from '../services/api';
 
 function Home() {
     const [screenings, setScreenings] = useState([]);
-    const [filtered, setFiltered] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState('');
-    const [search, setSearch] = useState('');
-    const [genre, setGenre] = useState('');
-
     const navigate = useNavigate();
 
     useEffect(() => {
+        const fetchScreenings = async () => {
+            try {
+                const response = await getScreenings();
+                const data = Array.isArray(response.data) ? response.data : [];
+                setScreenings(data);
+            } catch (_err) {
+                setScreenings([]);
+            } finally {
+                setLoading(false);
+            }
+        };
         fetchScreenings();
     }, []);
 
-    useEffect(() => {
-        let results = screenings;
-
-        if (search) {
-            results = results.filter(s =>
-                s.film_title?.toLowerCase().includes(search.toLowerCase())
-            );
-        }
-
-        if (genre) {
-            results = results.filter(s => s.genre === genre);
-        }
-
-        setFiltered(results);
-    }, [search, genre, screenings]);
-
-    const fetchScreenings = async () => {
-        try {
-            const response = await getScreenings();
-            const screeningData = Array.isArray(response.data) ? response.data : [];
-            setScreenings(screeningData);
-            setFiltered(screeningData);
-        } catch (err) {
-            setError('Predstav ni bilo mogoče naložiti. Ali strežnik API deluje?');
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    // Pridobi edinstvene žanre iz predstav za dropdown filter
-    const genres = [...new Set(screenings.map(s => s.genre))];
-
-    // Grupiraj predstave po naslovu filma
+    // Group screenings by film
     const filmMap = {};
-    filtered.forEach(screening => {
-        if (!filmMap[screening.film_title]) {
-            filmMap[screening.film_title] = {
-                title: screening.film_title,
-                age_rating: screening.age_rating,
-                duration_minutes: screening.duration_minutes,
-                poster_url: screening.poster_url,
-                genre: screening.genre,
+    screenings.forEach(s => {
+        if (!filmMap[s.film_title]) {
+            filmMap[s.film_title] = {
+                title: s.film_title,
+                genre: s.genre,
+                duration_minutes: s.duration_minutes,
+                age_rating: s.age_rating,
+                poster_url: s.poster_url,
                 screenings: [],
             };
         }
-        filmMap[screening.film_title].screenings.push(screening);
+        filmMap[s.film_title].screenings.push(s);
     });
-
     const films = Object.values(filmMap);
-
-    if (loading) return <div style={styles.center}>Nalagam predstave...</div>;
-    if (error) return <div className="error" style={styles.center}>{error}</div>;
+    const featuredFilm = films[0];
 
     return (
-        <div>
-            {/* Hero */}
-            <div style={styles.hero}>
-                <h1 style={styles.heroTitle}>🎬 Trenutno se predvaja</h1>
-                <p style={styles.heroSubtitle}>
-                    Rezervirajte svoje sedeže v nekaj sekundah
-                </p>
-            </div>
-
-            {/* Filters */}
-            <div style={styles.filters}>
-                <input
-                    placeholder="🔍 Išči filme..."
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
-                    style={styles.searchInput}
-                />
-                <select
-                    value={genre}
-                    onChange={(e) => setGenre(e.target.value)}
-                    style={styles.select}
-                >
-                    <option value="">Vsi žanri</option>
-                    {genres.map(g => (
-                        <option key={g} value={g}>{g}</option>
-                    ))}
-                </select>
-            </div>
-
-            {/* Film Grid */}
-            {films.length === 0 ? (
-                <div style={styles.center}>
-                    Ni najdenih predstav. Poskusite z drugim iskanjem!
-                </div>
-            ) : (
-                <div className="grid">
-                    {films.map(film => (
-                        <div
-                            key={film.title}
-                            className="card"
-                            style={styles.filmCard}
-                            onClick={() =>
-                                navigate(`/films/${film.screenings[0].id}`,
-                                { state: { film } })
-                            }
-                        >
-                            {/* Poster */}
-                            <div style={styles.posterWrapper}>
-                                {film.poster_url ? (
-                                    <img
-                                        src={film.poster_url}
-                                        alt={film.title}
-                                        style={styles.poster}
-                                    />
-                                ) : (
-                                    <div style={styles.posterPlaceholder}>
-                                        🎬
-                                    </div>
+        <div style={styles.page}>
+            {/* ── Hero Banner ── */}
+            {!loading && featuredFilm && (
+                <div style={{
+                    ...styles.hero,
+                    backgroundImage: featuredFilm.poster_url
+                        ? `url(${featuredFilm.poster_url})`
+                        : 'none',
+                }}>
+                    <div style={styles.heroOverlay}>
+                        <div style={styles.heroContent}>
+                            <span className="genre-tag">
+                                {featuredFilm.genre}
+                            </span>
+                            <h1 style={styles.heroTitle}>
+                                {featuredFilm.title}
+                            </h1>
+                            <p style={styles.heroMeta}>
+                                {featuredFilm.duration_minutes} min
+                                {'  ·  '}
+                                {featuredFilm.age_rating}
+                            </p>
+                            <button
+                                className="btn btn-primary"
+                                style={styles.heroBtn}
+                                onClick={() => navigate(
+                                    `/films/${featuredFilm.screenings[0].id}`,
+                                    { state: {
+                                        film: featuredFilm,
+                                        screening: featuredFilm.screenings[0]
+                                    }}
                                 )}
-                                <span style={styles.rating}>
-                                    {film.age_rating}
-                                </span>
-                            </div>
-
-                            {/* Info */}
-                            <div style={styles.filmInfo}>
-                                <h3 style={styles.filmTitle}>{film.title}</h3>
-                                <p style={styles.filmMeta}>
-                                    {film.genre} · {film.duration_minutes} min
-                                </p>
-
-                                {/* Screening times */}
-                                <div style={styles.times}>
-                                    {film.screenings.map(s => (
-                                        <span
-                                            key={s.id}
-                                            style={styles.timeChip}
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                navigate(`/films/${s.id}`,
-                                                { state: { film, screening: s } });
-                                            }}
-                                        >
-                                            {new Date(s.start_time)
-                                                .toLocaleTimeString([], {
-                                                    hour: '2-digit',
-                                                    minute: '2-digit'
-                                                })
-                                            }
-                                        </span>
-                                    ))}
-                                </div>
-
-                                <p style={styles.price}>
-                                    From €{film.screenings[0].price}
-                                </p>
-                            </div>
+                            >
+                                → Book Tickets
+                            </button>
                         </div>
-                    ))}
+                    </div>
                 </div>
             )}
+
+            <div className="container">
+                {/* ── In Cinemas Strip ── */}
+                {!loading && films.length > 0 && (
+                    <div style={styles.section}>
+                        <div style={styles.sectionHeader}>
+                            <span style={styles.sectionLabel}>
+                                IN CINEMAS
+                            </span>
+                        </div>
+                        <div style={styles.posterStrip}>
+                            {films.map(film => (
+                                <div
+                                    key={film.title}
+                                    style={styles.posterCard}
+                                    onClick={() => navigate(
+                                        `/films/${film.screenings[0].id}`,
+                                        { state: {
+                                            film,
+                                            screening: film.screenings[0]
+                                        }}
+                                    )}
+                                >
+                                    {film.poster_url ? (
+                                        <img
+                                            src={film.poster_url}
+                                            alt={film.title}
+                                            style={styles.posterImg}
+                                        />
+                                    ) : (
+                                        <div style={styles.posterPlaceholder}>
+                                            🎬
+                                        </div>
+                                    )}
+                                    <div style={styles.posterOverlay}>
+                                        <p style={styles.posterTitle}>
+                                            {film.title}
+                                        </p>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                )}
+
+                {/* ── Program Preview ── */}
+                {!loading && films.length > 0 && (
+                    <div style={styles.section}>
+                        <div style={styles.sectionHeader}>
+                            <span style={styles.sectionLabel}>
+                                TODAY'S PROGRAM
+                            </span>
+                            <button
+                                className="btn btn-secondary"
+                                style={{ fontSize: '13px', padding: '8px 16px' }}
+                                onClick={() => navigate('/program')}
+                            >
+                                View Full Program →
+                            </button>
+                        </div>
+
+                        {films.slice(0, 4).map(film => (
+                            <div
+                                key={film.title}
+                                style={styles.programRow}
+                                onClick={() => navigate(
+                                    `/films/${film.screenings[0].id}`,
+                                    { state: {
+                                        film,
+                                        screening: film.screenings[0]
+                                    }}
+                                )}
+                            >
+                                {/* Thumbnail */}
+                                <div style={styles.programThumb}>
+                                    {film.poster_url ? (
+                                        <img
+                                            src={film.poster_url}
+                                            alt={film.title}
+                                            style={styles.programThumbImg}
+                                        />
+                                    ) : (
+                                        <div style={styles.programThumbPlaceholder}>
+                                            🎬
+                                        </div>
+                                    )}
+                                </div>
+
+                                {/* Info */}
+                                <div style={styles.programInfo}>
+                                    <div style={styles.programTags}>
+                                        <span className="genre-tag">
+                                            {film.genre}
+                                        </span>
+                                        <span className="genre-tag"
+                                            style={styles.ratingTag}>
+                                            {film.age_rating}
+                                        </span>
+                                    </div>
+                                    <h3 style={styles.programTitle}>
+                                        {film.title}
+                                    </h3>
+                                    <p style={styles.programMeta}>
+                                        {film.duration_minutes} minutes
+                                    </p>
+
+                                    {/* Screening Times */}
+                                    <div style={styles.timesRow}>
+                                        {film.screenings.map(s => (
+                                            <button
+                                                key={s.id}
+                                                style={styles.timeChip}
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    navigate(
+                                                        `/films/${s.id}`,
+                                                        { state: { film, screening: s }}
+                                                    );
+                                                }}
+                                            >
+                                                {new Date(s.start_time)
+                                                    .toLocaleTimeString([], {
+                                                        hour: '2-digit',
+                                                        minute: '2-digit'
+                                                    })
+                                                }
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+
+                                {/* Price */}
+                                <div style={styles.programPrice}>
+                                    <span style={styles.priceLabel}>from</span>
+                                    <span style={styles.priceValue}>
+                                        €{film.screenings[0].price}
+                                    </span>
+                                </div>
+                            </div>
+                        ))}
+
+                        {films.length > 4 && (
+                            <div style={{ textAlign: 'center', marginTop: '24px' }}>
+                                <button
+                                    className="btn btn-primary"
+                                    onClick={() => navigate('/program')}
+                                >
+                                    See All {films.length} Films
+                                </button>
+                            </div>
+                        )}
+                    </div>
+                )}
+
+                {loading && (
+                    <div style={styles.center}>
+                        <div style={styles.loader}></div>
+                        <p style={{ color: '#555', marginTop: '16px' }}>
+                            Loading program...
+                        </p>
+                    </div>
+                )}
+            </div>
         </div>
     );
 }
 
 const styles = {
+    page: { minHeight: '100vh' },
     hero: {
-        textAlign: 'center',
-        padding: '60px 20px 40px',
-        marginBottom: '10px',
+        height: '480px',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center top',
+        position: 'relative',
+        backgroundColor: '#1a0a3e',
+    },
+    heroOverlay: {
+        position: 'absolute',
+        inset: 0,
+        background: 'linear-gradient(to right, rgba(8,11,26,0.95) 35%, rgba(8,11,26,0.3) 100%)',
+        display: 'flex',
+        alignItems: 'center',
+    },
+    heroContent: {
+        padding: '0 60px',
+        maxWidth: '520px',
     },
     heroTitle: {
         fontSize: '42px',
+        fontWeight: '700',
+        lineHeight: 1.15,
         marginBottom: '12px',
+        marginTop: '10px',
+        letterSpacing: '-0.5px',
     },
-    heroSubtitle: {
-        color: '#aaa',
-        fontSize: '18px',
+    heroMeta: {
+        color: 'rgba(255,255,255,0.6)',
+        fontSize: '15px',
+        marginBottom: '24px',
     },
-    filters: {
+    heroBtn: {
+        padding: '13px 28px',
+        fontSize: '15px',
+    },
+    section: { marginBottom: '48px', paddingTop: '32px' },
+    sectionHeader: {
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: '20px',
+    },
+    sectionLabel: {
+        fontSize: '12px',
+        fontWeight: '700',
+        letterSpacing: '2px',
+        color: '#00c9b1',
+        textTransform: 'uppercase',
+    },
+    posterStrip: {
         display: 'flex',
         gap: '12px',
-        marginBottom: '30px',
-        flexWrap: 'wrap',
+        overflowX: 'auto',
+        paddingBottom: '12px',
+        scrollbarWidth: 'none',
     },
-    searchInput: {
-        flex: 1,
-        minWidth: '200px',
-        marginBottom: 0,
-    },
-    select: {
-        width: '180px',
-        marginBottom: 0,
-    },
-    filmCard: {
-        cursor: 'pointer',
-        padding: '0',
+    posterCard: {
+        flexShrink: 0,
+        width: '130px',
+        height: '195px',
+        borderRadius: '10px',
         overflow: 'hidden',
-        transition: 'transform 0.2s',
-    },
-    posterWrapper: {
         position: 'relative',
-        width: '100%',
-        height: '280px',
-        background: '#222',
+        cursor: 'pointer',
+        transition: 'transform 0.2s',
+        background: '#1a1a2e',
     },
-    poster: {
+    posterImg: {
         width: '100%',
         height: '100%',
         objectFit: 'cover',
@@ -227,55 +327,112 @@ const styles = {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        fontSize: '60px',
-        background: '#1a1a1a',
+        fontSize: '36px',
+        background: '#1a1a2e',
     },
-    rating: {
+    posterOverlay: {
         position: 'absolute',
-        top: '10px',
-        right: '10px',
-        background: '#e50914',
-        color: 'white',
-        padding: '3px 8px',
-        borderRadius: '4px',
-        fontSize: '12px',
-        fontWeight: 'bold',
+        bottom: 0,
+        left: 0,
+        right: 0,
+        background: 'linear-gradient(transparent, rgba(0,0,0,0.85))',
+        padding: '20px 8px 8px',
     },
-    filmInfo: {
-        padding: '14px',
+    posterTitle: {
+        fontSize: '11px',
+        fontWeight: '600',
+        color: '#fff',
+        lineHeight: 1.3,
     },
-    filmTitle: {
-        fontSize: '17px',
-        marginBottom: '6px',
-    },
-    filmMeta: {
-        color: '#aaa',
-        fontSize: '13px',
-        marginBottom: '12px',
-    },
-    times: {
+    programRow: {
         display: 'flex',
-        flexWrap: 'wrap',
-        gap: '8px',
-        marginBottom: '12px',
-    },
-    timeChip: {
-        background: '#e50914',
-        color: 'white',
-        padding: '4px 10px',
-        borderRadius: '20px',
-        fontSize: '13px',
+        gap: '20px',
+        alignItems: 'center',
+        padding: '16px',
+        borderRadius: '12px',
+        marginBottom: '10px',
+        background: 'rgba(255,255,255,0.03)',
+        border: '1px solid rgba(255,255,255,0.06)',
         cursor: 'pointer',
-        fontWeight: 'bold',
+        transition: 'background 0.2s',
     },
-    price: {
-        color: '#aaa',
+    programThumb: {
+        flexShrink: 0,
+        width: '100px',
+        height: '140px',
+        borderRadius: '8px',
+        overflow: 'hidden',
+        background: '#1a1a2e',
+    },
+    programThumbImg: {
+        width: '100%',
+        height: '100%',
+        objectFit: 'cover',
+    },
+    programThumbPlaceholder: {
+        width: '100%',
+        height: '100%',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        fontSize: '28px',
+    },
+    programInfo: { flex: 1 },
+    programTags: { marginBottom: '8px' },
+    ratingTag: {
+        background: 'rgba(123,97,255,0.15)',
+        color: '#7b61ff',
+        border: '1px solid rgba(123,97,255,0.3)',
+    },
+    programTitle: {
+        fontSize: '20px',
+        fontWeight: '600',
+        marginBottom: '6px',
+        letterSpacing: '-0.3px',
+    },
+    programMeta: {
+        color: 'rgba(255,255,255,0.4)',
         fontSize: '13px',
+        marginBottom: '14px',
     },
-    center: {
-        textAlign: 'center',
-        padding: '60px',
-        color: '#aaa',
+    timesRow: { display: 'flex', gap: '8px', flexWrap: 'wrap' },
+    timeChip: {
+        background: 'rgba(0,201,177,0.12)',
+        color: '#00c9b1',
+        border: '1px solid rgba(0,201,177,0.3)',
+        borderRadius: '6px',
+        padding: '6px 14px',
+        fontSize: '13px',
+        fontWeight: '600',
+        cursor: 'pointer',
+        transition: 'all 0.2s',
+        fontFamily: 'Inter, sans-serif',
+    },
+    programPrice: {
+        flexShrink: 0,
+        textAlign: 'right',
+        paddingRight: '8px',
+    },
+    priceLabel: {
+        display: 'block',
+        color: 'rgba(255,255,255,0.4)',
+        fontSize: '11px',
+        marginBottom: '2px',
+    },
+    priceValue: {
+        fontSize: '22px',
+        fontWeight: '700',
+        color: '#fff',
+    },
+    center: { textAlign: 'center', padding: '80px 20px' },
+    loader: {
+        width: '40px',
+        height: '40px',
+        border: '3px solid rgba(255,255,255,0.1)',
+        borderTop: '3px solid #00c9b1',
+        borderRadius: '50%',
+        margin: '0 auto',
+        animation: 'spin 0.8s linear infinite',
     },
 };
 

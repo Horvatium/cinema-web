@@ -8,6 +8,7 @@ import Register from './pages/Register';
 import FilmDetail from './pages/FilmDetail';
 import MyReservations from './pages/MyReservations';
 import Admin from './pages/Admin';
+import Program from './pages/Program';
 
 function App() {
     return (
@@ -19,7 +20,10 @@ function App() {
                         <Route path="/" element={<Home />} />
                         <Route path="/login" element={<Login />} />
                         <Route path="/register" element={<Register />} />
-                        <Route path="/films/:id" element={<FilmDetail />} />
+                        <Route path="/films/:id" element={<FilmDetail />
+                    } />
+                        <Route path="/program" element={<Program />} />
+
                         <Route path="/my-reservations" element={
                             <ProtectedRoute>
                                 <MyReservations />
