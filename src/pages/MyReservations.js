@@ -66,7 +66,7 @@ function MyReservations() {
                                 <p style={styles.meta}>
                                     📅{' '}
                                     {new Date(reservation.start_time)
-                                        .toLocaleDateString('en-GB', {
+                                        .toLocaleDateString('sl-SI', {
                                             weekday: 'long',
                                             year: 'numeric',
                                             month: 'long',
@@ -75,9 +75,10 @@ function MyReservations() {
                                     }
                                     {' '}ob{' '}
                                     {new Date(reservation.start_time)
-                                        .toLocaleTimeString([], {
-                                            hour: '2-digit',
-                                            minute: '2-digit',
+                                        .toLocaleTimeString('sl-SI', {
+                                    hour: '2-digit',
+                                    minute: '2-digit',
+                                    hour12: false
                                         })
                                     }
                                 </p>
@@ -119,7 +120,7 @@ function MyReservations() {
                         <p style={styles.bookedAt}>
                             Rezervirano dne{' '}
                             {new Date(reservation.reserved_at)
-                                .toLocaleDateString('en-GB')
+                                .toLocaleDateString('sl-SI')
                             }
                         </p>
                     </div>

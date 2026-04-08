@@ -4,7 +4,7 @@ import { useAuth } from '../context/AuthContext';
 function ProtectedRoute({ children, adminOnly = false }) {
     const { user, loading } = useAuth();
 
-    if (loading) return <div>Loading...</div>;
+    if (loading) return <div>Nalaganje...</div>;
 
     if (!user) return <Navigate to="/login" />;
 

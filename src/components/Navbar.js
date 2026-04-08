@@ -1,5 +1,6 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import logo from '../logo-transparent.png';
 
 function Navbar() {
     const { user, logoutUser } = useAuth();
@@ -15,11 +16,11 @@ function Navbar() {
             <div style={styles.inner}>
                 {/* Logo */}
                 <Link to="/" style={styles.logo}>
-                    <span style={styles.logoIcon}>🎬</span>
-                    <span style={styles.logoText}>KinoPlex</span>
-                </Link>
-
-                {/* Nav Links */}
+    <img src={logo} alt="KinoPlex" style={styles.logoImg} />
+    <span style={styles.logoText}>KinoPlex</span>
+</Link>
+{/*🎬*/}
+                {/* navigacija povezave */}
                 <div style={styles.links}>
                     <Link to="/" style={styles.link}>Domov</Link>
                     <Link to="/program" style={styles.link}>Program</Link>
@@ -33,7 +34,7 @@ function Navbar() {
                     )}
                 </div>
 
-                {/* Auth */}
+                {/* Avtorizacija */}
                 <div style={styles.auth}>
                     {user ? (
                         <>
@@ -107,6 +108,11 @@ const styles = {
         WebkitTextFillColor: 'transparent',
         letterSpacing: '-0.5px',
     },
+    logoImg: {
+    height: '36px',
+    width: 'auto',
+    objectFit: 'contain',
+},
     links: {
         display: 'flex',
         gap: '32px',

@@ -67,8 +67,8 @@ function Program() {
         if (dateStr === today) return { day: 'Danes', date: '' };
         if (dateStr === tomorrow) return { day: 'Jutri', date: '' };
         return {
-            day: d.toLocaleDateString('en-GB', { weekday: 'short' }),
-            date: d.toLocaleDateString('en-GB', {
+            day: d.toLocaleDateString('sl-SI', { weekday: 'short' }),
+            date: d.toLocaleDateString('sl-SI', {
                 day: 'numeric', month: 'short'
             })
         };
@@ -195,9 +195,10 @@ function Program() {
                                         >
                                             <span style={styles.timeText}>
                                                 {new Date(s.start_time)
-                                                    .toLocaleTimeString([], {
-                                                        hour: '2-digit',
-                                                        minute: '2-digit'
+                                                    .toLocaleTimeString('sl-SI', {
+                                                    hour: '2-digit',
+                                                    minute: '2-digit',
+                                                    hour12: false
                                                     })
                                                 }
                                             </span>

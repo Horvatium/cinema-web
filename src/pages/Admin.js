@@ -353,7 +353,7 @@ function ScreeningsTab() {
                                     <p style={styles.meta}>
                                         📅{' '}
                                         {new Date(s.start_time).toLocaleString(
-                                            'en-GB', {
+                                            'sl-SI', {
                                                 dateStyle: 'medium',
                                                 timeStyle: 'short'
                                             }
@@ -642,7 +642,7 @@ function ReservationsTab() {
                             </p>
                             <p style={styles.meta}>
                                 📅{' '}
-                                {new Date(r.start_time).toLocaleString('en-GB', {
+                                {new Date(r.start_time).toLocaleString('sl-SI', {
                                     dateStyle: 'medium',
                                     timeStyle: 'short',
                                 })}

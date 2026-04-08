@@ -252,9 +252,10 @@ function Home() {
                                                 }}
                                             >
                                                 {new Date(s.start_time)
-                                                    .toLocaleTimeString([], {
-                                                        hour: '2-digit',
-                                                        minute: '2-digit'
+                                                    .toLocaleTimeString('sl-SI', {
+                                                     hour: '2-digit',
+                                                    minute: '2-digit',
+                                                    hour12: false
                                                     })
                                                 }
                                             </button>

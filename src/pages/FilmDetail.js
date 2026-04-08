@@ -146,7 +146,7 @@ function FilmDetail() {
             {screening && (
                 <div style={styles.screeningBadge}>
                     <span>📅 {new Date(screening.start_time)
-                        .toLocaleDateString('en-GB', {
+                        .toLocaleDateString('sl-SI', {
                             weekday: 'long',
                             year: 'numeric',
                             month: 'long',
@@ -154,9 +154,10 @@ function FilmDetail() {
                         })}
                     </span>
                     <span> ob {new Date(screening.start_time)
-                        .toLocaleTimeString([], {
-                            hour: '2-digit',
-                            minute: '2-digit',
+                        .toLocaleTimeString('sl-SI', {
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        hour12: false
                         })}
                     </span>
                     <span> · 🏛️ {screening.room_name}</span>
