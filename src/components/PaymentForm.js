@@ -20,7 +20,7 @@ function PaymentForm({ screeningId, seatIds, totalPrice, onSuccess, onCancel }) 
         setError('');
 
         try {
-            // Confirm payment with Stripe
+            // Potrdi plačilo s Stripe
             const { error: stripeError, paymentIntent } = await stripe.confirmPayment({
                 elements,
                 redirect: 'if_required',
@@ -33,7 +33,7 @@ function PaymentForm({ screeningId, seatIds, totalPrice, onSuccess, onCancel }) 
             }
 
             if (paymentIntent.status === 'succeeded') {
-                // Tell our backend to create the reservation
+                // nađ backend naj ustvari rezervacijo
                 const response = await confirmPayment({
                     payment_intent_id: paymentIntent.id,
                     screening_id: screeningId,
@@ -44,16 +44,16 @@ function PaymentForm({ screeningId, seatIds, totalPrice, onSuccess, onCancel }) 
             }
 
         } catch (err) {
-            setError(err.response?.data?.message || 'Payment failed.');
+            setError(err.response?.data?.message || 'Plačilo ni uspelo.');
             setProcessing(false);
         }
     };
 
     return (
         <div style={styles.wrapper}>
-            <h3 style={styles.title}>Complete Payment</h3>
+            <h3 style={styles.title}>Zaključi plačilo</h3>
             <p style={styles.amount}>
-                Total: <span style={styles.price}>€{totalPrice}</span>
+                Skupaj: <span style={styles.price}>€{totalPrice}</span>
             </p>
 
             {error && <div className="error">{error}</div>}
@@ -70,7 +70,7 @@ function PaymentForm({ screeningId, seatIds, totalPrice, onSuccess, onCancel }) 
                         disabled={processing || !stripe}
                         style={{ flex: 1 }}
                     >
-                        {processing ? 'Processing...' : `Pay €${totalPrice}`}
+                        {processing ? 'Obdelava...' : `Plačaj €${totalPrice}`}
                     </button>
                     <button
                         type="button"
@@ -83,8 +83,8 @@ function PaymentForm({ screeningId, seatIds, totalPrice, onSuccess, onCancel }) 
                 </div>
 
                 <p style={styles.testNote}>
-                    🔒 Test mode — use card <strong>4242 4242 4242 4242</strong>,
-                    any future expiry and any 3 digit CVC
+                    🔒 Testni način — uporabite kartico <strong>4242 4242 4242 4242</strong>,
+                    prihodnji datum izteka in poljubno 3-mestno kodo CVC
                 </p>
             </form>
         </div>

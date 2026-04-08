@@ -18,7 +18,7 @@ function FilmDetail() {
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
 
-    // Payment state
+    // Stanje plačila
     const [stripePromise, setStripePromise] = useState(null);
     const [clientSecret, setClientSecret] = useState('');
     const [totalPrice, setTotalPrice] = useState(0);
@@ -33,7 +33,7 @@ function FilmDetail() {
             const response = await getScreeningSeats(id);
             setSeats(response.data);
         } catch (_err) {
-            setError('Could not load seats.');
+            setError('Napaka pri nalaganju sedežev.');
         } finally {
             setLoading(false);
         }
@@ -55,7 +55,7 @@ function FilmDetail() {
     const handleProceedToPayment = async () => {
         if (!user) return navigate('/login');
         if (selectedSeats.length === 0) {
-            return setError('Please select at least one seat.');
+            return setError('Prosimo, izberite vsaj en sedež.');
         }
 
         setCreatingIntent(true);
@@ -67,7 +67,7 @@ function FilmDetail() {
                 seat_ids: selectedSeats.map(s => s.id),
             });
 
-            // Load Stripe with the publishable key from backend
+            // Naložite Stripe z objavljivim ključem iz backenda
             const stripe = await loadStripe(response.data.publishableKey);
             setStripePromise(Promise.resolve(stripe));
             setClientSecret(response.data.clientSecret);
@@ -75,14 +75,14 @@ function FilmDetail() {
             setShowPayment(true);
 
         } catch (err) {
-            setError(err.response?.data?.message || 'Could not initiate payment.');
+            setError(err.response?.data?.message || 'Napaka pri pripravi plačila.');
         } finally {
             setCreatingIntent(false);
         }
     };
 
     const handlePaymentSuccess = (data) => {
-        setSuccess(`Payment successful! ${selectedSeats.length} seat(s) reserved.`);
+        setSuccess(`Plačilo uspešno! ${selectedSeats.length} sedež/ev rezerviranih.`);
         setShowPayment(false);
         setSelectedSeats([]);
         fetchSeats();
@@ -93,7 +93,7 @@ function FilmDetail() {
         setClientSecret('');
     };
 
-    // Group seats by row
+    // grupiraj sedeže po vrstah
     const rows = {};
     seats.forEach(seat => {
         if (!rows[seat.row_label]) rows[seat.row_label] = [];
@@ -104,18 +104,18 @@ function FilmDetail() {
         ? (selectedSeats.length * screening.price).toFixed(2)
         : '0.00';
 
-    if (loading) return <div style={styles.center}>Loading seats...</div>;
+    if (loading) return <div style={styles.center}>Nalaganje sedežev...</div>;
 
     return (
         <div style={styles.wrapper}>
-            {/* Film Header */}
+            {/* glava filma */}
 <div style={styles.header}>
     <button
         onClick={() => navigate('/')}
         className="btn btn-secondary"
         style={{ marginBottom: '20px' }}
     >
-        ← Back
+        ← Nazaj
     </button>
 
     <div style={styles.filmHeaderRow}>
@@ -153,14 +153,14 @@ function FilmDetail() {
                             day: 'numeric',
                         })}
                     </span>
-                    <span> at {new Date(screening.start_time)
+                    <span> ob {new Date(screening.start_time)
                         .toLocaleTimeString([], {
                             hour: '2-digit',
                             minute: '2-digit',
                         })}
                     </span>
                     <span> · 🏛️ {screening.room_name}</span>
-                    <span> · 🎟️ €{screening.price} per seat</span>
+                    <span> · 🎟️ €{screening.price} na sedež</span>
                 </div>
             )}
         </div>
@@ -170,29 +170,29 @@ function FilmDetail() {
             {error && <div className="error">{error}</div>}
             {success && <div className="success">{success}</div>}
 
-            {/* Hide seat map when payment form is shown */}
+            {/* skrij zemljevid sedeže ko se prikaže plačilni obrazec */}
             {!showPayment && (
                 <>
-                    {/* Legend */}
+                    {/* Legenda */}
                     <div style={styles.legend}>
                         <span style={styles.legendItem}>
                             <span style={{...styles.legendDot,
-                                background: '#333'}}/> Available
+                                background: '#333'}}/> Prosto
                         </span>
                         <span style={styles.legendItem}>
                             <span style={{...styles.legendDot,
-                                background: '#e50914'}}/> Selected
+                                background: '#e50914'}}/> Izbrano
                         </span>
                         <span style={styles.legendItem}>
                             <span style={{...styles.legendDot,
-                                background: '#555', opacity: 0.4}}/> Taken
+                                background: '#555', opacity: 0.4}}/> Zasedeno
                         </span>
                     </div>
 
-                    {/* Screen */}
-                    <div style={styles.screen}>SCREEN</div>
+                    {/* predstava */}
+                    <div style={styles.screen}>ZASLON</div>
 
-                    {/* Seat Map */}
+                    {/* mapa sedežev */}
                     <div style={styles.seatMap}>
                         {Object.entries(rows).map(([rowLabel, rowSeats]) => (
                             <div key={rowLabel} style={styles.row}>
@@ -229,24 +229,24 @@ function FilmDetail() {
                         ))}
                     </div>
 
-                    {/* Booking Summary */}
+                    {/* Povzetek rezervacije */}
                     <div className="card" style={styles.summary}>
-                        <h3 style={{ marginBottom: '12px' }}>Booking Summary</h3>
+                        <h3 style={{ marginBottom: '12px' }}>Povzetek rezervacije</h3>
                         {selectedSeats.length === 0 ? (
                             <p style={{ color: '#aaa' }}>
-                                No seats selected yet.
+                                Ni izbranih sedežev.
                             </p>
                         ) : (
                             <>
                                 <p style={{ marginBottom: '8px' }}>
-                                    <strong>Selected seats: </strong>
+                                    <strong>Izbrani sedeži: </strong>
                                     {selectedSeats
                                         .map(s => `${s.row_label}${s.seat_number}`)
                                         .join(', ')
                                     }
                                 </p>
                                 <p style={{ marginBottom: '16px' }}>
-                                    <strong>Total: </strong>
+                                    <strong>Skupaj: </strong>
                                     <span style={{ color: '#e50914',
                                         fontSize: '20px' }}>
                                         €{currentTotal}
@@ -259,8 +259,8 @@ function FilmDetail() {
                                     style={{ width: '100%' }}
                                 >
                                     {creatingIntent
-                                        ? 'Preparing payment...'
-                                        : `Proceed to Payment — €${currentTotal}`
+                                        ? 'Priprava plačila...'
+                                        : `Nadaljuj na plačilo — €${currentTotal}`
                                     }
                                 </button>
                             </>
@@ -269,7 +269,7 @@ function FilmDetail() {
                 </>
             )}
 
-            {/* Payment Form */}
+            {/* Plačilni obrazec */}
             {showPayment && clientSecret && stripePromise && (
                 <Elements
                     stripe={stripePromise}

@@ -21,11 +21,11 @@ function Navbar() {
 
                 {/* Nav Links */}
                 <div style={styles.links}>
-                    <Link to="/" style={styles.link}>Home</Link>
+                    <Link to="/" style={styles.link}>Domov</Link>
                     <Link to="/program" style={styles.link}>Program</Link>
                     {user && (
                         <Link to="/my-reservations" style={styles.link}>
-                            My Tickets
+                            Moje vstopnice
                         </Link>
                     )}
                     {user?.role === 'admin' && (
@@ -38,14 +38,14 @@ function Navbar() {
                     {user ? (
                         <>
                             <span style={styles.greeting}>
-                                Hi, {user.first_name}
+                                Pozdravljeni, {user.first_name}
                             </span>
                             <button
                                 onClick={handleLogout}
                                 className="btn btn-secondary"
                                 style={{ padding: '8px 16px', fontSize: '13px' }}
                             >
-                                Logout
+                                Odjava
                             </button>
                         </>
                     ) : (
@@ -55,7 +55,7 @@ function Navbar() {
                                     className="btn btn-secondary"
                                     style={{ padding: '8px 16px', fontSize: '13px' }}
                                 >
-                                    Login
+                                    Prijava
                                 </button>
                             </Link>
                             <Link to="/register">
@@ -63,7 +63,7 @@ function Navbar() {
                                     className="btn btn-primary"
                                     style={{ padding: '8px 16px', fontSize: '13px' }}
                                 >
-                                    Register
+                                    Registracija
                                 </button>
                             </Link>
                         </>

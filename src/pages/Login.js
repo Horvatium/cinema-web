@@ -22,7 +22,7 @@ function Login() {
             loginUser(response.data.user, response.data.token);
             navigate('/');
         } catch (err) {
-            setError(err.response?.data?.message || 'Nekje se je pojavila napaka.');
+            setError(err.response?.data?.message || 'Prišlo je do napake.');
         } finally {
             setLoading(false);
         }
@@ -32,17 +32,17 @@ function Login() {
         <div style={styles.wrapper}>
             <div className="card" style={styles.card}>
                 <h2 style={styles.title}>Dobrodošli nazaj</h2>
-                <p style={styles.subtitle}>Prijavite se v vaš račun</p>
+                <p style={styles.subtitle}>Prijavite se v svoj račun</p>
 
                 {error && <div className="error">{error}</div>}
 
                 <form onSubmit={handleSubmit}>
-                    <label>E-mail</label>
+                    <label>E-poštni naslov</label>
                     <input
                         type="email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        placeholder="john@example.com"
+                        placeholder="janez@gmail.com"
                         required
                     />
 
@@ -61,12 +61,12 @@ function Login() {
                         style={{ width: '100%', marginTop: '8px' }}
                         disabled={loading}
                     >
-                        {loading ? 'Prijavljam...' : 'Prijavite se'}
+                        {loading ? 'Prijavljanje...' : 'Prijava'}
                     </button>
                 </form>
 
                 <p style={styles.switchText}>
-                    Nimate še računa?{' '}
+                    Nimate računa?{' '}
                     <Link to="/register" style={styles.switchLink}>
                         Registirirajte se tukaj
                     </Link>

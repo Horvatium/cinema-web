@@ -15,14 +15,14 @@ function MyReservations() {
             const response = await getMyReservations();
             setReservations(response.data);
         } catch (err) {
-            setError('Rezervacij ni bilo mogoče naložiti.');
+            setError('Napaka pri nalaganju rezervacij.');
         } finally {
             setLoading(false);
         }
     };
 
     const handleCancel = async (id) => {
-        if (!window.confirm('Ali ste prepričani, da želite preklicati to rezervacijo??')) return;
+        if (!window.confirm('Ste prepričani, da želite preklicati to rezervacijo??')) return;
 
         try {
             await cancelReservation(id);
@@ -73,7 +73,7 @@ function MyReservations() {
                                             day: 'numeric',
                                         })
                                     }
-                                    {' '}at{' '}
+                                    {' '}ob{' '}
                                     {new Date(reservation.start_time)
                                         .toLocaleTimeString([], {
                                             hour: '2-digit',
@@ -85,10 +85,10 @@ function MyReservations() {
                                     🏛️ {reservation.room_name}
                                 </p>
                                 <p style={styles.meta}>
-                                    💺 Seats: <strong>{reservation.seats}</strong>
+                                    💺 Sedeži: <strong>{reservation.seats}</strong>
                                 </p>
                                 <p style={styles.meta}>
-                                    💰 Total:{' '}
+                                    💰 Skupaj:{' '}
                                     <strong style={{ color: '#e50914' }}>
                                         €{reservation.total_price}
                                     </strong>
@@ -110,7 +110,7 @@ function MyReservations() {
                                         onClick={() => handleCancel(reservation.id)}
                                         style={{ marginTop: '12px' }}
                                     >
-                                        Cancel
+                                        Prekliči rezervacijo
                                     </button>
                                 )}
                             </div>

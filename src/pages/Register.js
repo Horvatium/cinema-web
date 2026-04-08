@@ -27,7 +27,7 @@ function Register() {
         setError('');
 
         if (form.password !== form.confirmPassword) {
-            return setError('Gesla se ne ujemata.');
+            return setError('Gesli se ne ujemata.');
         }
         if (form.password.length < 6) {
             return setError('Geslo mora vsebovati vsaj 6 znakov.');
@@ -46,7 +46,7 @@ function Register() {
             loginUser(response.data.user, response.data.token);
             navigate('/');
         } catch (err) {
-            setError(err.response?.data?.message || 'Nekaj se je pojavila napaka.');
+            setError(err.response?.data?.message || 'Prišlo je do napake.');
         } finally {
             setLoading(false);
         }
@@ -55,8 +55,8 @@ function Register() {
     return (
         <div style={styles.wrapper}>
             <div className="card" style={styles.card}>
-                <h2 style={styles.title}>Ustvari račun</h2>
-                <p style={styles.subtitle}>Pridruži se, da pričneš z nakupom kart</p>
+                <h2 style={styles.title}>Ustvarite račun</h2>
+                <p style={styles.subtitle}>Pridružite se nam in začnite rezervirati vstopnice</p>
 
                 {error && <div className="error">{error}</div>}
 
@@ -68,7 +68,7 @@ function Register() {
                                 name="first_name"
                                 value={form.first_name}
                                 onChange={handleChange}
-                                placeholder="John"
+                                placeholder="Janez"
                                 required
                             />
                         </div>
@@ -78,23 +78,23 @@ function Register() {
                                 name="last_name"
                                 value={form.last_name}
                                 onChange={handleChange}
-                                placeholder="Doe"
+                                placeholder="Novak"
                                 required
                             />
                         </div>
                     </div>
 
-                    <label>E-mail</label>
+                    <label>E-poštni naslov</label>
                     <input
                         type="email"
                         name="email"
                         value={form.email}
                         onChange={handleChange}
-                        placeholder="john@example.com"
+                        placeholder="janez@gmail.com"
                         required
                     />
 
-                    <label>Telefon (neobvezno)</label>
+                    <label>Telefonska številka (neobvezno)</label>
                     <input
                         name="phone"
                         value={form.phone}
@@ -118,7 +118,7 @@ function Register() {
                         name="confirmPassword"
                         value={form.confirmPassword}
                         onChange={handleChange}
-                        placeholder="Ponovi geslo"
+                        placeholder="Ponovite geslo"
                         required
                     />
 
@@ -128,7 +128,7 @@ function Register() {
                         style={{ width: '100%', marginTop: '8px' }}
                         disabled={loading}
                     >
-                        {loading ? 'Ustvarjam račun...' : 'Ustvari račun'}
+                        {loading ? 'Ustvarjanje računa...' : 'Ustvari račun'}
                     </button>
                 </form>
 

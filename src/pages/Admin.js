@@ -44,12 +44,12 @@ function ScreeningsTab() {
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
 
-    // Add form state
+    // Dodaj stanje obrazca
     const [addForm, setAddForm] = useState({
         film_id: '', room_id: '', start_time: '', end_time: '', price: ''
     });
 
-    // Edit state
+    // Uredi stanje
     const [editingId, setEditingId] = useState(null);
     const [editForm, setEditForm] = useState({
         film_id: '', room_id: '', start_time: '', end_time: '', price: ''
@@ -102,13 +102,15 @@ function ScreeningsTab() {
         }
     };
 
-    // Start editing — pre-fill the edit form with current values
+    // Začni urejanje – vnaprej izpolni obrazec za urejanje s trenutnimi vrednostmi
+
     const startEdit = (screening) => {
         setEditingId(screening.id);
         setError('');
         setSuccess('');
 
-        // Convert datetime to local format for datetime-local input
+        // Pretvori datum in čas v lokalno obliko za vnos datuma in časa
+
         const toLocalInput = (dateStr) => {
             const d = new Date(dateStr);
             const offset = d.getTimezoneOffset();
@@ -170,9 +172,9 @@ function ScreeningsTab() {
             {error && <div className="error">{error}</div>}
             {success && <div className="success">{success}</div>}
 
-            {/* ── Add Screening Form ── */}
+            {/* ── Dodaj obrazec za predstavo ── */}
             <div className="card" style={{ marginBottom: '30px' }}>
-                <h2 style={styles.sectionTitle}>Add New Screening</h2>
+                <h2 style={styles.sectionTitle}>Dodaj novo predvajanje</h2>
                 <form onSubmit={handleAdd}>
                     <label>Film</label>
                     <select
@@ -181,20 +183,20 @@ function ScreeningsTab() {
                         onChange={handleAddChange}
                         required
                     >
-                        <option value="">Select a film...</option>
+                        <option value="">Izberi film...</option>
                         {films.map(f => (
                             <option key={f.id} value={f.id}>{f.title}</option>
                         ))}
                     </select>
 
-                    <label>Room</label>
+                    <label>Dvorana</label>
                     <select
                         name="room_id"
                         value={addForm.room_id}
                         onChange={handleAddChange}
                         required
                     >
-                        <option value="">Select a room...</option>
+                        <option value="">Izberi dvorano...</option>
                         {rooms.map(r => (
                             <option key={r.id} value={r.id}>{r.name}</option>
                         ))}
@@ -202,7 +204,7 @@ function ScreeningsTab() {
 
                     <div style={styles.row}>
                         <div style={styles.half}>
-                            <label>Start Time</label>
+                            <label>Čas začetka</label>
                             <input
                                 type="datetime-local"
                                 name="start_time"
@@ -212,7 +214,7 @@ function ScreeningsTab() {
                             />
                         </div>
                         <div style={styles.half}>
-                            <label>End Time</label>
+                            <label>Čas konca</label>
                             <input
                                 type="datetime-local"
                                 name="end_time"
@@ -223,7 +225,7 @@ function ScreeningsTab() {
                         </div>
                     </div>
 
-                    <label>Ticket Price (€)</label>
+                    <label>Cena vstopnice (€)</label>
                     <input
                         type="number"
                         name="price"
@@ -236,24 +238,24 @@ function ScreeningsTab() {
                     />
 
                     <button type="submit" className="btn btn-primary">
-                        Add Screening
+                        Dodaj predvajanje
                     </button>
                 </form>
             </div>
 
-            {/* ── Screenings List ── */}
-            <h2 style={styles.sectionTitle}>Upcoming Screenings</h2>
+            {/* ── lista predstav ── */}
+            <h2 style={styles.sectionTitle}>Prihajajoča predvajanja</h2>
             {screenings.length === 0 ? (
-                <p style={{ color: '#aaa' }}>No upcoming screenings.</p>
+                <p style={{ color: '#aaa' }}>Ni prihajajočih predvajanj..</p>
             ) : (
                 screenings.map(s => (
                     <div key={s.id} className="card" style={{ marginBottom: '12px' }}>
 
-                        {/* ── Edit Form (shown inline when editing) ── */}
+                        {/* ── Uredi obrazec (prikazano v vrstici med urejanjem) ── */}
                         {editingId === s.id ? (
                             <form onSubmit={handleEditSubmit}>
                                 <h3 style={{ marginBottom: '16px', color: '#e50914' }}>
-                                    ✏️ Editing: {s.film_title}
+                                    ✏️ Urejanje: {s.film_title}
                                 </h3>
 
                                 <label>Film</label>
@@ -263,7 +265,7 @@ function ScreeningsTab() {
                                     onChange={handleEditChange}
                                     required
                                 >
-                                    <option value="">Select a film...</option>
+                                    <option value="">Izberi film...</option>
                                     {films.map(f => (
                                         <option key={f.id} value={f.id}>
                                             {f.title}
@@ -278,7 +280,7 @@ function ScreeningsTab() {
                                     onChange={handleEditChange}
                                     required
                                 >
-                                    <option value="">Select a room...</option>
+                                    <option value="">Izberi dvorano...</option>
                                     {rooms.map(r => (
                                         <option key={r.id} value={r.id}>
                                             {r.name}
@@ -288,7 +290,7 @@ function ScreeningsTab() {
 
                                 <div style={styles.row}>
                                     <div style={styles.half}>
-                                        <label>Start Time</label>
+                                        <label>Čas začetka</label>
                                         <input
                                             type="datetime-local"
                                             name="start_time"
@@ -298,7 +300,7 @@ function ScreeningsTab() {
                                         />
                                     </div>
                                     <div style={styles.half}>
-                                        <label>End Time</label>
+                                        <label>Čas konca</label>
                                         <input
                                             type="datetime-local"
                                             name="end_time"
@@ -309,7 +311,7 @@ function ScreeningsTab() {
                                     </div>
                                 </div>
 
-                                <label>Ticket Price (€)</label>
+                                <label>Cena vstopnice (€)</label>
                                 <input
                                     type="number"
                                     name="price"
@@ -329,14 +331,14 @@ function ScreeningsTab() {
             type="submit"
             className="btn btn-primary"
         >
-            Save Changes
+            Shrani spremembe
         </button>
         <button
             type="button"
             className="btn btn-secondary"
             onClick={cancelEdit}
         >
-            Cancel
+            Prekliči
         </button>
     </div>
 </div>
@@ -344,7 +346,7 @@ function ScreeningsTab() {
 
                         ) : (
 
-                            /* ── Normal Row ── */
+                            /* ── Normalna vrsta ── */
                             <div style={styles.listItem}>
                                 <div>
                                     <strong>{s.film_title}</strong>
@@ -365,13 +367,13 @@ function ScreeningsTab() {
                                         className="btn btn-secondary"
                                         onClick={() => startEdit(s)}
                                     >
-                                        ✏️ Edit
+                                        ✏️ Uredi
                                     </button>
                                     <button
                                         className="btn btn-danger"
                                         onClick={() => handleDelete(s.id)}
                                     >
-                                        Delete
+                                        Izbriši
                                     </button>
                                 </div>
                             </div>
@@ -419,9 +421,9 @@ const handlePosterUpload = async (e) => {
         const response = await uploadPoster(formData);
         setForm({ ...form, poster_url: response.data.url });
         setPosterPreview(response.data.url);
-        setSuccess('Poster uploaded!');
+        setSuccess('Plakat naložen!');
     } catch (_err) {
-         setError('Could not upload poster.');
+         setError('Napaka pri nalaganju plakata.');
     } finally {
         setUploading(false);
     }
@@ -449,7 +451,7 @@ const handlePosterUpload = async (e) => {
     };
 
     const handleDelete = async (id) => {
-        if (!window.confirm('Želite izbrisati ta film? S tem boste izbrisali tudi vse njegove predstave.')) return;
+        if (!window.confirm('Izbrišete ta film? Izbrisana bodo tudi vsa njegova predvajanja..')) return;
         try {
             await deleteFilm(id);
             setFilms(films.filter(f => f.id !== id));
@@ -513,10 +515,10 @@ const handlePosterUpload = async (e) => {
                                 required
                             >
                                 <option value="">Izberi...</option>
-                                <option value="G">G</option>
-                                <option value="PG">PG</option>
-                                <option value="PG-13">PG-13</option>
-                                <option value="R">R</option>
+                                <option value="0-12">Za vse</option>
+                                <option value="12+">12+</option>
+                                <option value="15+">15+</option>
+                                <option value="18+">18+</option>
                             </select>
                         </div>
                     </div>
@@ -552,7 +554,7 @@ const handlePosterUpload = async (e) => {
                         rows={3}
                     />
 
-                    <label>Poster Image</label>
+                    <label>Slika plakata</label>
 <input
     type="file"
     accept="image/*"
@@ -561,7 +563,7 @@ const handlePosterUpload = async (e) => {
     style={{ marginBottom: '8px' }}
 />
 {uploading && <p style={{ color: '#aaa', fontSize: '13px' }}>
-    Uploading...
+    Nalaganje...
 </p>}
 {posterPreview && (
     <img
@@ -578,7 +580,7 @@ const handlePosterUpload = async (e) => {
 )}
 
                     <button type="submit" className="btn btn-primary">
-                        Add Film
+                        Dodaj film
                     </button>
                 </form>
             </div>

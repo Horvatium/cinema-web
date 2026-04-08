@@ -29,12 +29,12 @@ function Program() {
         fetchScreenings();
     }, []);
 
-    // Get unique dates
+    // pridobi unikatne datume
     const dates = [...new Set(
         screenings.map(s => new Date(s.start_time).toDateString())
     )].slice(0, 7);
 
-    // Group screenings by film for selected date
+    // Združi predstave po filmih za izbrani datum
     const filmMap = {};
     screenings
         .filter(s => new Date(s.start_time).toDateString() === selectedDate)
@@ -64,8 +64,8 @@ function Program() {
         const tomorrow = new Date(
             Date.now() + 86400000
         ).toDateString();
-        if (dateStr === today) return { day: 'Today', date: '' };
-        if (dateStr === tomorrow) return { day: 'Tomorrow', date: '' };
+        if (dateStr === today) return { day: 'Danes', date: '' };
+        if (dateStr === tomorrow) return { day: 'Jutri', date: '' };
         return {
             day: d.toLocaleDateString('en-GB', { weekday: 'short' }),
             date: d.toLocaleDateString('en-GB', {
@@ -76,21 +76,21 @@ function Program() {
 
     return (
         <div style={styles.page}>
-            {/* ── Header ── */}
+            {/* ── glava ── */}
             <div style={styles.header}>
                 <div style={styles.headerInner}>
                     <h1 style={styles.headerTitle}>Program</h1>
 
-                    {/* Search */}
+                    {/* išči */}
                     <input
-                        placeholder="🔍 Search films..."
+                        placeholder="🔍 Išči filme..."
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
                         style={styles.searchInput}
                     />
                 </div>
 
-                {/* ── Date Selector ── */}
+                {/* ── izbirnik datuma ── */}
                 <div style={styles.dateBar}>
                     <div style={styles.dateBarInner}>
                         {dates.map(date => {
@@ -118,11 +118,11 @@ function Program() {
                 </div>
             </div>
 
-            {/* ── Film List ── */}
+            {/* ── lista filmov ── */}
             <div className="container" style={{ paddingTop: '32px' }}>
                 {loading ? (
                     <div style={styles.center}>
-                        <p style={{ color: '#555' }}>Loading program...</p>
+                        <p style={{ color: '#555' }}>Nalaganje programa...</p>
                     </div>
                 ) : films.length === 0 ? (
                     <div style={styles.center}>
@@ -130,7 +130,7 @@ function Program() {
                             🎬
                         </p>
                         <p style={{ color: '#555' }}>
-                            No screenings for this date.
+                            Ni predvajanj za ta dan.
                         </p>
                     </div>
                 ) : (
@@ -179,7 +179,7 @@ function Program() {
                                     {film.duration_minutes} min
                                 </p>
 
-                                {/* Screening times */}
+                                {/* Časi predstav */}
                                 <div style={styles.timesRow}>
                                     {film.screenings.map(s => (
                                         <button
@@ -209,9 +209,9 @@ function Program() {
                                 </div>
                             </div>
 
-                            {/* Price */}
+                            {/* cena */}
                             <div style={styles.priceCol}>
-                                <span style={styles.priceFrom}>from</span>
+                                <span style={styles.priceFrom}>od</span>
                                 <span style={styles.price}>
                                     €{film.screenings[0].price}
                                 </span>
@@ -229,7 +229,7 @@ function Program() {
                                         );
                                     }}
                                 >
-                                    Book
+                                    Rezerviraj
                                 </button>
                             </div>
                         </div>

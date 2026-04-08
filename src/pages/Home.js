@@ -23,7 +23,7 @@ function Home() {
         fetchScreenings();
     }, []);
 
-    // Group screenings by film
+    // Združi predstave po filmu
     const filmMap = {};
     screenings.forEach(s => {
         if (!filmMap[s.film_title]) {
@@ -42,7 +42,7 @@ function Home() {
     });
     const films = Object.values(filmMap);
 
-    // Auto-cycle hero every 5 seconds
+    // Hero samodejno preklapljanje vsakih 5 sekund
     useEffect(() => {
         if (films.length <= 1) return;
         const interval = setInterval(() => {
@@ -55,7 +55,7 @@ function Home() {
 
     return (
         <div style={styles.page}>
-            {/* ── Hero Banner ── */}
+            {/* ── Hero baner ── */}
 {!loading && featuredFilm && (
     <div style={{
     ...styles.hero,
@@ -93,12 +93,12 @@ function Home() {
                         }}
                     )}
                 >
-                    → Book Tickets
+                    → Rezerviraj vstopnice
                 </button>
             </div>
         </div>
 
-        {/* Cycling dots */}
+        {/* pike */}
         <div style={styles.heroDots}>
             {films.map((_, i) => (
                 <button
@@ -112,7 +112,7 @@ function Home() {
             ))}
         </div>
 
-        {/* Prev / Next arrows */}
+        {/* nazaj / naprej puščice */}
         <button
             style={{...styles.heroArrow, left: '20px'}}
             onClick={() => setHeroIndex(
@@ -133,12 +133,12 @@ function Home() {
 )}
 
             <div className="container">
-                {/* ── In Cinemas Strip ── */}
+                {/* ── V kinu poster  ── */}
                 {!loading && films.length > 0 && (
                     <div style={styles.section}>
                         <div style={styles.sectionHeader}>
                             <span style={styles.sectionLabel}>
-                                IN CINEMAS
+                                V KINODVORANAH
                             </span>
                         </div>
                         <div style={styles.posterStrip}>
@@ -176,19 +176,19 @@ function Home() {
                     </div>
                 )}
 
-                {/* ── Program Preview ── */}
+                {/* ── Predogled programa ── */}
                 {!loading && films.length > 0 && (
                     <div style={styles.section}>
                         <div style={styles.sectionHeader}>
                             <span style={styles.sectionLabel}>
-                                TODAY'S PROGRAM
+                                DANAŠNJI PROGRAM
                             </span>
                             <button
                                 className="btn btn-secondary"
                                 style={{ fontSize: '13px', padding: '8px 16px' }}
                                 onClick={() => navigate('/program')}
                             >
-                                View Full Program →
+                                Celoten program →
                             </button>
                         </div>
 
@@ -204,7 +204,7 @@ function Home() {
                                     }}
                                 )}
                             >
-                                {/* Thumbnail */}
+                                {/* Sličica */}
                                 <div style={styles.programThumb}>
                                     {film.poster_url ? (
                                         <img
@@ -234,10 +234,10 @@ function Home() {
                                         {film.title}
                                     </h3>
                                     <p style={styles.programMeta}>
-                                        {film.duration_minutes} minutes
+                                        {film.duration_minutes} minut
                                     </p>
 
-                                    {/* Screening Times */}
+                                    {/* Časi predvajanja */}
                                     <div style={styles.timesRow}>
                                         {film.screenings.map(s => (
                                             <button
@@ -262,9 +262,9 @@ function Home() {
                                     </div>
                                 </div>
 
-                                {/* Price */}
+                                {/* Cena */}
                                 <div style={styles.programPrice}>
-                                    <span style={styles.priceLabel}>from</span>
+                                    <span style={styles.priceLabel}>od</span>
                                     <span style={styles.priceValue}>
                                         €{film.screenings[0].price}
                                     </span>
@@ -278,7 +278,7 @@ function Home() {
                                     className="btn btn-primary"
                                     onClick={() => navigate('/program')}
                                 >
-                                    See All {films.length} Films
+                                    Prikaži vseh {films.length} filmov
                                 </button>
                             </div>
                         )}
@@ -289,7 +289,7 @@ function Home() {
                     <div style={styles.center}>
                         <div style={styles.loader}></div>
                         <p style={{ color: '#555', marginTop: '16px' }}>
-                            Loading program...
+                            Nalaganje programa...
                         </p>
                     </div>
                 )}
