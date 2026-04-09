@@ -17,7 +17,10 @@ function Navbar() {
                 {/* Logo */}
                 <Link to="/" style={styles.logo}>
     <img src={logo} alt="KinoPlex" style={styles.logoImg} />
-    <span style={styles.logoText}>KinoPlex</span>
+    <div style={styles.logoTextGroup}>
+        <span style={styles.logoText}>KinoPlex</span>
+        <span style={styles.logoSlogan}>Kino v vaših rokah</span>
+    </div>
 </Link>
 {/*🎬*/}
                 {/* navigacija povezave */}
@@ -112,6 +115,17 @@ const styles = {
     height: '36px',
     width: 'auto',
     objectFit: 'contain',
+},
+logoTextGroup: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '1px',
+},
+logoSlogan: {
+    fontSize: '10px',
+    color: 'rgba(255,255,255,0.4)',
+    letterSpacing: '0.5px',
+    fontWeight: '400',
 },
     links: {
         display: 'flex',

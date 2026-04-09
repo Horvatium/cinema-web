@@ -12,8 +12,9 @@ function Home() {
         const fetchScreenings = async () => {
             try {
                 const response = await getScreenings();
-                const data = Array.isArray(response.data) ? response.data : [];
-                setScreenings(data);
+                const screeningData = Array.isArray(response.data)
+                    ? response.data : [];
+                setScreenings(screeningData);
             } catch (_err) {
                 setScreenings([]);
             } finally {
@@ -23,7 +24,6 @@ function Home() {
         fetchScreenings();
     }, []);
 
-    // Združi predstave po filmu
     const filmMap = {};
     screenings.forEach(s => {
         if (!filmMap[s.film_title]) {
@@ -42,7 +42,6 @@ function Home() {
     });
     const films = Object.values(filmMap);
 
-    // Hero samodejno preklapljanje vsakih 5 sekund
     useEffect(() => {
         if (films.length <= 1) return;
         const interval = setInterval(() => {
@@ -55,85 +54,93 @@ function Home() {
 
     return (
         <div style={styles.page}>
-            {/* ── Hero baner ── */}
-{!loading && featuredFilm && (
-    <div style={{
-    ...styles.hero,
-    backgroundImage: featuredFilm.backdrop_url
-        ? `url(${featuredFilm.backdrop_url})`
-        : featuredFilm.poster_url
-        ? `url(${featuredFilm.poster_url})`
-        : 'none',
-}}>
-        <div style={styles.heroOverlay}>
-            <div style={styles.heroContent}>
-                <span className="genre-tag">{featuredFilm.genre}</span>
-                <h1 style={styles.heroTitle}>{featuredFilm.title}</h1>
-                <p style={styles.heroMeta}>
-                    {featuredFilm.duration_minutes} min
-                    {'  ·  '}
-                    {featuredFilm.age_rating}
-                </p>
-                {featuredFilm.synopsis && (
-                    <p style={styles.heroSynopsis}>
-                        {featuredFilm.synopsis.length > 160
-                            ? featuredFilm.synopsis.substring(0, 160) + '...'
-                            : featuredFilm.synopsis
-                        }
-                    </p>
-                )}
-                <button
-                    className="btn btn-primary"
-                    style={styles.heroBtn}
-                    onClick={() => navigate(
-                        `/films/${featuredFilm.screenings[0].id}`,
-                        { state: {
-                            film: featuredFilm,
-                            screening: featuredFilm.screenings[0]
-                        }}
-                    )}
-                >
-                    → Rezerviraj vstopnice
-                </button>
-            </div>
-        </div>
 
-        {/* pike */}
-        <div style={styles.heroDots}>
-            {films.map((_, i) => (
-                <button
-                    key={i}
-                    onClick={() => setHeroIndex(i)}
-                    style={{
-                        ...styles.heroDot,
-                        ...(i === heroIndex ? styles.heroDotActive : {})
-                    }}
-                />
-            ))}
-        </div>
+            {/* ── Hero pasica ── */}
+            {!loading && featuredFilm && (
+                <div style={{
+                    ...styles.hero,
+                    backgroundImage: featuredFilm.backdrop_url
+                        ? `url(${featuredFilm.backdrop_url})`
+                        : featuredFilm.poster_url
+                        ? `url(${featuredFilm.poster_url})`
+                        : 'none',
+                }}>
+                    <div style={styles.heroOverlay}>
+                        <div style={styles.heroContent}>
+                            <span className="genre-tag">
+                                {featuredFilm.genre}
+                            </span>
+                            <h1 style={styles.heroTitle}>
+                                {featuredFilm.title}
+                            </h1>
+                            <p style={styles.heroMeta}>
+                                {featuredFilm.duration_minutes} min
+                                {'  ·  '}
+                                {featuredFilm.age_rating}
+                            </p>
+                            {featuredFilm.synopsis && (
+                                <p style={styles.heroSynopsis}>
+                                    {featuredFilm.synopsis.length > 160
+                                        ? featuredFilm.synopsis
+                                            .substring(0, 160) + '...'
+                                        : featuredFilm.synopsis
+                                    }
+                                </p>
+                            )}
+                            <button
+                                className="btn btn-primary"
+                                style={styles.heroBtn}
+                                onClick={() => navigate(
+                                    `/films/${featuredFilm.screenings[0].id}`,
+                                    { state: {
+                                        film: featuredFilm,
+                                        screening: featuredFilm.screenings[0]
+                                    }}
+                                )}
+                            >
+                                → Rezerviraj vstopnice
+                            </button>
+                        </div>
+                    </div>
 
-        {/* nazaj / naprej puščice */}
-        <button
-            style={{...styles.heroArrow, left: '20px'}}
-            onClick={() => setHeroIndex(
-                prev => (prev - 1 + films.length) % films.length
+                    {/* Dots */}
+                    <div style={styles.heroDots}>
+                        {films.map((_, i) => (
+                            <button
+                                key={i}
+                                onClick={() => setHeroIndex(i)}
+                                style={{
+                                    ...styles.heroDot,
+                                    ...(i === heroIndex
+                                        ? styles.heroDotActive : {})
+                                }}
+                            />
+                        ))}
+                    </div>
+
+                    {/* Puščice */}
+                    <button
+    style={{...styles.heroArrow, left: '20px'}}
+    onClick={() => setHeroIndex(
+        prev => (prev - 1 + films.length) % films.length
+    )}
+>
+    {'<'}
+</button>
+<button
+    style={{...styles.heroArrow, right: '20px'}}
+    onClick={() => setHeroIndex(
+        prev => (prev + 1) % films.length
+    )}
+>
+    {'>'}
+</button>
+                </div>
             )}
-        >
-            ‹
-        </button>
-        <button
-            style={{...styles.heroArrow, right: '20px'}}
-            onClick={() => setHeroIndex(
-                prev => (prev + 1) % films.length
-            )}
-        >
-            ›
-        </button>
-    </div>
-)}
 
             <div className="container">
-                {/* ── V kinu poster  ── */}
+
+                {/* ── Poster trak ── */}
                 {!loading && films.length > 0 && (
                     <div style={styles.section}>
                         <div style={styles.sectionHeader}>
@@ -204,7 +211,6 @@ function Home() {
                                     }}
                                 )}
                             >
-                                {/* Sličica */}
                                 <div style={styles.programThumb}>
                                     {film.poster_url ? (
                                         <img
@@ -219,14 +225,15 @@ function Home() {
                                     )}
                                 </div>
 
-                                {/* Info */}
                                 <div style={styles.programInfo}>
                                     <div style={styles.programTags}>
                                         <span className="genre-tag">
                                             {film.genre}
                                         </span>
-                                        <span className="genre-tag"
-                                            style={styles.ratingTag}>
+                                        <span
+                                            className="genre-tag"
+                                            style={styles.ratingTag}
+                                        >
                                             {film.age_rating}
                                         </span>
                                     </div>
@@ -236,8 +243,6 @@ function Home() {
                                     <p style={styles.programMeta}>
                                         {film.duration_minutes} minut
                                     </p>
-
-                                    {/* Časi predvajanja */}
                                     <div style={styles.timesRow}>
                                         {film.screenings.map(s => (
                                             <button
@@ -247,15 +252,18 @@ function Home() {
                                                     e.stopPropagation();
                                                     navigate(
                                                         `/films/${s.id}`,
-                                                        { state: { film, screening: s }}
+                                                        { state: {
+                                                            film,
+                                                            screening: s
+                                                        }}
                                                     );
                                                 }}
                                             >
                                                 {new Date(s.start_time)
                                                     .toLocaleTimeString('sl-SI', {
-                                                     hour: '2-digit',
-                                                    minute: '2-digit',
-                                                    hour12: false
+                                                        hour: '2-digit',
+                                                        minute: '2-digit',
+                                                        hour12: false
                                                     })
                                                 }
                                             </button>
@@ -263,7 +271,6 @@ function Home() {
                                     </div>
                                 </div>
 
-                                {/* Cena */}
                                 <div style={styles.programPrice}>
                                     <span style={styles.priceLabel}>od</span>
                                     <span style={styles.priceValue}>
@@ -286,14 +293,60 @@ function Home() {
                     </div>
                 )}
 
+                {/* ── Promocijska pasica aplikacije ── */}
+                {!loading && (
+                    <div style={styles.promoBanner}>
+                        <img
+                            src="https://cineamo-cdn.b-cdn.net/images/pictures/im-smartphoneWithCineamoAppAndPopcornBackground.png?width=1080"
+                            alt="KinoPlex mobilna aplikacija"
+                            style={styles.promoImg}
+                        />
+                        <div style={styles.promoContent}>
+                            <h2 style={styles.promoTitle}>
+                                Kino v vaših rokah
+                            </h2>
+                            <p style={styles.promoText}>
+                                Odkrijte vse, kar ponuja vaš kino. Z aplikacijo
+                                KinoPlex ne morete le rezervirati kina, temveč
+                                tudi odkriti trenutni program in nove dogodke v
+                                kinu. Najdete jo zdaj v trgovini z aplikacijami!
+                            </p>
+                            <div style={styles.promoButtons}>
+    <button
+        className="btn btn-secondary"
+        style={{ padding: 0, background: 'none', border: 'none' }}
+        onClick={() => window.open('https://apps.apple.com', '_blank')}
+    >
+        <img
+            src="https://developer.apple.com/assets/elements/badges/download-on-the-app-store.svg"
+            alt="App Store"
+            style={styles.storeBadge}
+        />
+    </button>
+    <button
+        className="btn btn-secondary"
+        style={{ padding: 0, background: 'none', border: 'none' }}
+        onClick={() => window.open('https://play.google.com', '_blank')}
+    >
+        <img
+            src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg"
+            alt="Google Play"
+            style={styles.storeBadge}
+        />
+    </button>
+</div>
+                        </div>
+                    </div>
+                )}
+
                 {loading && (
                     <div style={styles.center}>
-                        <div style={styles.loader}></div>
-                        <p style={{ color: '#555', marginTop: '16px' }}>
+                        <p style={{ color: '#555' }}>
                             Nalaganje programa...
                         </p>
                     </div>
                 )}
+
             </div>
         </div>
     );
@@ -301,13 +354,14 @@ function Home() {
 
 const styles = {
     page: { minHeight: '100vh' },
+
+    // ── Hero ──
     hero: {
         height: '520px',
         backgroundSize: 'cover',
         backgroundPosition: 'center center',
         position: 'relative',
         backgroundColor: '#1a0a3e',
-        transition: 'background-image 0.5s ease-in-out',
     },
     heroOverlay: {
         position: 'absolute',
@@ -316,10 +370,7 @@ const styles = {
         display: 'flex',
         alignItems: 'center',
     },
-    heroContent: {
-        padding: '0 60px',
-        maxWidth: '520px',
-    },
+    heroContent: { padding: '0 60px', maxWidth: '520px' },
     heroTitle: {
         fontSize: '42px',
         fontWeight: '700',
@@ -328,15 +379,55 @@ const styles = {
         marginTop: '10px',
         letterSpacing: '-0.5px',
     },
-    heroMeta: {
-        color: 'rgba(255,255,255,0.6)',
-        fontSize: '15px',
+    heroMeta: { color: 'rgba(255,255,255,0.6)', fontSize: '15px', marginBottom: '12px' },
+    heroSynopsis: {
+        color: 'rgba(255,255,255,0.7)',
+        fontSize: '14px',
+        lineHeight: 1.6,
         marginBottom: '24px',
+        maxWidth: '460px',
     },
-    heroBtn: {
-        padding: '13px 28px',
-        fontSize: '15px',
+    heroBtn: { padding: '13px 28px', fontSize: '15px' },
+    heroDots: {
+        position: 'absolute',
+        bottom: '20px',
+        left: '50%',
+        transform: 'translateX(-50%)',
+        display: 'flex',
+        gap: '8px',
     },
+    heroDot: {
+        width: '8px',
+        height: '8px',
+        borderRadius: '50%',
+        background: 'rgba(255,255,255,0.3)',
+        border: 'none',
+        cursor: 'pointer',
+        padding: 0,
+    },
+    heroDotActive: {
+        background: '#00c9b1',
+        width: '24px',
+        borderRadius: '4px',
+    },
+    heroArrow: {
+        position: 'absolute',
+        top: '50%',
+        transform: 'translateY(-50%)',
+        background: 'rgba(0,0,0,0.4)',
+        border: '1px solid rgba(255,255,255,0.2)',
+        color: '#fff',
+        width: '44px',
+        height: '44px',
+        borderRadius: '50%',
+        fontSize: '24px',
+        cursor: 'pointer',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+
+    // ── Sekcije ──
     section: { marginBottom: '48px', paddingTop: '32px' },
     sectionHeader: {
         display: 'flex',
@@ -351,6 +442,8 @@ const styles = {
         color: '#00c9b1',
         textTransform: 'uppercase',
     },
+
+    // ── Poster trak ──
     posterStrip: {
         display: 'flex',
         gap: '12px',
@@ -366,14 +459,9 @@ const styles = {
         overflow: 'hidden',
         position: 'relative',
         cursor: 'pointer',
-        transition: 'transform 0.2s',
         background: '#1a1a2e',
     },
-    posterImg: {
-        width: '100%',
-        height: '100%',
-        objectFit: 'cover',
-    },
+    posterImg: { width: '100%', height: '100%', objectFit: 'cover' },
     posterPlaceholder: {
         width: '100%',
         height: '100%',
@@ -391,12 +479,9 @@ const styles = {
         background: 'linear-gradient(transparent, rgba(0,0,0,0.85))',
         padding: '20px 8px 8px',
     },
-    posterTitle: {
-        fontSize: '11px',
-        fontWeight: '600',
-        color: '#fff',
-        lineHeight: 1.3,
-    },
+    posterTitle: { fontSize: '11px', fontWeight: '600', color: '#fff', lineHeight: 1.3 },
+
+    // ── Program vrstice ──
     programRow: {
         display: 'flex',
         gap: '20px',
@@ -407,7 +492,6 @@ const styles = {
         background: 'rgba(255,255,255,0.03)',
         border: '1px solid rgba(255,255,255,0.06)',
         cursor: 'pointer',
-        transition: 'background 0.2s',
     },
     programThumb: {
         flexShrink: 0,
@@ -417,11 +501,7 @@ const styles = {
         overflow: 'hidden',
         background: '#1a1a2e',
     },
-    programThumbImg: {
-        width: '100%',
-        height: '100%',
-        objectFit: 'cover',
-    },
+    programThumbImg: { width: '100%', height: '100%', objectFit: 'cover' },
     programThumbPlaceholder: {
         width: '100%',
         height: '100%',
@@ -437,17 +517,8 @@ const styles = {
         color: '#7b61ff',
         border: '1px solid rgba(123,97,255,0.3)',
     },
-    programTitle: {
-        fontSize: '20px',
-        fontWeight: '600',
-        marginBottom: '6px',
-        letterSpacing: '-0.3px',
-    },
-    programMeta: {
-        color: 'rgba(255,255,255,0.4)',
-        fontSize: '13px',
-        marginBottom: '14px',
-    },
+    programTitle: { fontSize: '20px', fontWeight: '600', marginBottom: '6px' },
+    programMeta: { color: 'rgba(255,255,255,0.4)', fontSize: '13px', marginBottom: '14px' },
     timesRow: { display: 'flex', gap: '8px', flexWrap: 'wrap' },
     timeChip: {
         background: 'rgba(0,201,177,0.12)',
@@ -458,82 +529,60 @@ const styles = {
         fontSize: '13px',
         fontWeight: '600',
         cursor: 'pointer',
-        transition: 'all 0.2s',
         fontFamily: 'Inter, sans-serif',
     },
-    programPrice: {
+    programPrice: { flexShrink: 0, textAlign: 'right', paddingRight: '8px' },
+    priceLabel: { display: 'block', color: 'rgba(255,255,255,0.4)', fontSize: '11px', marginBottom: '2px' },
+    priceValue: { fontSize: '22px', fontWeight: '700', color: '#fff' },
+
+    // ── Promocijska pasica aplikacije ──
+    promoBanner: {
+        display: 'flex',
+        alignItems: 'center',
+        gap: '40px',
+        background: 'linear-gradient(135deg, rgba(26,10,62,0.9) 0%, rgba(8,11,26,0.95) 100%)',
+        border: '1px solid rgba(255,255,255,0.08)',
+        borderRadius: '20px',
+        overflow: 'hidden',
+        marginTop: '48px',
+        marginBottom: '48px',
+    },
+    promoImg: {
+        width: '340px',
+        height: '280px',
+        objectFit: 'cover',
         flexShrink: 0,
-        textAlign: 'right',
-        paddingRight: '8px',
     },
-    priceLabel: {
-        display: 'block',
-        color: 'rgba(255,255,255,0.4)',
-        fontSize: '11px',
-        marginBottom: '2px',
+    promoContent: {
+        padding: '40px 40px 40px 0',
+        flex: 1,
     },
-    priceValue: {
-        fontSize: '22px',
+    promoTitle: {
+        fontSize: '28px',
         fontWeight: '700',
-        color: '#fff',
+        marginBottom: '16px',
+        letterSpacing: '-0.5px',
     },
+    promoText: {
+        color: 'rgba(255,255,255,0.65)',
+        fontSize: '15px',
+        lineHeight: 1.7,
+        marginBottom: '28px',
+        maxWidth: '480px',
+    },
+    promoButtons: {
+        display: 'flex',
+        gap: '16px',
+        flexWrap: 'wrap',
+        alignItems: 'center',
+    },
+    storeBadge: {
+        height: '44px',
+        width: 'auto',
+    },
+
+    // ── Nalaganje ──
     center: { textAlign: 'center', padding: '80px 20px' },
-    loader: {
-        width: '40px',
-        height: '40px',
-        border: '3px solid rgba(255,255,255,0.1)',
-        borderTop: '3px solid #00c9b1',
-        borderRadius: '50%',
-        margin: '0 auto',
-        animation: 'spin 0.8s linear infinite',
-    },
-    heroSynopsis: {
-    color: 'rgba(255,255,255,0.7)',
-    fontSize: '14px',
-    lineHeight: 1.6,
-    marginBottom: '24px',
-    maxWidth: '460px',
-},
-heroDots: {
-    position: 'absolute',
-    bottom: '20px',
-    left: '50%',
-    transform: 'translateX(-50%)',
-    display: 'flex',
-    gap: '8px',
-},
-heroDot: {
-    width: '8px',
-    height: '8px',
-    borderRadius: '50%',
-    background: 'rgba(255,255,255,0.3)',
-    border: 'none',
-    cursor: 'pointer',
-    padding: 0,
-    transition: 'all 0.2s',
-},
-heroDotActive: {
-    background: '#00c9b1',
-    width: '24px',
-    borderRadius: '4px',
-},
-heroArrow: {
-    position: 'absolute',
-    top: '50%',
-    transform: 'translateY(-50%)',
-    background: 'rgba(0,0,0,0.4)',
-    border: '1px solid rgba(255,255,255,0.2)',
-    color: '#fff',
-    width: '44px',
-    height: '44px',
-    borderRadius: '50%',
-    fontSize: '24px',
-    cursor: 'pointer',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    transition: 'background 0.2s',
-},
 };
 
 export default Home;
