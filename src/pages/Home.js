@@ -293,51 +293,54 @@ function Home() {
                     </div>
                 )}
 
-                {/* ── Promocijska pasica aplikacije ── */}
-                {!loading && (
-                    <div style={styles.promoBanner}>
-                        <img
-                            src="https://cineamo-cdn.b-cdn.net/images/pictures/im-smartphoneWithCineamoAppAndPopcornBackground.png?width=1080"
-                            alt="KinoPlex mobilna aplikacija"
-                            style={styles.promoImg}
-                        />
-                        <div style={styles.promoContent}>
-                            <h3 style={styles.promoTitle}>
+{/* ── Promo baner aplikacije ── */}
+{!loading && (
+    <div style={styles.promoBanner}>
+        <div style={styles.promoImgWrapper}>
+            <img
+                src="https://cineamo-cdn.b-cdn.net/images/pictures/im-smartphoneWithCineamoAppAndPopcornBackground.png?width=1080"
+                alt="KinoPlex mobilna aplikacija"
+                style={styles.promoImg}
+            />
+            <div style={styles.promoImgFade} />
+        </div>
+        <div style={styles.promoContent}>
+             <h3 style={styles.promoTitle}>
                                 Kino v vaših rokah - z aplikacijo KinoPlex 
                             </h3>
-                            <p style={styles.promoText}>
-                                Odkrijte vse, kar ponuja vaš kino. Z aplikacijo
-                                KinoPlex ne morete le rezervirati kina, temveč
-                                tudi odkriti trenutni program in nove dogodke v
-                                kinu. Najdete jo zdaj v trgovini z aplikacijami!
-                            </p>
-                            <div style={styles.promoButtons}>
-    <button
-        className="btn btn-secondary"
-        style={{ padding: 0, background: 'none', border: 'none' }}
-        onClick={() => window.open('https://apps.apple.com', '_blank')}
-    >
-        <img
-            src="https://developer.apple.com/assets/elements/badges/download-on-the-app-store.svg"
-            alt="App Store"
-            style={styles.storeBadge}
-        />
-    </button>
-    <button
-        className="btn btn-secondary"
-        style={{ padding: 0, background: 'none', border: 'none' }}
-        onClick={() => window.open('https://play.google.com', '_blank')}
-    >
-        <img
-            src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg"
-            alt="Google Play"
-            style={styles.storeBadge}
-        />
-    </button>
-</div>
-                        </div>
-                    </div>
-                )}
+            <p style={styles.promoText}>
+                Odkrijte vse, kar ponuja vaš kino. Z aplikacijo KinoPlex
+                ne morete le rezervirati kina, temveč tudi odkriti
+                trenutni program in nove dogodke v kinu. Najdete jo zdaj
+                v trgovini z aplikacijami!
+            </p>
+            <div style={styles.promoButtons}>
+                <button
+                    className="btn btn-secondary"
+                    style={{ padding: 0, background: 'none', border: 'none' }}
+                    onClick={() => window.open('https://apps.apple.com', '_blank')}
+                >
+                    <img
+                        src="https://developer.apple.com/assets/elements/badges/download-on-the-app-store.svg"
+                        alt="App Store"
+                        style={styles.storeBadge}
+                    />
+                </button>
+                <button
+                    className="btn btn-secondary"
+                    style={{ padding: 0, background: 'none', border: 'none' }}
+                    onClick={() => window.open('https://play.google.com', '_blank')}
+                >
+                    <img
+                        src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg"
+                        alt="Google Play"
+                        style={styles.storeBadge}
+                    />
+                </button>
+            </div>
+        </div>
+    </div>
+)}
 
                 {loading && (
                     <div style={styles.center}>
@@ -536,51 +539,69 @@ const styles = {
     priceValue: { fontSize: '22px', fontWeight: '700', color: '#fff' },
 
     // ── Promocijska pasica aplikacije ──
-    promoBanner: {
-        display: 'flex',
-        alignItems: 'center',
-        gap: '40px',
-        background: 'linear-gradient(135deg, rgba(26,10,62,0.9) 0%, rgba(8,11,26,0.95) 100%)',
-        border: '1px solid rgba(255,255,255,0.08)',
-        borderRadius: '20px',
-        overflow: 'hidden',
-        marginTop: '48px',
-        marginBottom: '48px',
-    },
-    promoImg: {
-        width: '340px',
-        height: '280px',
-        objectFit: 'cover',
-        flexShrink: 0,
-        
-    },
-    promoContent: {
-        padding: '40px 40px 40px 0',
-        flex: 1,
-    },
-    promoTitle: {
-        fontSize: '28px',
-        fontWeight: '700',
-        marginBottom: '16px',
-        letterSpacing: '-0.5px',
-    },
-    promoText: {
-        color: 'rgba(255,255,255,0.65)',
-        fontSize: '15px',
-        lineHeight: 1.7,
-        marginBottom: '28px',
-        maxWidth: '480px',
-    },
-    promoButtons: {
-        display: 'flex',
-        gap: '16px',
-        flexWrap: 'wrap',
-        alignItems: 'center',
-    },
-    storeBadge: {
-        height: '44px',
-        width: 'auto',
-    },
+promoBanner: {
+    display: 'flex',
+    alignItems: 'stretch',
+    borderRadius: '20px',
+    overflow: 'hidden',
+    marginTop: '48px',
+    marginBottom: '48px',
+    background: 'linear-gradient(135deg, #1a0a3e 0%, #0a1628 50%, #003d3d 100%)',
+    minHeight: '220px',
+},
+promoImgWrapper: {
+    position: 'relative',
+    width: '380px',
+    flexShrink: 0,
+},
+promoImg: {
+    width: '100%',
+    height: '100%',
+    objectFit: 'cover',
+    display: 'block',
+},
+promoImgFade: {
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    bottom: 0,
+    width: '60%',
+    background: 'linear-gradient(to right, transparent, #1a0a3e)',
+},
+promoContent: {
+    flex: 1,
+    padding: '40px 48px',
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'flex-end',
+    textAlign: 'right',
+},
+promoTitle: {
+    fontSize: '24px',
+    fontWeight: '700',
+    marginBottom: '16px',
+    letterSpacing: '-0.3px',
+    color: '#fff',
+},
+promoText: {
+    color: 'rgba(255,255,255,0.7)',
+    fontSize: '14px',
+    lineHeight: 1.7,
+    marginBottom: '24px',
+    maxWidth: '480px',
+},
+promoButtons: {
+    display: 'flex',
+    gap: '16px',
+    flexWrap: 'wrap',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+},
+storeBadge: {
+    height: '44px',
+    width: 'auto',
+},
 
     // ── Nalaganje ──
     center: { textAlign: 'center', padding: '80px 20px' },
