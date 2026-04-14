@@ -302,9 +302,9 @@ function Home() {
                             style={styles.promoImg}
                         />
                         <div style={styles.promoContent}>
-                            <h2 style={styles.promoTitle}>
-                                Kino v vaših rokah
-                            </h2>
+                            <h3 style={styles.promoTitle}>
+                                Kino v vaših rokah - z aplikacijo KinoPlex 
+                            </h3>
                             <p style={styles.promoText}>
                                 Odkrijte vse, kar ponuja vaš kino. Z aplikacijo
                                 KinoPlex ne morete le rezervirati kina, temveč
@@ -552,6 +552,7 @@ const styles = {
         height: '280px',
         objectFit: 'cover',
         flexShrink: 0,
+        
     },
     promoContent: {
         padding: '40px 40px 40px 0',
