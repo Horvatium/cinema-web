@@ -395,8 +395,9 @@ function FilmsTab() {
     const [success, setSuccess] = useState('');
     const [form, setForm] = useState({
         title: '', genre: '', duration_minutes: '',
-        age_rating: '', synopsis: '', director: '',
-        release_year: '', poster_url: ''
+    age_rating: '', synopsis: '', director: '',
+    release_year: '', poster_url: '',
+    imdb_url: '', trailer_url: '', cast_members: ''
     });
 
     useEffect(() => {
@@ -439,8 +440,9 @@ const handlePosterUpload = async (e) => {
             setSuccess('Film uspešno dodan!');
             setForm({
                 title: '', genre: '', duration_minutes: '',
-                age_rating: '', synopsis: '', director: '',
-                release_year: '', poster_url: ''
+    age_rating: '', synopsis: '', director: '',
+    release_year: '', poster_url: '',
+    imdb_url: '', trailer_url: '', cast_members: ''
             });
             setPosterPreview('');
             const response = await getFilms();
@@ -451,7 +453,7 @@ const handlePosterUpload = async (e) => {
     };
 
     const handleDelete = async (id) => {
-        if (!window.confirm('Izbrišete ta film? Izbrisana bodo tudi vsa njegova predvajanja..')) return;
+        if (!window.confirm('Izbrišete ta film? Izbrisana bodo tudi vsa njegova predvajanja.')) return;
         try {
             await deleteFilm(id);
             setFilms(films.filter(f => f.id !== id));
@@ -553,6 +555,29 @@ const handlePosterUpload = async (e) => {
                         placeholder="Kratek opis filma..."
                         rows={3}
                     />
+                    <label>IMDB povezava</label>
+<input
+    name="imdb_url"
+    value={form.imdb_url}
+    onChange={handleChange}
+    placeholder="https://www.imdb.com/title/tt1375666/"
+/>
+
+<label>YouTube trailer povezava</label>
+<input
+    name="trailer_url"
+    value={form.trailer_url}
+    onChange={handleChange}
+    placeholder="https://www.youtube.com/watch?v=..."
+/>
+
+<label>Glavne vloge</label>
+<input
+    name="cast_members"
+    value={form.cast_members}
+    onChange={handleChange}
+    placeholder="Leonardo DiCaprio, Joseph Gordon-Levitt, Ellen Page"
+/>
 
                     <label>Slika plakata</label>
 <input

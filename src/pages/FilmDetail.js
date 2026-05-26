@@ -139,10 +139,53 @@ function FilmDetail() {
             <h1 style={styles.title}>{film?.title}</h1>
             <p style={styles.meta}>
                 {film?.duration_minutes} min
+                {film?.release_year && ` · ${film.release_year}`}
             </p>
+            {/* Režiser */}
+    {film?.director && (
+        <p style={styles.director}>
+            <span style={styles.metaLabel}>Režiser: </span>
+            {film.director}
+        </p>
+    )}
+
+    {/* Zasedba */}
+    {film?.cast_members && (
+        <p style={styles.castText}>
+            <span style={styles.metaLabel}>Zasedba: </span>
+            {film.cast_members}
+        </p>
+    )}
+
+    {/* Povzetek */}
             {film?.synopsis && (
                 <p style={styles.synopsis}>{film.synopsis}</p>
             )}
+            {/* IMDB in Trailer gumbi */}
+                        <div style={styles.linksRow}>
+                            {film?.imdb_url && (
+                                <a
+                                    href={film.imdb_url}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    style={styles.imdbBtn}
+                                >
+                                    IMDB
+                                </a>
+                            )}
+                            {film?.trailer_url && (
+                                <a
+                                    href={film.trailer_url}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    style={styles.trailerBtn}
+                                >
+                                    Oglej si napovednik
+                                </a>
+                            )}
+                        </div>
+
+    {/* Čas predvajanja */}
             {screening && (
                 <div style={styles.screeningBadge}>
                     <span>📅 {new Date(screening.start_time)
@@ -373,7 +416,50 @@ screeningBadge: {
     flexWrap: 'wrap',
     gap: '4px',
 },
-
+director: {
+    color: 'rgba(255,255,255,0.7)',
+    fontSize: '14px',
+    marginBottom: '6px',
+},
+castText: {
+    color: 'rgba(255,255,255,0.7)',
+    fontSize: '14px',
+    marginBottom: '12px',
+},
+metaLabel: {
+    color: '#00c9b1',
+    fontWeight: '600',
+},
+linksRow: {
+    display: 'flex',
+    gap: '12px',
+    marginBottom: '16px',
+    flexWrap: 'wrap',
+},
+imdbBtn: {
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: '6px',
+    background: '#f5c518',
+    color: '#000',
+    padding: '8px 16px',
+    borderRadius: '6px',
+    textDecoration: 'none',
+    fontSize: '13px',
+    fontWeight: '700',
+},
+trailerBtn: {
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: '6px',
+    background: '#ff0000',
+    color: '#fff',
+    padding: '8px 16px',
+    borderRadius: '6px',
+    textDecoration: 'none',
+    fontSize: '13px',
+    fontWeight: '700',
+},
 };
 
 export default FilmDetail;
