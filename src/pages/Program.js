@@ -43,14 +43,19 @@ function Program() {
         .forEach(s => {
             if (!filmMap[s.film_title]) {
                 filmMap[s.film_title] = {
-                    title: s.film_title,
-                    genre: s.genre,
-                    duration_minutes: s.duration_minutes,
-                    age_rating: s.age_rating,
-                    poster_url: s.poster_url,
-                    backdrop_url: s.backdrop_url,
-                    synopsis: s.synopsis,
-                    screenings: [],
+                     title: s.film_title,
+    genre: s.genre,
+    duration_minutes: s.duration_minutes,
+    age_rating: s.age_rating,
+    poster_url: s.poster_url,
+    backdrop_url: s.backdrop_url,
+    synopsis: s.synopsis,
+    director: s.director,
+    release_year: s.release_year,
+    cast_members: s.cast_members,
+    imdb_url: s.imdb_url,
+    trailer_url: s.trailer_url,
+    screenings: [],
                 };
             }
             filmMap[s.film_title].screenings.push(s);
