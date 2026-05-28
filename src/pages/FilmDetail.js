@@ -237,15 +237,17 @@ function FilmDetail() {
                         </span>
                         <span style={styles.legendItem}>
                             <span style={{...styles.legendDot,
-                                background: '#555', opacity: 0.4}}/> Zasedeno
+                                background: '#00c9b1', opacity: 0.6}}/> Zasedeno
                         </span>
                     </div>
 
                     {/* predstava */}
                     <div style={styles.screen}>ZASLON</div>
 
-                    {/* mapa sedežev */}
+                    {/* Zemljevid sedežev */}
                     <div style={styles.seatMap}>
+                        {/* Zaslon znotraj zemljevida */}
+    <div style={styles.screen}>ZASLON</div>
                         {Object.entries(rows).map(([rowLabel, rowSeats]) => (
                             <div key={rowLabel} style={styles.row}>
                                 <span style={styles.rowLabel}>{rowLabel}</span>
@@ -260,7 +262,7 @@ function FilmDetail() {
                                             style={{
                                                 ...styles.seat,
                                                 background: isTaken
-                                                    ? '#444'
+                                                    ? '#00c9b1'
                                                     : isSelected
                                                     ? '#e50914'
                                                     : '#333',
@@ -369,13 +371,14 @@ const styles = {
     border: '1px solid rgba(0,201,177,0.4)',
     color: '#00c9b1',
     textAlign: 'center',
-    padding: '10px',
+    padding: '10px 40px',
     borderRadius: '6px',
     marginBottom: '24px',
     fontSize: '12px',
     letterSpacing: '6px',
     fontWeight: '700',
     boxShadow: '0 0 20px rgba(0,201,177,0.15)',
+    alignSelf: 'center',
 },
     seatMap: {
         display: 'flex', flexDirection: 'column',
