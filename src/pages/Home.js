@@ -154,18 +154,16 @@ function Home() {
                             </span>
                         </div>
                         <div style={styles.posterStrip}>
-                            {films.map(film => (
-                                <div
-                                    key={film.title}
-                                    style={styles.posterCard}
-                                    onClick={() => navigate(
-                                        `/films/${film.screenings[0].id}`,
-                                        { state: {
-                                            film,
-                                            screening: film.screenings[0]
-                                        }}
-                                    )}
-                                >
+                            {films.map((film, index) => (
+    <div
+        key={film.title}
+        style={styles.posterCard}
+        onMouseEnter={() => setHeroIndex(index)}
+        onClick={() => navigate(
+            `/films/${film.screenings[0].id}`,
+            { state: { film, screening: film.screenings[0] }}
+        )}
+    >
                                     {film.poster_url ? (
                                         <img
                                             src={film.poster_url}
@@ -187,7 +185,17 @@ function Home() {
                         </div>
                     </div>
                 )}
-
+                {/* Paralax slika */}
+<div style={styles.parallaxSection}>
+    <div style={styles.parallaxOverlay}>
+        <h2 style={styles.parallaxText}>
+            Dozivetje, ki ga ne boste pozabili
+        </h2>
+        <p style={styles.parallaxSubtext}>
+            Rezervirajte svoje sedeze ze danes
+        </p>
+    </div>
+</div>
                 {/* ── Predogled programa ── */}
                 {!loading && films.length > 0 && (
                     <div style={styles.section}>
@@ -365,12 +373,13 @@ const styles = {
 
     // ── Hero ──
     hero: {
-        height: '520px',
-        backgroundSize: 'cover',
-        backgroundPosition: 'center center',
-        position: 'relative',
-        backgroundColor: '#1a0a3e',
-    },
+    height: '520px',
+    backgroundSize: 'cover',
+    backgroundPosition: 'center center',
+    position: 'relative',
+    backgroundColor: '#1a0a3e',
+    transition: 'background-image 0.8s ease-in-out',
+},
     heroOverlay: {
         position: 'absolute',
         inset: 0,
@@ -488,7 +497,40 @@ const styles = {
         padding: '20px 8px 8px',
     },
     posterTitle: { fontSize: '11px', fontWeight: '600', color: '#fff', lineHeight: 1.3 },
-
+    
+    // Paralax
+    parallaxSection: {
+    height: '300px',
+    backgroundImage: 'url(https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=1600)',
+    backgroundAttachment: 'fixed',
+    backgroundSize: 'cover',
+    backgroundPosition: 'center',
+    position: 'relative',
+    margin: '0 -20px',
+    marginBottom: '0',
+},
+parallaxOverlay: {
+    position: 'absolute',
+    inset: 0,
+    background: 'rgba(8,11,26,0.6)',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: '12px',
+},
+parallaxText: {
+    fontSize: '32px',
+    fontWeight: '700',
+    color: '#fff',
+    textAlign: 'center',
+    letterSpacing: '-0.5px',
+},
+parallaxSubtext: {
+    color: 'rgba(255,255,255,0.7)',
+    fontSize: '16px',
+    textAlign: 'center',
+},
     // ── Program vrstice ──
     programRow: {
         display: 'flex',

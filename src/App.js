@@ -9,6 +9,7 @@ import FilmDetail from './pages/FilmDetail';
 import MyReservations from './pages/MyReservations';
 import Admin from './pages/Admin';
 import Program from './pages/Program';
+import Footer from './components/Footer';
 
 function App() {
     return (
@@ -36,6 +37,7 @@ function App() {
                         } />
                     </Routes>
                 </div>
+                <Footer />
             </BrowserRouter>
         </AuthProvider>
     );
