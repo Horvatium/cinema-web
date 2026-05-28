@@ -136,7 +136,15 @@ function FilmDetail() {
                     {film?.age_rating}
                 </span>
             </div>
-            <h1 style={styles.title}>{film?.title}</h1>
+            <h1 style={styles.title}>
+    {film?.title_sl || film?.title}
+</h1>
+{film?.title_sl && film?.title_sl !== film?.title && (
+    <p style={styles.originalTitle}>
+        {film?.title}
+    </p>
+)}
+
             <p style={styles.meta}>
                 {film?.duration_minutes} min
                 {film?.release_year && ` · ${film.release_year}`}
@@ -384,6 +392,13 @@ const styles = {
         justifyContent: 'center', fontSize: '12px',
         fontWeight: 'bold', userSelect: 'none',
     },
+    originalTitle: {
+    color: 'rgba(255,255,255,0.35)',
+    fontSize: '14px',
+    fontStyle: 'italic',
+    marginBottom: '8px',
+    marginTop: '-4px',
+},
     summary: { marginTop: '10px' },
     center: { textAlign: 'center', padding: '60px', color: '#aaa' },
     filmHeaderRow: {

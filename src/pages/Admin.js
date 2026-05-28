@@ -10,7 +10,7 @@ function Admin() {
 
     return (
         <div>
-            <h1 style={styles.title}>Admin Panel</h1>
+            <h1 style={styles.title}>Skrbniška plošča</h1>
 
             {/* vrstica z zavihki */}
             <div style={styles.tabBar}>
@@ -61,7 +61,7 @@ function ScreeningsTab() {
                 setScreenings(sRes.data);
                 setFilms(fRes.data);
             })
-            .catch(() => setError('Could not load data.'))
+            .catch(() => setError('Podatkov ni bilo mogoče naložiti.'))
             .finally(() => setLoading(false));
     }, []);
 
@@ -80,25 +80,25 @@ function ScreeningsTab() {
         setSuccess('');
         try {
             await addScreening(addForm);
-            setSuccess('Screening added successfully!');
+            setSuccess('Predstava je bila uspešno dodana!');
             setAddForm({
                 film_id: '', room_id: '',
                 start_time: '', end_time: '', price: ''
             });
             await refreshScreenings();
         } catch (err) {
-            setError(err.response?.data?.message || 'Could not add screening.');
+            setError(err.response?.data?.message || 'Predstave ni bilo mogoče dodati.');
         }
     };
 
     const handleDelete = async (id) => {
-        if (!window.confirm('Delete this screening? All reservations will be cancelled.')) return;
+        if (!window.confirm('Želite izbrisati to predstavo? Vse rezervacije bodo preklicane..')) return;
         try {
             await deleteScreening(id);
             setScreenings(screenings.filter(s => s.id !== id));
-            setSuccess('Screening deleted.');
+            setSuccess('Predstava izbrisana.');
         } catch (_err) {
-            setError('Could not delete screening.');
+            setError('Predstave ni bilo mogoče izbrisati.');
         }
     };
 
@@ -147,25 +147,25 @@ function ScreeningsTab() {
             const response = await updateScreening(editingId, editForm);
             const affected = response.data.affectedReservations;
             setSuccess(
-                `Screening updated!${affected > 0
-                    ? ` Note: ${affected} existing reservation(s) are affected.`
+                `Predstava posodobljena!${affected > 0
+                    ? ` Opomba: ${affected} obstoječe rezervacije so prizadete.`
                     : ''
                 }`
             );
             setEditingId(null);
             await refreshScreenings();
         } catch (err) {
-             setError(err.response?.data?.message || 'Could not update screening.');
+             setError(err.response?.data?.message || 'Predstave ni bilo mogoče posodobiti.');
         }
     };
 
     const rooms = [
-        { id: '1', name: 'Hall 1' },
-        { id: '2', name: 'Hall 2' },
-        { id: '3', name: 'VIP Screen' },
+        { id: '1', name: 'Dvorana 1' },
+        { id: '2', name: 'Dvorana 2' },
+        { id: '3', name: 'VIP Dvorana' },
     ];
 
-    if (loading) return <p style={{ color: '#aaa' }}>Loading...</p>;
+    if (loading) return <p style={{ color: '#aaa' }}>Nalaganje...</p>;
 
     return (
         <div>
@@ -394,7 +394,7 @@ function FilmsTab() {
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
     const [form, setForm] = useState({
-        title: '', genre: '', duration_minutes: '',
+        title: '', title_sl: '', genre: '', duration_minutes: '',
     age_rating: '', synopsis: '', director: '',
     release_year: '', poster_url: '',
     imdb_url: '', trailer_url: '', cast_members: ''
@@ -439,7 +439,7 @@ const handlePosterUpload = async (e) => {
             await addFilm(form);
             setSuccess('Film uspešno dodan!');
             setForm({
-                title: '', genre: '', duration_minutes: '',
+                title: '', title_sl: '', genre: '', duration_minutes: '',
     age_rating: '', synopsis: '', director: '',
     release_year: '', poster_url: '',
     imdb_url: '', trailer_url: '', cast_members: ''
@@ -483,6 +483,13 @@ const handlePosterUpload = async (e) => {
                                 placeholder="Naslov filma"
                                 required
                             />
+                            <label>Slovensko ime filma</label>
+<input
+    name="title_sl"
+    value={form.title_sl}
+    onChange={handleChange}
+    placeholder="Npr. Temni vitez"
+/>
                         </div>
                         <div style={styles.half}>
                             <label>Žanr</label>

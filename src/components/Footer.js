@@ -15,8 +15,8 @@ function Footer() {
                     />
                     <p style={styles.description}>
                         KinoPlex je moderni kinematograf, ki vam ponuja
-                        najboljso filmsko izkusnjo v udobnem okolju.
-                        Rezervirajte svoje sedeže po spletu in uživajte v filmu!
+                        najboljšo filmsko izkušnjo v udobnem okolju.
+                        Rezervirajte svoje sedeže po spletu in uživajte v filmih!
                     </p>
                 </div>
 
@@ -47,10 +47,10 @@ function Footer() {
                         Tel: +386 1 234 56 78
                     </p>
                     <p style={styles.contactItem}>
-                        E-posta: info@kinoplex.si
+                        E-pošta: info@kinoplex.si
                     </p>
                     <p style={styles.contactItem}>
-                        Delovni cas: vsak dan 10:00 - 23:00
+                        Delovni čas: vsak dan 10:00 - 23:00
                     </p>
                 </div>
 
@@ -61,13 +61,13 @@ function Footer() {
                         KinoPlex d.o.o.
                     </p>
                     <p style={styles.contactItem}>
-                        Maticna stevilka: 1234567000
+                        Matična številka: 1234567000
                     </p>
                     <p style={styles.contactItem}>
-                        Davcna stevilka: SI12345678
+                        Davčna številka: SI12345678
                     </p>
                     <p style={styles.contactItem}>
-                        Transakcijski racun: SI56 1234 5678 9012 345
+                        Transakcijski račun: SI56 1234 5678 9012 345
                     </p>
                     <p style={styles.contactItem}>
                         Register: Okrožno sodišče v Ljubljani
@@ -79,7 +79,7 @@ function Footer() {
             {/* Spodnja vrstica */}
             <div style={styles.bottomBar}>
                 <p style={styles.copyright}>
-                    {new Date().getFullYear()} KinoPlex d.o.o. Vse pravice pridrzane.
+                    {new Date().getFullYear()} KinoPlex d.o.o. Vse pravice pridržane.
                 </p>
                 <div style={styles.bottomLinks}>
                     <span style={styles.bottomLink}>Politika zasebnosti</span>

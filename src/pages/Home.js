@@ -29,6 +29,7 @@ function Home() {
         if (!filmMap[s.film_title]) {
             filmMap[s.film_title] = {
                  title: s.film_title,
+                 title_sl: s.film_title_sl,
     genre: s.genre,
     duration_minutes: s.duration_minutes,
     age_rating: s.age_rating,
@@ -76,7 +77,7 @@ function Home() {
                                 {featuredFilm.genre}
                             </span>
                             <h1 style={styles.heroTitle}>
-                                {featuredFilm.title}
+                                {featuredFilm.title_sl || featuredFilm.title}
                             </h1>
                             <p style={styles.heroMeta}>
                                 {featuredFilm.duration_minutes} min
@@ -177,7 +178,7 @@ function Home() {
                                     )}
                                     <div style={styles.posterOverlay}>
                                         <p style={styles.posterTitle}>
-                                            {film.title}
+                                            {film.title_sl || film.title}
                                         </p>
                                     </div>
                                 </div>
@@ -189,10 +190,10 @@ function Home() {
 <div style={styles.parallaxSection}>
     <div style={styles.parallaxOverlay}>
         <h2 style={styles.parallaxText}>
-            Dozivetje, ki ga ne boste pozabili
+            Doživetje, ki ga ne boste pozabili
         </h2>
         <p style={styles.parallaxSubtext}>
-            Rezervirajte svoje sedeze ze danes
+            Rezervirajte svoje sedeže že danes
         </p>
     </div>
 </div>
@@ -251,7 +252,7 @@ function Home() {
                                         </span>
                                     </div>
                                     <h3 style={styles.programTitle}>
-                                        {film.title}
+                                        {film.title_sl || film.title}
                                     </h3>
                                     <p style={styles.programMeta}>
                                         {film.duration_minutes} minut
@@ -497,11 +498,11 @@ const styles = {
         padding: '20px 8px 8px',
     },
     posterTitle: { fontSize: '11px', fontWeight: '600', color: '#fff', lineHeight: 1.3 },
-    
+
     // Paralax
     parallaxSection: {
     height: '300px',
-    backgroundImage: 'url(https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=1600)',
+    backgroundImage: 'url(https://cdn.mclcinema.com/desktopweb/about-us-banner.jpg)',
     backgroundAttachment: 'fixed',
     backgroundSize: 'cover',
     backgroundPosition: 'center',

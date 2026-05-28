@@ -44,6 +44,7 @@ function Program() {
             if (!filmMap[s.film_title]) {
                 filmMap[s.film_title] = {
                      title: s.film_title,
+                     title_sl: s.film_title_sl,
     genre: s.genre,
     duration_minutes: s.duration_minutes,
     age_rating: s.age_rating,
@@ -179,7 +180,14 @@ function Program() {
                                         {film.age_rating}
                                     </span>
                                 </div>
-                                <h2 style={styles.filmTitle}>{film.title}</h2>
+                                <h2 style={styles.filmTitle}>
+                                    {film.title_sl || film.title}
+                                    </h2>
+                                    {film.title_sl && film.title_sl !== film.title && (
+    <p style={styles.originalTitle}>
+        {film.title}
+    </p>
+)}
                                 <p style={styles.filmMeta}>
                                     {film.duration_minutes} min
                                 </p>
@@ -350,6 +358,13 @@ const styles = {
         marginBottom: '6px',
         letterSpacing: '-0.3px',
     },
+    originalTitle: {
+    color: 'rgba(255,255,255,0.35)',
+    fontSize: '12px',
+    fontStyle: 'italic',
+    marginTop: '-4px',
+    marginBottom: '8px',
+},
     filmMeta: {
         color: 'rgba(255,255,255,0.4)',
         fontSize: '13px',
