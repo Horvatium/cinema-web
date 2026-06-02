@@ -2,6 +2,11 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getScreenings } from '../services/api';
 
+const optimizeImg = (url, width) => {
+    if (!url) return url;
+    return url.replace('/original/', `/w${width}/`);
+};
+
 function Program() {
     const [screenings, setScreenings] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -156,10 +161,13 @@ function Program() {
                             <div style={styles.poster}>
                                 {film.poster_url ? (
                                     <img
-                                        src={film.poster_url}
-                                        alt={film.title}
-                                        style={styles.posterImg}
-                                    />
+    src={optimizeImg(film.poster_url, 342)}
+    alt={film.title_sl || film.title}
+    style={styles.posterImg}
+    width={130}
+    height={195}
+    loading="lazy"
+/>
                                 ) : (
                                     <div style={styles.posterPlaceholder}>
                                         🎬

@@ -2,6 +2,12 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getScreenings } from '../services/api';
 
+// Pomanjšaj TMDB slike za hitrejše nalaganje
+const optimizeImg = (url, width) => {
+    if (!url) return url;
+    return url.replace('/original/', `/w${width}/`);
+};
+
 function Home() {
     const [screenings, setScreenings] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -60,16 +66,16 @@ function Home() {
 
     return (
         <div style={styles.page}>
-
+            
             {/* ── Hero pasica ── */}
-            {!loading && featuredFilm && (
+                {!loading && featuredFilm && (
                 <div style={{
                     ...styles.hero,
                     backgroundImage: featuredFilm.backdrop_url
-                        ? `url(${featuredFilm.backdrop_url})`
-                        : featuredFilm.poster_url
-                        ? `url(${featuredFilm.poster_url})`
-                        : 'none',
+    ? `url(${optimizeImg(featuredFilm.backdrop_url, 1280)})`
+    : featuredFilm.poster_url
+    ? `url(${optimizeImg(featuredFilm.poster_url, 780)})`
+    : 'none',
                 }}>
                     <div style={styles.heroOverlay}>
                         <div style={styles.heroContent}>
@@ -113,14 +119,14 @@ function Home() {
                     <div style={styles.heroDots}>
                         {films.map((_, i) => (
                             <button
-                                key={i}
-                                onClick={() => setHeroIndex(i)}
-                                style={{
-                                    ...styles.heroDot,
-                                    ...(i === heroIndex
-                                        ? styles.heroDotActive : {})
-                                }}
-                            />
+    key={i}
+    onClick={() => setHeroIndex(i)}
+    style={{
+        ...styles.heroDot,
+        ...(i === heroIndex ? styles.heroDotActive : {})
+    }}
+    aria-label={`Film ${i + 1}`}
+/>
                         ))}
                     </div>
 
@@ -130,17 +136,15 @@ function Home() {
     onClick={() => setHeroIndex(
         prev => (prev - 1 + films.length) % films.length
     )}
->
-    {'<'}
-</button>
+    aria-label="Prejšnji film"
+>{'<'}</button>
 <button
     style={{...styles.heroArrow, right: '20px'}}
     onClick={() => setHeroIndex(
         prev => (prev + 1) % films.length
     )}
->
-    {'>'}
-</button>
+    aria-label="Naslednji film"
+>{'>'}</button>
                 </div>
             )}
 
@@ -167,10 +171,13 @@ function Home() {
     >
                                     {film.poster_url ? (
                                         <img
-                                            src={film.poster_url}
-                                            alt={film.title}
-                                            style={styles.posterImg}
-                                        />
+    src={optimizeImg(film.poster_url, 342)}
+    alt={film.title_sl || film.title}
+    style={styles.posterImg}
+    width={130}
+    height={195}
+    loading="lazy"
+/>
                                     ) : (
                                         <div style={styles.posterPlaceholder}>
                                             🎬
@@ -228,10 +235,13 @@ function Home() {
                                 <div style={styles.programThumb}>
                                     {film.poster_url ? (
                                         <img
-                                            src={film.poster_url}
-                                            alt={film.title}
-                                            style={styles.programThumbImg}
-                                        />
+    src={optimizeImg(film.poster_url, 342)}
+    alt={film.title_sl || film.title}
+    style={styles.programThumbImg}
+    width={100}
+    height={140}
+    loading="lazy"
+/>
                                     ) : (
                                         <div style={styles.programThumbPlaceholder}>
                                             🎬
@@ -329,7 +339,7 @@ function Home() {
                 v trgovini z aplikacijami!
             </p>
             <div style={styles.promoButtons}>
-                <button
+                {/*<button
                     className="btn btn-secondary"
                     style={{ padding: 0, background: 'none', border: 'none' }}
                     onClick={() => window.open('https://apps.apple.com', '_blank')}
@@ -339,12 +349,12 @@ function Home() {
                         alt="App Store"
                         style={styles.storeBadge}
                     />
-                </button>
+                </button>*/}
                 <button
-                    className="btn btn-secondary"
-                    style={{ padding: 0, background: 'none', border: 'none' }}
-                    onClick={() => window.open('https://play.google.com', '_blank')}
-                >
+    style={{ padding: 0, background: 'none', border: 'none' }}
+    onClick={() => window.open('https://play.google.com', '_blank')}
+    aria-label="Prenesi na Google Play"
+>
                     <img
                         src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg"
                         alt="Google Play"
@@ -415,19 +425,22 @@ const styles = {
         gap: '8px',
     },
     heroDot: {
-        width: '8px',
-        height: '8px',
-        borderRadius: '50%',
-        background: 'rgba(255,255,255,0.3)',
-        border: 'none',
-        cursor: 'pointer',
-        padding: 0,
-    },
-    heroDotActive: {
-        background: '#00c9b1',
-        width: '24px',
-        borderRadius: '4px',
-    },
+    width: '12px',
+    height: '12px',
+    borderRadius: '50%',
+    background: 'rgba(255,255,255,0.3)',
+    border: 'none',
+    cursor: 'pointer',
+    padding: '8px',
+    backgroundClip: 'content-box',
+},
+heroDotActive: {
+    background: '#00c9b1',
+    width: '28px',
+    borderRadius: '4px',
+    padding: '8px',
+    backgroundClip: 'content-box',
+},
     heroArrow: {
         position: 'absolute',
         top: '50%',

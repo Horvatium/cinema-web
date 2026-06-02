@@ -6,6 +6,11 @@ import { getScreeningSeats, createPaymentIntent } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import PaymentForm from '../components/PaymentForm';
 
+const optimizeImg = (url, width) => {
+    if (!url) return url;
+    return url.replace('/original/', `/w${width}/`);
+};
+
 function FilmDetail() {
     const { id } = useParams();
     const { state } = useLocation();
@@ -122,10 +127,13 @@ function FilmDetail() {
         {/* Poster */}
         {film?.poster_url && (
             <img
-                src={film.poster_url}
-                alt={film.title}
-                style={styles.filmPoster}
-            />
+    src={optimizeImg(film.poster_url, 342)}
+    alt={film.title_sl || film.title}
+    style={styles.posterImg}
+    width={130}
+    height={195}
+    loading="lazy"
+/>
         )}
 
         {/* Info */}
@@ -241,8 +249,7 @@ function FilmDetail() {
                         </span>
                     </div>
 
-                    {/* predstava */}
-                    <div style={styles.screen}>ZASLON</div>
+                                 
 
                     {/* Zemljevid sedežev */}
                     <div style={styles.seatMap}>

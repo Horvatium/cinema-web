@@ -16,6 +16,7 @@ function App() {
         <AuthProvider>
             <BrowserRouter>
                 <Navbar />
+                <main>
                 <div className="container">
                     <Routes>
                         <Route path="/" element={<Home />} />
@@ -37,6 +38,7 @@ function App() {
                         } />
                     </Routes>
                 </div>
+                </main>
                 <Footer />
             </BrowserRouter>
         </AuthProvider>
