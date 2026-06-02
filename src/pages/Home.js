@@ -72,9 +72,9 @@ function Home() {
                 <div style={{
                     ...styles.hero,
                     backgroundImage: featuredFilm.backdrop_url
-    ? `url(${optimizeImg(featuredFilm.backdrop_url, 1280)})`
+    ? `url(${optimizeImg(featuredFilm.backdrop_url, 780)})`
     : featuredFilm.poster_url
-    ? `url(${optimizeImg(featuredFilm.poster_url, 780)})`
+    ? `url(${optimizeImg(featuredFilm.poster_url, 500)})`
     : 'none',
                 }}>
                     <div style={styles.heroOverlay}>
@@ -325,6 +325,9 @@ function Home() {
                 src="https://cineamo-cdn.b-cdn.net/images/pictures/im-smartphoneWithCineamoAppAndPopcornBackground.png?width=1080"
                 alt="KinoPlex mobilna aplikacija"
                 style={styles.promoImg}
+                width={340}
+                height={280}
+                loading="lazy"
             />
             <div style={styles.promoImgFade} />
         </div>
@@ -492,16 +495,21 @@ heroDotActive: {
         cursor: 'pointer',
         background: '#1a1a2e',
     },
-    posterImg: { width: '100%', height: '100%', objectFit: 'cover' },
-    posterPlaceholder: {
-        width: '100%',
-        height: '100%',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        fontSize: '36px',
-        background: '#1a1a2e',
+    posterImg: { 
+        width: '100%', 
+        height: '100%', 
+        objectFit: 'cover' 
     },
+    
+    posterPlaceholder: {
+    width: '130px',
+    height: '195px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    fontSize: '36px',
+    background: '#1a1a2e',
+},
     posterOverlay: {
         position: 'absolute',
         bottom: 0,
@@ -515,7 +523,8 @@ heroDotActive: {
     // Paralax
     parallaxSection: {
     height: '300px',
-    backgroundImage: 'url(https://cdn.mclcinema.com/desktopweb/about-us-banner.jpg)',
+    minHeight: '300px',
+    backgroundImage: 'url(https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=1600)',
     backgroundAttachment: 'fixed',
     backgroundSize: 'cover',
     backgroundPosition: 'center',
