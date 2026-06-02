@@ -69,7 +69,9 @@ function Home() {
             
             {/* ── Hero pasica ── */}
                 {!loading && featuredFilm && (
-                <div style={{
+                
+                <div className="hero-banner"
+                style={{
                     ...styles.hero,
                     backgroundImage: featuredFilm.backdrop_url
     ? `url(${optimizeImg(featuredFilm.backdrop_url, 780)})`
@@ -194,7 +196,7 @@ function Home() {
                     </div>
                 )}
                 {/* Paralax slika */}
-<div style={styles.parallaxSection}>
+<div className="parallax-section">
     <div style={styles.parallaxOverlay}>
         <h2 style={styles.parallaxText}>
             Doživetje, ki ga ne boste pozabili
@@ -319,7 +321,8 @@ function Home() {
 
 {/* ── Promo baner aplikacije ── */}
 {!loading && (
-    <div style={styles.promoBanner}>
+    <div className="promo-banner" 
+    style={styles.promoBanner}>
         <div style={styles.promoImgWrapper}>
             <img
                 src="https://cineamo-cdn.b-cdn.net/images/pictures/im-smartphoneWithCineamoAppAndPopcornBackground.png?width=1080"
@@ -500,7 +503,7 @@ heroDotActive: {
         height: '100%', 
         objectFit: 'cover' 
     },
-    
+
     posterPlaceholder: {
     width: '130px',
     height: '195px',
@@ -521,7 +524,7 @@ heroDotActive: {
     posterTitle: { fontSize: '11px', fontWeight: '600', color: '#fff', lineHeight: 1.3 },
 
     // Paralax
-    parallaxSection: {
+    /*parallaxSection: {
     height: '300px',
     minHeight: '300px',
     backgroundImage: 'url(https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=1600)',
@@ -531,7 +534,7 @@ heroDotActive: {
     position: 'relative',
     margin: '0 -20px',
     marginBottom: '0',
-},
+},*/
 parallaxOverlay: {
     position: 'absolute',
     inset: 0,
