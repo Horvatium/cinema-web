@@ -24,7 +24,7 @@ function Admin() {
                             background: tab === t ? '#e50914' : '#222',
                         }}
                     >
-                        {t.charAt(0).toUpperCase() + t.slice(1)}
+                        {{ screenings: 'Predvajanja', films: 'Filmi', reservations: 'Rezervacije' }[t]}
                     </button>
                 ))}
             </div>
@@ -273,7 +273,7 @@ function ScreeningsTab() {
                                     ))}
                                 </select>
 
-                                <label>Room</label>
+                                <label>Dvorana</label>
                                 <select
                                     name="room_id"
                                     value={editForm.room_id}
@@ -475,7 +475,7 @@ const handlePosterUpload = async (e) => {
                 <form onSubmit={handleAdd}>
                     <div style={styles.row}>
                         <div style={styles.half}>
-                            <label>Title</label>
+                            <label>Naslov</label>
                             <input
                                 name="title"
                                 value={form.title}

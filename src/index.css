@@ -144,6 +144,28 @@ label {
     margin-right: 6px;
     margin-bottom: 4px;
 }
+/*-Barva dropdown menu-ja-*/
+select {
+    background-color: #1a1a2e;
+    color: #f0f0f0;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    padding: 10px;
+    border-radius: 6px;
+    width: 100%;
+    font-size: 14px;
+    font-family: 'Inter', Arial, sans-serif;
+    cursor: pointer;
+}
+
+select option {
+    background-color: #1a1a2e;
+    color: #f0f0f0;
+}
+
+select:focus {
+    outline: none;
+    border-color: #00c9b1;
+}
 
 /* ── Scrollbar ── */
 ::-webkit-scrollbar { width: 6px; }
