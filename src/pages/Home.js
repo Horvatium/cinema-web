@@ -524,18 +524,17 @@ heroDotActive: {
     posterTitle: { fontSize: '11px', fontWeight: '600', color: '#fff', lineHeight: 1.3 },
 
     // Paralax
-    parallaxSection: {
+    /*ParallaxSection: {
     height: '300px',
     minHeight: '300px',
-    backgroundImage: 'url(https://offloadmedia.feverup.com/secretmelbourne.com/wp-content/uploads/2023/06/13224906/cinemas-in-melbourne.jpg)',
-    /*backgroundImage: 'url(https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=1600)',*/
+    backgroundImage: 'url(https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=1600)',
     backgroundAttachment: 'fixed',
     backgroundSize: 'cover',
     backgroundPosition: 'center',
     position: 'relative',
     margin: '0 -20px',
     marginBottom: '0',
-},
+},*/
 parallaxOverlay: {
     position: 'absolute',
     inset: 0,
