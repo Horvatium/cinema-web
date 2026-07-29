@@ -1,70 +1,52 @@
-# Getting Started with Create React App
+# KinoPlex — Spletna aplikacija 🎬
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Spletna aplikacija informacijskega sistema za upravljanje kinematografa s spletnim sistemom
+za rezervacijo vstopnic. Projekt je bil izdelan v okviru diplomske naloge.
 
-## Available Scripts
+🌐 Povezava: [www.kinoplex.si](https://www.kinoplex.si)
 
-In the project directory, you can run:
+## O projektu
 
-### `npm start`
+Spletna aplikacija strankam omogoča pregledovanje filmskega sporeda, izbiro sedežev ter
+spletno rezervacijo in plačilo vstopnic. Skrbnikom kinematografa omogoča upravljanje filmov,
+predvajanj in pregled vseh rezervacij prek posebne skrbniške plošče.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+Povezan je z zalednim sistemom [cinema-api](https://github.com/Horvatium/cinema-api), ki zagotavlja
+podatke in obravnava avtentikacijo ter plačila.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## Tehnologije
 
-### `npm test`
+- **React** — knjižnica za izgradnjo uporabniškega vmesnika
+- **React Router** — usmerjanje med stranmi
+- **Axios** — komunikacija z zalednim sistemom
+- **Stripe** — spletno plačevanje vstopnic
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Funkcionalnosti
 
-### `npm run build`
+- Registracija in prijava uporabnikov
+- Pregled filmskega sporeda in podrobnosti filmov (opis, igralci, režiser, IMDB, napovednik)
+- Izbira sedežev na interaktivnem zemljevidu dvorane
+- Spletno plačilo vstopnic prek sistema Stripe
+- Pregled in preklic lastnih rezervacij
+- Skrbniška plošča za upravljanje filmov, predvajanj in rezervacij
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## Zagon projekta
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+```
+npm install
+npm start
+```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+Aplikacija se zažene na `http://localhost:3000`.
 
-### `npm run eject`
+Za delovanje potrebuješ zagnan zaledni sistem [cinema-api](https://github.com/Horvatium/cinema-api)
+in ustrezno nastavljeno spremenljivko okolja z naslovom API-ja.
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+## Diagrami
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+Diagrami sistema (EER, primeri uporabe, razredni diagram, arhitektura namestitve) so na voljo
+v mapi [`docs/diagrami`](./docs/diagrami).
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+## Avtor
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+Diplomska naloga — Vid Gudič, CPU, 2026.
