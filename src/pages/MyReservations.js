@@ -35,7 +35,7 @@ function MyReservations() {
     const getStatusStyle = (status) => {
         switch (status) {
             case 'confirmed': return { color: '#2ecc71' };
-            case 'cancelled': return { color: '#e74c3c' };
+            case 'canceled': return { color: '#e74c3c' };
             case 'pending': return { color: '#f39c12' };
             default: return {};
         }

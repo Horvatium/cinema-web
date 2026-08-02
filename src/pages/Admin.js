@@ -689,7 +689,7 @@ function ReservationsTab() {
                             fontWeight: 'bold',
                             color: r.status === 'confirmed'
                                 ? '#2ecc71'
-                                : r.status === 'cancelled'
+                                : r.status === 'canceled'
                                 ? '#e74c3c'
                                 : '#f39c12'
                         }}>
