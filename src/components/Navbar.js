@@ -33,8 +33,10 @@ function Navbar() {
                         </Link>
                     )}
                     {user?.role === 'admin' && (
-                        <Link to="/admin" style={styles.link}>Admin</Link>
-                    )}
+    <Link to="/admin" style={{ ...styles.link, ...styles.adminLink }}>Admin</Link>
+    
+)}
+
                 </div>
 
                 {/* Avtorizacija */}
@@ -139,6 +141,10 @@ logoSlogan: {
         fontWeight: '500',
         transition: 'color 0.2s',
     },
+    adminLink: {
+    color: '#e50914',
+    fontWeight: '700',
+},
     auth: {
         display: 'flex',
         alignItems: 'center',
