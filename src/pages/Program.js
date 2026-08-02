@@ -42,9 +42,9 @@ function Program() {
     // Združi predstave po filmih za izbrani datum
     const filmMap = {};
     screenings
-        .filter(s => new Date(s.start_time).toDateString() === selectedDate)
-        .filter(s => !search || s.film_title?.toLowerCase()
-            .includes(search.toLowerCase()))
+        .filter(s => search || new Date(s.start_time).toDateString() === selectedDate)
+.filter(s => !search || s.film_title?.toLowerCase()
+    .includes(search.toLowerCase()))
         .forEach(s => {
             if (!filmMap[s.film_title]) {
                 filmMap[s.film_title] = {
@@ -66,6 +66,10 @@ function Program() {
             }
             filmMap[s.film_title].screenings.push(s);
         });
+
+Object.values(filmMap).forEach(f =>
+    f.screenings.sort((a, b) => new Date(a.start_time) - new Date(b.start_time))
+);
 
     const films = Object.values(filmMap);
 
@@ -141,7 +145,7 @@ function Program() {
                             🎬
                         </p>
                         <p style={{ color: '#555' }}>
-                            Ni predvajanj za ta dan.
+                            {search ? 'Ni zadetkov za to iskanje.' : 'Ni predvajanj za ta dan.'}
                         </p>
                     </div>
                 ) : (
@@ -214,6 +218,13 @@ function Program() {
                                                 );
                                             }}
                                         >
+                                            {search && (
+    <span style={styles.dateChip}>
+        {new Date(s.start_time).toLocaleDateString('sl-SI', {
+            day: 'numeric', month: 'numeric'
+        })}
+    </span>
+)}
                                             <span style={styles.timeText}>
                                                 {new Date(s.start_time)
                                                     .toLocaleTimeString('sl-SI', {
@@ -406,6 +417,11 @@ const styles = {
         fontSize: '10px',
         opacity: 0.7,
     },
+    dateChip: {
+    fontSize: '10px',
+    fontWeight: '700',
+    opacity: 0.85,
+},
     priceCol: {
         flexShrink: 0,
         textAlign: 'center',
