@@ -211,7 +211,7 @@ function Home() {
                     <div style={styles.section}>
                         <div style={styles.sectionHeader}>
                             <span style={styles.sectionLabel}>
-                                DANAŠNJI PROGRAM
+                                TRENUTNO NA SPOREDU
                             </span>
                             <button
                                 className="btn btn-secondary"
@@ -271,29 +271,36 @@ function Home() {
                                     </p>
                                     <div style={styles.timesRow}>
                                         {film.screenings.map(s => (
-                                            <button
-                                                key={s.id}
-                                                style={styles.timeChip}
-                                                onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    navigate(
-                                                        `/films/${s.id}`,
-                                                        { state: {
-                                                            film,
-                                                            screening: s
-                                                        }}
-                                                    );
-                                                }}
-                                            >
-                                                {new Date(s.start_time)
-                                                    .toLocaleTimeString('sl-SI', {
-                                                        hour: '2-digit',
-                                                        minute: '2-digit',
-                                                        hour12: false
-                                                    })
-                                                }
-                                            </button>
-                                        ))}
+    <button
+        key={s.id}
+        style={styles.timeChip}
+        onClick={(e) => {
+            e.stopPropagation();
+            navigate(
+                `/films/${s.id}`,
+                { state: {
+                    film,
+                    screening: s
+                }}
+            );
+        }}
+    >
+        {new Date(s.start_time)
+            .toLocaleDateString('sl-SI', {
+                day: '2-digit',
+                month: '2-digit'
+            })
+        }
+        {' '}
+        {new Date(s.start_time)
+            .toLocaleTimeString('sl-SI', {
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: false
+            })
+        }
+    </button>
+))}
                                     </div>
                                 </div>
 
