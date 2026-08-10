@@ -389,13 +389,15 @@ function ScreeningsTab() {
 const PRAZEN_FILM = {
     title: '', title_sl: '', genre: '', duration_minutes: '',
     age_rating: '', synopsis: '', director: '',
-    release_year: '', poster_url: '',
+    release_year: '', poster_url: '', backdrop_url: '',
     imdb_url: '', trailer_url: '', cast_members: ''
 };
 
 function FilmsTab() {
     const [uploading, setUploading] = useState(false);
     const [posterPreview, setPosterPreview] = useState('');
+    const [uploadingBackdrop, setUploadingBackdrop] = useState(false);
+    const [backdropPreview, setBackdropPreview] = useState('');
     const [films, setFilms] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
@@ -413,6 +415,25 @@ function FilmsTab() {
     const handleChange = (e) => {
         setForm({ ...form, [e.target.name]: e.target.value });
     };
+
+const handleBackdropUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    setUploadingBackdrop(true);
+    try {
+        const formData = new FormData();
+        formData.append('poster', file);
+        const response = await uploadPoster(formData);
+        setForm(prev => ({ ...prev, backdrop_url: response.data.url }));
+        setBackdropPreview(response.data.url);
+        setSuccess('Pasica naložena!');
+    } catch (_err) {
+        setError('Napaka pri nalaganju pasice.');
+    } finally {
+        setUploadingBackdrop(false);
+    }
+};
 
 const handlePosterUpload = async (e) => {
     const file = e.target.files[0];
@@ -449,6 +470,7 @@ const handlePosterUpload = async (e) => {
             setForm(PRAZEN_FILM);
             setEditingId(null);
             setPosterPreview('');
+            setBackdropPreview('');
             const response = await getFilms();
             setFilms(response.data);
         } catch (err) {
@@ -470,11 +492,13 @@ const handlePosterUpload = async (e) => {
             director: film.director || '',
             release_year: film.release_year || '',
             poster_url: film.poster_url || '',
+            backdrop_url: film.backdrop_url || '',
             imdb_url: film.imdb_url || '',
             trailer_url: film.trailer_url || '',
             cast_members: film.cast_members || ''
         });
         setPosterPreview(film.poster_url || '');
+        setBackdropPreview(film.backdrop_url || '');
         setError('');
         setSuccess('');
         window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -484,6 +508,7 @@ const handlePosterUpload = async (e) => {
         setEditingId(null);
         setForm(PRAZEN_FILM);
         setPosterPreview('');
+        setBackdropPreview('');
         setError('');
         setSuccess('');
     };
@@ -638,10 +663,35 @@ const handlePosterUpload = async (e) => {
 {posterPreview && (
     <img
         src={posterPreview}
-        alt="Poster preview"
+        alt="Predogled plakata"
         style={{
             width: '120px',
             height: '180px',
+            objectFit: 'cover',
+            borderRadius: '6px',
+            marginBottom: '12px'
+        }}
+    />
+)}
+
+<label>Slika pasice (širokoformatna, za naslovnico)</label>
+<input
+    type="file"
+    accept="image/*"
+    onChange={handleBackdropUpload}
+    disabled={uploadingBackdrop}
+    style={{ marginBottom: '8px' }}
+/>
+{uploadingBackdrop && <p style={{ color: '#aaa', fontSize: '13px' }}>
+    Nalaganje...
+</p>}
+{backdropPreview && (
+    <img
+        src={backdropPreview}
+        alt="Predogled pasice"
+        style={{
+            width: '260px',
+            height: '146px',
             objectFit: 'cover',
             borderRadius: '6px',
             marginBottom: '12px'
