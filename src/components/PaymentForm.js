@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import {
     PaymentElement,
     useStripe,
@@ -6,15 +6,48 @@ import {
 } from '@stripe/react-stripe-js';
 import { confirmPayment } from '../services/api';
 
-function PaymentForm({ screeningId, seatIds, totalPrice, onSuccess, onCancel }) {
+function PaymentForm({ screeningId, seatIds, totalPrice, expiresAt, onSuccess, onCancel, onExpire }) {
     const stripe = useStripe();
     const elements = useElements();
     const [error, setError] = useState('');
     const [processing, setProcessing] = useState(false);
+    const [preostalo, setPreostalo] = useState(null);
+
+    // Sklic na funkcijo ob izteku, da odštevalnik ni odvisen od ponovnih izrisov
+    const onExpireRef = useRef(onExpire);
+    useEffect(() => {
+        onExpireRef.current = onExpire;
+    }, [onExpire]);
+
+    // Odštevalnik zadržanja sedežev
+    useEffect(() => {
+        if (!expiresAt) return;
+
+        const konec = new Date(expiresAt).getTime();
+        let izteklo = false;
+
+        const posodobi = () => {
+            const sekunde = Math.max(0, Math.round((konec - Date.now()) / 1000));
+            setPreostalo(sekunde);
+            if (sekunde === 0 && !izteklo) {
+                izteklo = true;
+                if (onExpireRef.current) onExpireRef.current();
+            }
+        };
+
+        posodobi();
+        const id = setInterval(posodobi, 1000);
+        return () => clearInterval(id);
+    }, [expiresAt]);
+
+    const zapisiCas = (s) =>
+        `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
+
+    const potekel = preostalo === 0;
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (!stripe || !elements) return;
+        if (!stripe || !elements || potekel) return;
 
         setProcessing(true);
         setError('');
@@ -33,7 +66,7 @@ function PaymentForm({ screeningId, seatIds, totalPrice, onSuccess, onCancel }) 
             }
 
             if (paymentIntent.status === 'succeeded') {
-                // nađ backend naj ustvari rezervacijo
+                // Zaledni sistem naj potrdi rezervacijo
                 const response = await confirmPayment({
                     payment_intent_id: paymentIntent.id,
                     screening_id: screeningId,
@@ -53,8 +86,20 @@ function PaymentForm({ screeningId, seatIds, totalPrice, onSuccess, onCancel }) 
         <div style={styles.wrapper}>
             <h3 style={styles.title}>Zaključi plačilo</h3>
             <p style={styles.amount}>
-                Skupaj: <span style={styles.price}>€{totalPrice}</span>
+                Skupaj: <span style={styles.price}>{totalPrice} €</span>
             </p>
+
+            {preostalo !== null && !potekel && (
+                <p style={preostalo <= 60 ? styles.timerOpozorilo : styles.timer}>
+                    Izbrani sedeži so za vas zadržani še <strong>{zapisiCas(preostalo)}</strong>
+                </p>
+            )}
+
+            {potekel && (
+                <div className="error">
+                    Čas za dokončanje plačila je potekel, sedeži so bili sproščeni.
+                </div>
+            )}
 
             {error && <div className="error">{error}</div>}
 
@@ -67,10 +112,10 @@ function PaymentForm({ screeningId, seatIds, totalPrice, onSuccess, onCancel }) 
                     <button
                         type="submit"
                         className="btn btn-primary"
-                        disabled={processing || !stripe}
+                        disabled={processing || !stripe || potekel}
                         style={{ flex: 1 }}
                     >
-                        {processing ? 'Obdelava...' : `Plačaj €${totalPrice}`}
+                        {processing ? 'Obdelava...' : `Plačaj ${totalPrice} €`}
                     </button>
                     <button
                         type="button"
@@ -78,7 +123,7 @@ function PaymentForm({ screeningId, seatIds, totalPrice, onSuccess, onCancel }) 
                         onClick={onCancel}
                         disabled={processing}
                     >
-                        Cancel
+                        Prekliči
                     </button>
                 </div>
 
@@ -99,8 +144,10 @@ const styles = {
         marginTop: '20px',
     },
     title: { fontSize: '20px', marginBottom: '8px' },
-    amount: { color: '#aaa', marginBottom: '20px' },
+    amount: { color: '#aaa', marginBottom: '12px' },
     price: { color: '#e50914', fontWeight: 'bold', fontSize: '20px' },
+    timer: { color: '#aaa', fontSize: '14px', marginBottom: '16px' },
+    timerOpozorilo: { color: '#e50914', fontSize: '14px', marginBottom: '16px' },
     cardContainer: {
         background: '#fff',
         borderRadius: '8px',

@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements } from '@stripe/react-stripe-js';
-import { getScreeningSeats, createPaymentIntent } from '../services/api';
+import { getScreeningSeats, createPaymentIntent, cancelPaymentIntent } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import PaymentForm from '../components/PaymentForm';
 
@@ -27,6 +27,8 @@ function FilmDetail() {
     const [stripePromise, setStripePromise] = useState(null);
     const [clientSecret, setClientSecret] = useState('');
     const [totalPrice, setTotalPrice] = useState(0);
+    const [expiresAt, setExpiresAt] = useState(null);
+    const [reservationId, setReservationId] = useState(null);
     const [showPayment, setShowPayment] = useState(false);
     const [creatingIntent, setCreatingIntent] = useState(false);
 
@@ -77,6 +79,8 @@ function FilmDetail() {
             setStripePromise(Promise.resolve(stripe));
             setClientSecret(response.data.clientSecret);
             setTotalPrice(response.data.total_price);
+            setExpiresAt(response.data.expires_at);
+            setReservationId(response.data.reservation_id);
             setShowPayment(true);
 
         } catch (err) {
@@ -90,13 +94,36 @@ function FilmDetail() {
         setSuccess(`Plačilo uspešno! ${selectedSeats.length} sedež/ev rezerviranih.`);
         setShowPayment(false);
         setSelectedSeats([]);
+        setExpiresAt(null);
+        setReservationId(null);
         fetchSeats();
     };
 
-    const handlePaymentCancel = () => {
+    const handlePaymentCancel = async () => {
+        // Sprosti zadržane sedeže, da niso blokirani do izteka desetih minut
+        if (reservationId) {
+            try {
+                await cancelPaymentIntent({ reservation_id: reservationId });
+            } catch (_err) {
+                // Če sprostitev ne uspe, zadržanje poteče samo od sebe
+            }
+        }
         setShowPayment(false);
         setClientSecret('');
+        setExpiresAt(null);
+        setReservationId(null);
+        fetchSeats();
     };
+
+    const handlePaymentExpire = useCallback(() => {
+        setShowPayment(false);
+        setClientSecret('');
+        setExpiresAt(null);
+        setReservationId(null);
+        setSelectedSeats([]);
+        setError('Čas za dokončanje plačila je potekel. Sedeži so bili sproščeni.');
+        fetchSeats();
+    }, [fetchSeats]);
 
     // grupiraj sedeže po vrstah
     const rows = {};
@@ -346,8 +373,10 @@ function FilmDetail() {
                         screeningId={parseInt(id)}
                         seatIds={selectedSeats.map(s => s.id)}
                         totalPrice={totalPrice.toFixed(2)}
+                        expiresAt={expiresAt}
                         onSuccess={handlePaymentSuccess}
                         onCancel={handlePaymentCancel}
+                        onExpire={handlePaymentExpire}
                     />
                 </Elements>
             )}

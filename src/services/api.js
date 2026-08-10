@@ -46,3 +46,4 @@ export const uploadPoster = (formData) => api.post('/upload/poster', formData, {
 // Plačila
 export const createPaymentIntent = (data) => api.post('/payments/create-intent', data);
 export const confirmPayment = (data) => api.post('/payments/confirm', data);
+export const cancelPaymentIntent = (data) => api.post('/payments/cancel-intent', data);
