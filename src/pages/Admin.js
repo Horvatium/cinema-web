@@ -1,5 +1,5 @@
 import {
-    getFilms, addFilm, deleteFilm,
+    getFilms, addFilm, updateFilm, deleteFilm,
     getScreenings, addScreening, updateScreening, deleteScreening,
     getAllReservations, uploadPoster
 } from '../services/api';
@@ -386,6 +386,13 @@ function ScreeningsTab() {
 }
 
 // Zavihek s filmi
+const PRAZEN_FILM = {
+    title: '', title_sl: '', genre: '', duration_minutes: '',
+    age_rating: '', synopsis: '', director: '',
+    release_year: '', poster_url: '',
+    imdb_url: '', trailer_url: '', cast_members: ''
+};
+
 function FilmsTab() {
     const [uploading, setUploading] = useState(false);
     const [posterPreview, setPosterPreview] = useState('');
@@ -393,12 +400,8 @@ function FilmsTab() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
-    const [form, setForm] = useState({
-        title: '', title_sl: '', genre: '', duration_minutes: '',
-    age_rating: '', synopsis: '', director: '',
-    release_year: '', poster_url: '',
-    imdb_url: '', trailer_url: '', cast_members: ''
-    });
+    const [form, setForm] = useState(PRAZEN_FILM);
+    const [editingId, setEditingId] = useState(null);
 
     useEffect(() => {
         getFilms()
@@ -431,25 +434,58 @@ const handlePosterUpload = async (e) => {
 };
 
 
-    const handleAdd = async (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
         setSuccess('');
         try {
-            await addFilm(form);
-            setSuccess('Film uspešno dodan!');
-            setForm({
-                title: '', title_sl: '', genre: '', duration_minutes: '',
-    age_rating: '', synopsis: '', director: '',
-    release_year: '', poster_url: '',
-    imdb_url: '', trailer_url: '', cast_members: ''
-            });
+            if (editingId) {
+                await updateFilm(editingId, form);
+                setSuccess('Film uspešno posodobljen!');
+            } else {
+                await addFilm(form);
+                setSuccess('Film uspešno dodan!');
+            }
+            setForm(PRAZEN_FILM);
+            setEditingId(null);
             setPosterPreview('');
             const response = await getFilms();
             setFilms(response.data);
         } catch (err) {
-            setError(err.response?.data?.message || 'Filma ni bilo možno dodati.');
+            setError(err.response?.data?.message ||
+                (editingId ? 'Filma ni bilo možno posodobiti.' : 'Filma ni bilo možno dodati.'));
         }
+    };
+
+    // Napolni obrazec s podatki izbranega filma
+    const handleEdit = (film) => {
+        setEditingId(film.id);
+        setForm({
+            title: film.title || '',
+            title_sl: film.title_sl || '',
+            genre: film.genre || '',
+            duration_minutes: film.duration_minutes || '',
+            age_rating: film.age_rating || '',
+            synopsis: film.synopsis || '',
+            director: film.director || '',
+            release_year: film.release_year || '',
+            poster_url: film.poster_url || '',
+            imdb_url: film.imdb_url || '',
+            trailer_url: film.trailer_url || '',
+            cast_members: film.cast_members || ''
+        });
+        setPosterPreview(film.poster_url || '');
+        setError('');
+        setSuccess('');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
+    const handleCancelEdit = () => {
+        setEditingId(null);
+        setForm(PRAZEN_FILM);
+        setPosterPreview('');
+        setError('');
+        setSuccess('');
     };
 
     const handleDelete = async (id) => {
@@ -468,11 +504,13 @@ const handlePosterUpload = async (e) => {
         <div>
             {/* Dodaj filmski obrazec */}
             <div className="card" style={{ marginBottom: '30px' }}>
-                <h2 style={styles.sectionTitle}>Dodaj nov film</h2>
+                <h2 style={styles.sectionTitle}>
+                    {editingId ? 'Uredi film' : 'Dodaj nov film'}
+                </h2>
                 {error && <div className="error">{error}</div>}
                 {success && <div className="success">{success}</div>}
 
-                <form onSubmit={handleAdd}>
+                <form onSubmit={handleSubmit}>
                     <div style={styles.row}>
                         <div style={styles.half}>
                             <label>Naslov</label>
@@ -611,9 +649,20 @@ const handlePosterUpload = async (e) => {
     />
 )}
 
-                    <button type="submit" className="btn btn-primary">
-                        Dodaj film
-                    </button>
+                    <div style={{ display: 'flex', gap: '10px' }}>
+                        <button type="submit" className="btn btn-primary">
+                            {editingId ? 'Shrani spremembe' : 'Dodaj film'}
+                        </button>
+                        {editingId && (
+                            <button
+                                type="button"
+                                className="btn btn-secondary"
+                                onClick={handleCancelEdit}
+                            >
+                                Prekliči
+                            </button>
+                        )}
+                    </div>
                 </form>
             </div>
 
@@ -628,12 +677,20 @@ const handlePosterUpload = async (e) => {
                             {film.age_rating} · {film.release_year}
                         </p>
                     </div>
-                    <button
-                        className="btn btn-danger"
-                        onClick={() => handleDelete(film.id)}
-                    >
-                        Izbriši
-                    </button>
+                    <div style={{ display: 'flex', gap: '8px' }}>
+                        <button
+                            className="btn btn-secondary"
+                            onClick={() => handleEdit(film)}
+                        >
+                            Uredi
+                        </button>
+                        <button
+                            className="btn btn-danger"
+                            onClick={() => handleDelete(film.id)}
+                        >
+                            Izbriši
+                        </button>
+                    </div>
                 </div>
             ))}
         </div>
@@ -681,7 +738,7 @@ function ReservationsTab() {
                                 {' '}· 🏛️ {r.room_name}
                             </p>
                             <p style={styles.meta}>
-                                💺 {r.seats} · 💰 €{r.total_price}
+                                💺 {r.seats} · 💰 {r.total_price} €
                             </p>
                         </div>
                         <span style={{
