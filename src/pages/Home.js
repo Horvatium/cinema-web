@@ -288,7 +288,8 @@ function Home() {
         {new Date(s.start_time)
             .toLocaleDateString('sl-SI', {
                 day: '2-digit',
-                month: '2-digit'
+                month: '2-digit',
+                timeZone: 'UTC',
             })
         }
         {' '}
@@ -296,7 +297,8 @@ function Home() {
             .toLocaleTimeString('sl-SI', {
                 hour: '2-digit',
                 minute: '2-digit',
-                hour12: false
+                hour12: false,
+                timeZone: 'UTC',
             })
         }
     </button>

@@ -71,6 +71,7 @@ function MyReservations() {
                                             year: 'numeric',
                                             month: 'long',
                                             day: 'numeric',
+                                            timeZone: 'UTC',
                                         })
                                     }
                                     {' '}ob{' '}
@@ -78,7 +79,8 @@ function MyReservations() {
                                         .toLocaleTimeString('sl-SI', {
                                     hour: '2-digit',
                                     minute: '2-digit',
-                                    hour12: false
+                                    hour12: false,
+                                    timeZone: 'UTC',
                                         })
                                     }
                                 </p>
@@ -120,7 +122,8 @@ function MyReservations() {
                         <p style={styles.bookedAt}>
                             Rezervirano dne{' '}
                             {new Date(reservation.reserved_at)
-                                .toLocaleDateString('sl-SI')
+                                .toLocaleDateString('sl-SI',
+                                    {timeZone: 'UTC',})
                             }
                         </p>
                     </div>

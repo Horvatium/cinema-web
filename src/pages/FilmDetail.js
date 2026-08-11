@@ -237,13 +237,15 @@ function FilmDetail() {
                             year: 'numeric',
                             month: 'long',
                             day: 'numeric',
+                            timeZone: 'UTC',
                         })}
                     </span>
                     <span> ob {new Date(screening.start_time)
                         .toLocaleTimeString('sl-SI', {
                         hour: '2-digit',
                         minute: '2-digit',
-                        hour12: false
+                        hour12: false,
+                        timeZone: 'UTC',
                         })}
                     </span>
                     <span> · 🏛️ {screening.room_name}</span>

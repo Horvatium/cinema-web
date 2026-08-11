@@ -355,7 +355,8 @@ function ScreeningsTab() {
                                         {new Date(s.start_time).toLocaleString(
                                             'sl-SI', {
                                                 dateStyle: 'medium',
-                                                timeStyle: 'short'
+                                                timeStyle: 'short',
+                                                timeZone: 'UTC',
                                             }
                                         )}
                                         {' '}· 🏛️ {s.room_name}
@@ -784,6 +785,7 @@ function ReservationsTab() {
                                 {new Date(r.start_time).toLocaleString('sl-SI', {
                                     dateStyle: 'medium',
                                     timeStyle: 'short',
+                                    timeZone: 'UTC',
                                 })}
                                 {' '}· 🏛️ {r.room_name}
                             </p>
