@@ -82,9 +82,9 @@ Object.values(filmMap).forEach(f =>
         if (dateStr === today) return { day: 'Danes', date: '' };
         if (dateStr === tomorrow) return { day: 'Jutri', date: '' };
         return {
-            day: d.toLocaleDateString('sl-SI', { weekday: 'short' }),
+            day: d.toLocaleDateString('sl-SI', { weekday: 'short', timeZone: 'UTC', }),
             date: d.toLocaleDateString('sl-SI', {
-                day: 'numeric', month: 'short'
+                day: 'numeric', month: 'short', timeZone: 'UTC',
             })
         };
     };
@@ -221,7 +221,7 @@ Object.values(filmMap).forEach(f =>
                                             {search && (
     <span style={styles.dateChip}>
         {new Date(s.start_time).toLocaleDateString('sl-SI', {
-            day: 'numeric', month: 'numeric'
+            day: 'numeric', month: 'numeric', timeZone: 'UTC',
         })}
     </span>
 )}
@@ -230,7 +230,8 @@ Object.values(filmMap).forEach(f =>
                                                     .toLocaleTimeString('sl-SI', {
                                                     hour: '2-digit',
                                                     minute: '2-digit',
-                                                    hour12: false
+                                                    hour12: false,
+                                                    timeZone: 'UTC',
                                                     })
                                                 }
                                             </span>
