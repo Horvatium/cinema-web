@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { register } from '../services/api';
-import { useAuth } from '../context/AuthContext';
 
 function Register() {
     const [form, setForm] = useState({
@@ -13,9 +12,9 @@ function Register() {
         phone: '',
     });
     const [error, setError] = useState('');
+    const [success, setSuccess] = useState('');
     const [loading, setLoading] = useState(false);
 
-    const { loginUser } = useAuth();
     const navigate = useNavigate();
 
     const handleChange = (e) => {
@@ -36,15 +35,17 @@ function Register() {
         setLoading(true);
 
         try {
-            const response = await register({
+            await register({
                 first_name: form.first_name,
                 last_name: form.last_name,
                 email: form.email,
                 password: form.password,
                 phone: form.phone,
             });
-            loginUser(response.data.user, response.data.token);
-            navigate('/');
+            setSuccess(
+                'Registracija je uspela. Na vaš elektronski naslov smo poslali ' +
+                'potrditveno povezavo — odprite jo, nato se lahko prijavite.'
+            );
         } catch (err) {
             setError(err.response?.data?.message || 'Prišlo je do napake.');
         } finally {
@@ -60,6 +61,18 @@ function Register() {
 
                 {error && <div className="error">{error}</div>}
 
+                {success ? (
+                    <div>
+                        <div className="success">{success}</div>
+                        <button
+                            className="btn btn-primary"
+                            style={{ width: '100%', marginTop: '16px' }}
+                            onClick={() => navigate('/login')}
+                        >
+                            Pojdi na prijavo
+                        </button>
+                    </div>
+                ) : (
                 <form onSubmit={handleSubmit}>
                     <div style={styles.row}>
                         <div style={styles.half}>
@@ -131,6 +144,7 @@ function Register() {
                         {loading ? 'Ustvarjanje računa...' : 'Ustvari račun'}
                     </button>
                 </form>
+                )}
 
                 <p style={styles.switchText}>
                     Že imate račun?{' '}
