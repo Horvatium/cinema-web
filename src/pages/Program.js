@@ -13,6 +13,10 @@ function Program() {
     const [selectedDate, setSelectedDate] = useState(null);
     const [search, setSearch] = useState('');
     const navigate = useNavigate();
+        const utcDatumKljuc = (isoNiz) => {
+        const d = new Date(isoNiz);
+        return `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, '0')}-${String(d.getUTCDate()).padStart(2, '0')}`;
+    };
 
     useEffect(() => {
         const fetchScreenings = async () => {
@@ -21,10 +25,10 @@ function Program() {
                 const data = Array.isArray(response.data) ? response.data : [];
                 setScreenings(data);
                  if (data.length > 0) {
-                    const firstDate = new Date(data[0].start_time)
-                        .toLocaleDateString('sl-SI', { timeZone: 'UTC' });
+                const firstDate = utcDatumKljuc(data[0].start_time);
                     setSelectedDate(firstDate);
                 }
+                
             } catch (_err) {
                 setScreenings([]);
             } finally {
@@ -35,14 +39,14 @@ function Program() {
     }, []);
 
     // pridobi unikatne datume
-    const dates = [...new Set(
-        screenings.map(s => new Date(s.start_time).toLocaleDateString('sl-SI', { timeZone: 'UTC' }))
+        const dates = [...new Set(
+        screenings.map(s => utcDatumKljuc(s.start_time))
     )].slice(0, 7);
 
     // Združi predstave po filmih za izbrani datum
     const filmMap = {};
     screenings
-        .filter(s => search || new Date(s.start_time).toLocaleDateString('sl-SI', { timeZone: 'UTC' }) === selectedDate)
+    .filter(s => search || utcDatumKljuc(s.start_time) === selectedDate)
 .filter(s => !search || s.film_title?.toLowerCase()
     .includes(search.toLowerCase()))
         .forEach(s => {
@@ -73,16 +77,16 @@ Object.values(filmMap).forEach(f =>
 
     const films = Object.values(filmMap);
 
-    const formatDate = (dateStr) => {
+        const formatDate = (dateStr) => {
         const d = new Date(dateStr);
-        const today = new Date().toDateString();
-        const tomorrow = new Date(
-            Date.now() + 86400000
-        ).toDateString();
+        const zdaj = new Date();
+        const today = `${zdaj.getFullYear()}-${String(zdaj.getMonth() + 1).padStart(2, '0')}-${String(zdaj.getDate()).padStart(2, '0')}`;
+        const jutriDatum = new Date(Date.now() + 86400000);
+        const tomorrow = `${jutriDatum.getFullYear()}-${String(jutriDatum.getMonth() + 1).padStart(2, '0')}-${String(jutriDatum.getDate()).padStart(2, '0')}`;
         if (dateStr === today) return { day: 'Danes', date: '' };
         if (dateStr === tomorrow) return { day: 'Jutri', date: '' };
         return {
-            day: d.toLocaleDateString('sl-SI', { weekday: 'short', timeZone: 'UTC', }),
+            day: d.toLocaleDateString('sl-SI', { weekday: 'short', timeZone: 'UTC' }),
             date: d.toLocaleDateString('sl-SI', {
                 day: 'numeric', month: 'short', timeZone: 'UTC',
             })
