@@ -62,10 +62,10 @@ function Login() {
                         {resendMessage ? (
                             <p style={styles.resendMessage}>{resendMessage}</p>
                         ) : (
-                            <button
+                                                        <button
                                 type="button"
-                                className="btn btn-secondary"
-                                style={{ width: '100%' }}
+                                className="btn"
+                                style={styles.resendBtn}
                                 onClick={handleResend}
                                 disabled={resending || !email}
                             >
@@ -141,6 +141,12 @@ const styles = {
         color: '#aaa',
         fontSize: '14px',
         textAlign: 'center',
+    },
+        resendBtn: {
+        width: '100%',
+        background: 'rgba(123,97,255,0.15)',
+        color: '#7b61ff',
+        border: '1px solid rgba(123,97,255,0.4)',
     },
     switchText: {
         textAlign: 'center',
