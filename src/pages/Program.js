@@ -20,9 +20,9 @@ function Program() {
                 const response = await getScreenings();
                 const data = Array.isArray(response.data) ? response.data : [];
                 setScreenings(data);
-                if (data.length > 0) {
+                 if (data.length > 0) {
                     const firstDate = new Date(data[0].start_time)
-                        .toDateString();
+                        .toLocaleDateString('sl-SI', { timeZone: 'UTC' });
                     setSelectedDate(firstDate);
                 }
             } catch (_err) {
@@ -36,13 +36,13 @@ function Program() {
 
     // pridobi unikatne datume
     const dates = [...new Set(
-        screenings.map(s => new Date(s.start_time).toDateString())
+        screenings.map(s => new Date(s.start_time).toLocaleDateString('sl-SI', { timeZone: 'UTC' }))
     )].slice(0, 7);
 
     // Združi predstave po filmih za izbrani datum
     const filmMap = {};
     screenings
-        .filter(s => search || new Date(s.start_time).toDateString() === selectedDate)
+        .filter(s => search || new Date(s.start_time).toLocaleDateString('sl-SI', { timeZone: 'UTC' }) === selectedDate)
 .filter(s => !search || s.film_title?.toLowerCase()
     .includes(search.toLowerCase()))
         .forEach(s => {
