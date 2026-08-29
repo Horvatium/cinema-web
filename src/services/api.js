@@ -49,6 +49,12 @@ export const addScreening = (data) => api.post('/screenings', data);
 export const updateScreening = (id, data) => api.put(`/screenings/${id}`, data);
 export const deleteScreening = (id) => api.delete(`/screenings/${id}`);
 
+// Dvorane
+export const getRooms = () => api.get('/rooms');
+export const addRoom = (data) => api.post('/rooms', data);
+export const updateRoom = (id, data) => api.put(`/rooms/${id}`, data);
+export const deleteRoom = (id) => api.delete(`/rooms/${id}`);
+
 // Rezervacije
 export const getMyReservations = () => api.get('/reservations/my');
 export const getAllReservations = () => api.get('/reservations');

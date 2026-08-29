@@ -1,6 +1,6 @@
 import {
     getFilms, addFilm, updateFilm, deleteFilm,
-    getScreenings, addScreening, updateScreening, deleteScreening,
+    getScreenings, addScreening, updateScreening, deleteScreening, getRooms, addRoom, updateRoom, deleteRoom,
     getAllReservations, uploadPoster
 } from '../services/api';
 import { useState, useEffect } from 'react';
@@ -14,7 +14,7 @@ function Admin() {
 
             {/* vrstica z zavihki */}
             <div style={styles.tabBar}>
-                {['screenings', 'films', 'reservations'].map(t => (
+                {['screenings', 'films', 'rooms','reservations'].map(t => (
                     <button
                         key={t}
                         onClick={() => setTab(t)}
@@ -24,13 +24,14 @@ function Admin() {
                             background: tab === t ? '#e50914' : '#222',
                         }}
                     >
-                        {{ screenings: 'Predvajanja', films: 'Filmi', reservations: 'Rezervacije' }[t]}
+                        {{ screenings: 'Predvajanja', films: 'Filmi', rooms: 'Dvorane', reservations: 'Rezervacije' }[t]}
                     </button>
                 ))}
             </div>
 
             {tab === 'screenings' && <ScreeningsTab />}
             {tab === 'films' && <FilmsTab />}
+            {tab === 'rooms' && <RoomsTab />}
             {tab === 'reservations' && <ReservationsTab />}
         </div>
     );
@@ -739,6 +740,137 @@ const handlePosterUpload = async (e) => {
                             className="btn btn-danger"
                             onClick={() => handleDelete(film.id)}
                         >
+                            Izbriši
+                        </button>
+                    </div>
+                </div>
+            ))}
+        </div>
+    );
+}
+
+// zavihek dvoran
+function RoomsTab() {
+    const [rooms, setRooms] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState('');
+    const [success, setSuccess] = useState('');
+    const [form, setForm] = useState({ name: '', capacity: '' });
+    const [editingId, setEditingId] = useState(null);
+
+    const nalozi = () => {
+        getRooms()
+            .then(res => setRooms(res.data))
+            .catch(() => setError('Dvoran ni bilo možno naložiti.'))
+            .finally(() => setLoading(false));
+    };
+
+    useEffect(() => { nalozi(); }, []);
+
+    const handleChange = (e) => {
+        setForm({ ...form, [e.target.name]: e.target.value });
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setError('');
+        setSuccess('');
+        try {
+            if (editingId) {
+                await updateRoom(editingId, form);
+                setSuccess('Dvorana posodobljena!');
+            } else {
+                await addRoom(form);
+                setSuccess('Dvorana dodana!');
+            }
+            setForm({ name: '', capacity: '' });
+            setEditingId(null);
+            nalozi();
+        } catch (err) {
+            setError(err.response?.data?.message ||
+                (editingId ? 'Dvorane ni bilo možno posodobiti.' : 'Dvorane ni bilo možno dodati.'));
+        }
+    };
+
+    const handleEdit = (room) => {
+        setEditingId(room.id);
+        setForm({ name: room.name, capacity: room.capacity });
+        setError('');
+        setSuccess('');
+    };
+
+    const handleCancelEdit = () => {
+        setEditingId(null);
+        setForm({ name: '', capacity: '' });
+    };
+
+    const handleDelete = async (id) => {
+        if (!window.confirm('Ste prepričani, da želite izbrisati to dvorano?')) return;
+        try {
+            await deleteRoom(id);
+            nalozi();
+        } catch (err) {
+            setError(err.response?.data?.message || 'Dvorane ni bilo možno izbrisati.');
+        }
+    };
+
+    if (loading) return <p style={{ color: '#aaa' }}>Nalagam...</p>;
+
+    return (
+        <div>
+            <h2 style={styles.sectionTitle}>
+                {editingId ? 'Uredi dvorano' : 'Dodaj novo dvorano'}
+            </h2>
+
+            {error && <div className="error">{error}</div>}
+            {success && <div className="success">{success}</div>}
+
+            <form onSubmit={handleSubmit} className="card" style={{ marginBottom: '30px' }}>
+                <div style={styles.row}>
+                    <div style={styles.half}>
+                        <label>Ime dvorane</label>
+                        <input
+                            name="name"
+                            value={form.name}
+                            onChange={handleChange}
+                            required
+                        />
+                    </div>
+                    <div style={styles.half}>
+                        <label>Število sedežev</label>
+                        <input
+                            name="capacity"
+                            type="number"
+                            value={form.capacity}
+                            onChange={handleChange}
+                            required
+                        />
+                    </div>
+                </div>
+                <div style={{ display: 'flex', gap: '10px', marginTop: '16px' }}>
+                    <button type="submit" className="btn btn-primary">
+                        {editingId ? 'Shrani spremembe' : 'Dodaj dvorano'}
+                    </button>
+                    {editingId && (
+                        <button type="button" className="btn btn-secondary" onClick={handleCancelEdit}>
+                            Prekliči
+                        </button>
+                    )}
+                </div>
+            </form>
+
+            <h2 style={styles.sectionTitle}>Seznam dvoran ({rooms.length})</h2>
+            {rooms.map(r => (
+                <div key={r.id} className="card" style={styles.listItem}>
+                    <div>
+                        <strong>{r.name}</strong>
+                        <p style={styles.meta}>💺 {r.capacity} sedežev</p>
+                    </div>
+                    <div style={{ display: 'flex', gap: '8px' }}>
+                        <button className="btn btn-secondary" onClick={() => handleEdit(r)}>
+                            Uredi
+                        </button>
+                        <button className="btn btn-danger" onClick={() => handleDelete(r.id)}>
                             Izbriši
                         </button>
                     </div>
