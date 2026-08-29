@@ -34,6 +34,7 @@ api.interceptors.response.use(
 // Avtorizacija
 export const register = (data) => api.post('/auth/register', data);
 export const login = (data) => api.post('/auth/login', data);
+export const resendVerification = (email) => api.post('/auth/resend-verification', { email });
 
 // Filmi
 export const getFilms = () => api.get('/films');

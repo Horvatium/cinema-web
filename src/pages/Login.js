@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { login } from '../services/api';
+import { login, resendVerification } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 
 function Login() {
@@ -8,6 +8,9 @@ function Login() {
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
+    const [needsVerification, setNeedsVerification] = useState(false);
+    const [resendMessage, setResendMessage] = useState('');
+    const [resending, setResending] = useState(false);
 
     const { loginUser } = useAuth();
     const navigate = useNavigate();
@@ -15,6 +18,8 @@ function Login() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
+        setResendMessage('');
+        setNeedsVerification(false);
         setLoading(true);
 
         try {
@@ -23,8 +28,24 @@ function Login() {
             navigate('/');
         } catch (err) {
             setError(err.response?.data?.message || 'Prišlo je do napake.');
+            if (err.response?.data?.requiresVerification) {
+                setNeedsVerification(true);
+            }
         } finally {
             setLoading(false);
+        }
+    };
+
+    const handleResend = async () => {
+        setResending(true);
+        setResendMessage('');
+        try {
+            const response = await resendVerification(email);
+            setResendMessage(response.data.message);
+        } catch (err) {
+            setResendMessage('Sporočila ni bilo mogoče poslati. Poskusite znova.');
+        } finally {
+            setResending(false);
         }
     };
 
@@ -35,6 +56,24 @@ function Login() {
                 <p style={styles.subtitle}>Prijavite se v svoj račun</p>
 
                 {error && <div className="error">{error}</div>}
+
+                {needsVerification && (
+                    <div style={styles.resendBox}>
+                        {resendMessage ? (
+                            <p style={styles.resendMessage}>{resendMessage}</p>
+                        ) : (
+                            <button
+                                type="button"
+                                className="btn btn-secondary"
+                                style={{ width: '100%' }}
+                                onClick={handleResend}
+                                disabled={resending || !email}
+                            >
+                                {resending ? 'Pošiljanje...' : 'Znova pošlji potrditveno povezavo'}
+                            </button>
+                        )}
+                    </div>
+                )}
 
                 <form onSubmit={handleSubmit}>
                     <label>E-poštni naslov</label>
@@ -94,6 +133,14 @@ const styles = {
     subtitle: {
         color: '#aaa',
         marginBottom: '24px',
+    },
+    resendBox: {
+        marginBottom: '16px',
+    },
+    resendMessage: {
+        color: '#aaa',
+        fontSize: '14px',
+        textAlign: 'center',
     },
     switchText: {
         textAlign: 'center',
