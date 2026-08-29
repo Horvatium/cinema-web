@@ -49,6 +49,7 @@ function ScreeningsTab() {
     const [addForm, setAddForm] = useState({
         film_id: '', room_id: '', start_time: '', end_time: '', price: ''
     });
+        const [rooms, setRooms] = useState([]);
 
     // Uredi stanje
     const [editingId, setEditingId] = useState(null);
@@ -56,11 +57,12 @@ function ScreeningsTab() {
         film_id: '', room_id: '', start_time: '', end_time: '', price: ''
     });
 
-    useEffect(() => {
-        Promise.all([getScreenings(), getFilms()])
-            .then(([sRes, fRes]) => {
+       useEffect(() => {
+        Promise.all([getScreenings(), getFilms(), getRooms()])
+            .then(([sRes, fRes, rRes]) => {
                 setScreenings(sRes.data);
                 setFilms(fRes.data);
+                setRooms(rRes.data);
             })
             .catch(() => setError('Podatkov ni bilo mogoče naložiti.'))
             .finally(() => setLoading(false));
@@ -160,11 +162,11 @@ function ScreeningsTab() {
         }
     };
 
-    const rooms = [
+    /*const rooms = [
         { id: '1', name: 'Dvorana 1' },
         { id: '2', name: 'Dvorana 2' },
         { id: '3', name: 'VIP Dvorana' },
-    ];
+    ];*/
 
     if (loading) return <p style={{ color: '#aaa' }}>Nalaganje...</p>;
 
