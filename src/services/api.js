@@ -69,3 +69,7 @@ export const uploadPoster = (formData) => api.post('/upload/poster', formData, {
 export const createPaymentIntent = (data) => api.post('/payments/create-intent', data);
 export const confirmPayment = (data) => api.post('/payments/confirm', data);
 export const cancelPaymentIntent = (data) => api.post('/payments/cancel-intent', data);
+
+// Uporabniki
+export const getUsers = () => api.get('/users');
+export const deleteUser = (id) => api.delete(`/users/${id}`);
