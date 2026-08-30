@@ -1,7 +1,7 @@
 import {
     getFilms, addFilm, updateFilm, deleteFilm,
     getScreenings, addScreening, updateScreening, deleteScreening, getRooms, addRoom, updateRoom, deleteRoom,
-    getAllReservations, uploadPoster
+    getAllReservations, uploadPoster, getUsers, deleteUser
 } from '../services/api';
 import { useState, useEffect } from 'react';
 
@@ -14,7 +14,7 @@ function Admin() {
 
             {/* vrstica z zavihki */}
             <div style={styles.tabBar}>
-                {['screenings', 'films', 'rooms','reservations'].map(t => (
+                {['screenings', 'films', 'rooms','reservations','users'].map(t => (
                     <button
                         key={t}
                         onClick={() => setTab(t)}
@@ -24,7 +24,7 @@ function Admin() {
                             background: tab === t ? '#e50914' : '#222',
                         }}
                     >
-                        {{ screenings: 'Predvajanja', films: 'Filmi', rooms: 'Dvorane', reservations: 'Rezervacije' }[t]}
+                        {{ screenings: 'Predvajanja', films: 'Filmi', rooms: 'Dvorane', reservations: 'Rezervacije', users: 'Uporabniki' }[t]}
                     </button>
                 ))}
             </div>
@@ -33,6 +33,7 @@ function Admin() {
             {tab === 'films' && <FilmsTab />}
             {tab === 'rooms' && <RoomsTab />}
             {tab === 'reservations' && <ReservationsTab />}
+            {tab === 'users' && <UsersTab />}
         </div>
     );
 }
@@ -941,6 +942,54 @@ function ReservationsTab() {
                     </div>
                 ))
             )}
+        </div>
+    );
+}
+
+// zavihek z uporabniki
+function UsersTab() {
+    const [users, setUsers] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState('');
+
+    useEffect(() => {
+        getUsers()
+            .then(res => setUsers(res.data))
+            .catch(() => setError('Uporabnikov ni bilo mogoče naložiti.'))
+            .finally(() => setLoading(false));
+    }, []);
+
+    const handleDelete = async (id) => {
+        if (!window.confirm('Izbrišete tega uporabnika? Izbrisane bodo tudi vse njegove rezervacije.')) return;
+        try {
+            await deleteUser(id);
+            setUsers(users.filter(u => u.id !== id));
+        } catch (err) {
+            setError(err.response?.data?.message || 'Uporabnika ni bilo možno izbrisati.');
+        }
+    };
+
+    if (loading) return <p style={{ color: '#aaa' }}>Nalaganje...</p>;
+
+    return (
+        <div>
+            {error && <div className="error">{error}</div>}
+            {users.map(u => (
+                <div
+                    key={u.id}
+                    className="card"
+                    style={{ marginBottom: '10px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
+                >
+                    <div>
+                        <strong>{u.first_name} {u.last_name}</strong>{' '}
+                        ({u.role === 'admin' ? 'skrbnik' : 'stranka'})
+                        <div style={{ fontSize: '13px', color: '#aaa' }}>{u.email}</div>
+                    </div>
+                    <button className="btn btn-danger" onClick={() => handleDelete(u.id)}>
+                        Izbriši
+                    </button>
+                </div>
+            ))}
         </div>
     );
 }

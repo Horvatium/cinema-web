@@ -28,7 +28,7 @@ podatke in obravnava avtentikacijo ter plačila.
 - Izbira sedežev na interaktivnem zemljevidu dvorane
 - Spletno plačilo vstopnic prek sistema Stripe
 - Pregled in preklic lastnih rezervacij
-- Skrbniška plošča za upravljanje filmov, predvajanj in rezervacij
+- Skrbniška plošča za upravljanje filmov, predvajanj, dvoran in rezervacij
 
 ## Zagon projekta
 
