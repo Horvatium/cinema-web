@@ -11,6 +11,45 @@ const optimizeImg = (url, width) => {
     return url.replace('/original/', `/w${width}/`);
 };
 
+// Shranjevanje zadržane rezervacije med plačilom, da plačilni obrazec preživi
+// osvežitev strani. Stanje komponente se ob osvežitvi izgubi, rezervacija na
+// zaledju pa ostane "pending" do izteka — brez tega uporabnik obrazca ne bi
+// več videl, čeprav je zadržanje sedežev še vedno veljavno.
+const HOLD_KEY = 'kinoplex_payment_hold';
+
+const loadPaymentHold = (screeningId) => {
+    try {
+        const raw = sessionStorage.getItem(HOLD_KEY);
+        if (!raw) return null;
+        const hold = JSON.parse(raw);
+        if (String(hold.screeningId) !== String(screeningId)) return null;
+        if (!hold.expiresAt || new Date(hold.expiresAt).getTime() <= Date.now()) {
+            sessionStorage.removeItem(HOLD_KEY);
+            return null;
+        }
+        return hold;
+    } catch (_err) {
+        return null;
+    }
+};
+
+const savePaymentHold = (hold) => {
+    try {
+        sessionStorage.setItem(HOLD_KEY, JSON.stringify(hold));
+    } catch (_err) {
+        // sessionStorage ni na voljo (npr. zaseben način brskanja) — obnovitev
+        // po osvežitvi preprosto ne bo delovala, na samo plačilo to ne vpliva
+    }
+};
+
+const clearPaymentHold = () => {
+    try {
+        sessionStorage.removeItem(HOLD_KEY);
+    } catch (_err) {
+        // ni česa počistiti
+    }
+};
+
 function FilmDetail() {
     const { id } = useParams();
     const { state } = useLocation();
@@ -50,6 +89,36 @@ function FilmDetail() {
         fetchSeats();
     }, [fetchSeats]);
 
+    // Če je bila rezervacija zadržana (klik na "Nadaljuj na plačilo"), stran pa je
+    // bila medtem osvežena, tukaj poskusimo plačilni obrazec obnoviti iz
+    // sessionStorage namesto da uporabnika pustimo brez obrazca do izteka
+    // desetih minut zadržanja.
+    useEffect(() => {
+        const hold = loadPaymentHold(id);
+        if (!hold) return;
+
+        let preklicano = false;
+
+        (async () => {
+            try {
+                const stripe = await loadStripe(hold.publishableKey);
+                if (preklicano) return;
+                setStripePromise(Promise.resolve(stripe));
+                setClientSecret(hold.clientSecret);
+                setTotalPrice(hold.totalPrice);
+                setExpiresAt(hold.expiresAt);
+                setReservationId(hold.reservationId);
+                setSelectedSeats(hold.seats || []);
+                setShowPayment(true);
+            } catch (_err) {
+                clearPaymentHold();
+            }
+        })();
+
+        return () => { preklicano = true; };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [id]);
+
     const toggleSeat = (seat) => {
         if (seat.status === 'taken') return;
         setSelectedSeats(prev => {
@@ -83,6 +152,18 @@ function FilmDetail() {
             setReservationId(response.data.reservation_id);
             setShowPayment(true);
 
+            savePaymentHold({
+                screeningId: id,
+                reservationId: response.data.reservation_id,
+                clientSecret: response.data.clientSecret,
+                totalPrice: response.data.total_price,
+                expiresAt: response.data.expires_at,
+                publishableKey: response.data.publishableKey,
+                seats: selectedSeats.map(s => ({
+                    id: s.id, row_label: s.row_label, seat_number: s.seat_number,
+                })),
+            });
+
         } catch (err) {
             setError(err.response?.data?.message || 'Napaka pri pripravi plačila.');
         } finally {
@@ -91,6 +172,7 @@ function FilmDetail() {
     };
 
     const handlePaymentSuccess = (data) => {
+        clearPaymentHold();
         setSuccess(`Plačilo uspešno! ${selectedSeats.length} sedež/ev rezerviranih.`);
         setShowPayment(false);
         setSelectedSeats([]);
@@ -108,6 +190,7 @@ function FilmDetail() {
                 // Če sprostitev ne uspe, zadržanje poteče samo od sebe
             }
         }
+        clearPaymentHold();
         setShowPayment(false);
         setClientSecret('');
         setExpiresAt(null);
@@ -116,6 +199,7 @@ function FilmDetail() {
     };
 
     const handlePaymentExpire = useCallback(() => {
+        clearPaymentHold();
         setShowPayment(false);
         setClientSecret('');
         setExpiresAt(null);
@@ -213,7 +297,7 @@ function FilmDetail() {
                                     rel="noreferrer"
                                     style={styles.imdbBtn}
                                 >
-                                    IMDB
+                                    IMDb
                                 </a>
                             )}
                             {film?.trailer_url && (
