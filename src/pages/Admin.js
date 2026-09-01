@@ -519,12 +519,12 @@ const handlePosterUpload = async (e) => {
     };
 
     const handleDelete = async (id) => {
-        if (!window.confirm('Izbrišete ta film? Izbrisana bodo tudi vsa njegova predvajanja.')) return;
+        if (!window.confirm('Izbrišete ta film?')) return;
         try {
             await deleteFilm(id);
             setFilms(films.filter(f => f.id !== id));
         } catch (err) {
-            setError('Filma ni bilo možno izbrisati.');
+            setError(err.response?.data?.message || 'Filma ni bilo možno izbrisati.');
         }
     };
 

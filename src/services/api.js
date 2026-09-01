@@ -59,7 +59,6 @@ export const deleteRoom = (id) => api.delete(`/rooms/${id}`);
 // Rezervacije
 export const getMyReservations = () => api.get('/reservations/my');
 export const getAllReservations = () => api.get('/reservations');
-export const createReservation = (data) => api.post('/reservations', data);
 export const cancelReservation = (id) => api.put(`/reservations/${id}/cancel`);
 export const uploadPoster = (formData) => api.post('/upload/poster', formData, {
     headers: { 'Content-Type': 'multipart/form-data' }
