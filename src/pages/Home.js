@@ -222,7 +222,12 @@ function Home() {
         </p>
     </div>
 </div>
-<form onSubmit={handleHomeSearch} style={styles.homeSearchWrap}>
+
+
+                {/* ── Predogled programa ── */}
+                {!loading && films.length > 0 && (
+                    <div style={styles.section}>
+                        <form onSubmit={handleHomeSearch} style={styles.homeSearchWrap}>
     <input
         placeholder="🔍 Išči filme..."
         value={homeSearch}
@@ -230,10 +235,6 @@ function Home() {
         style={styles.homeSearchInput}
     />
 </form>
-
-                {/* ── Predogled programa ── */}
-                {!loading && films.length > 0 && (
-                    <div style={styles.section}>
                         <div style={styles.sectionHeader}>
                             <span style={styles.sectionLabel}>
                                 TRENUTNO NA SPOREDU
@@ -713,7 +714,7 @@ storeBadge: {
 },
 homeSearchWrap: {
     maxWidth: '480px',
-    margin: '0 auto 32px',
+    margin: '0 0 12px',
     padding: '0 20px',
 },
 homeSearchInput: {

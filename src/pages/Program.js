@@ -59,7 +59,7 @@ const [search, setSearch] = useState(searchParams.get('q') || '');
     // Združi predstave po filmih za izbrani datum
     const filmMap = {};
     screenings
-    .filter(s => search || new Date(s.start_time).toDateString() === selectedDate)
+    .filter(s => search || utcDatumKljuc(s.start_time) === selectedDate)
     .filter(s => {
         if (!search) return true;
         const q = search.toLowerCase();
