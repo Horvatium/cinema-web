@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { getMyReservations, cancelReservation } from '../services/api';
 
+// Pregled vstopnic prijavljenega uporabnika z možnostjo preklica.
+// Podatke vrne pot /reservations/my, ki vrne le rezervacije tega uporabnika.
 function MyReservations() {
     const [reservations, setReservations] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -10,6 +12,7 @@ function MyReservations() {
         fetchReservations();
     }, []);
 
+    // Po preklicu seznam znova naložimo, da se stanje ujema z bazo
     const fetchReservations = async () => {
         try {
             const response = await getMyReservations();
@@ -21,6 +24,7 @@ function MyReservations() {
         }
     };
 
+    // Preklic zahteva potrditev, ker ga ni mogoče razveljaviti
     const handleCancel = async (id) => {
         if (!window.confirm('Ste prepričani, da želite preklicati to rezervacijo??')) return;
 
@@ -32,6 +36,7 @@ function MyReservations() {
         }
     };
 
+    // Barva značke glede na stanje rezervacije
     const getStatusStyle = (status) => {
         switch (status) {
             case 'confirmed': return { color: '#2ecc71' };
@@ -106,6 +111,8 @@ function MyReservations() {
                                     {reservation.status.toUpperCase()}
                                 </span>
 
+                                {/* Preklic ponudimo samo pri potrjenih rezervacijah
+                                    za predvajanja, ki se še niso začela */}
                                 {reservation.status === 'confirmed' &&
                                  new Date(reservation.start_time) > new Date() && (
                                     <button

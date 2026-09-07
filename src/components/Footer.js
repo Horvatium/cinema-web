@@ -1,6 +1,8 @@
 import { Link } from 'react-router-dom';
 import logo from '../logo-transparent.png';
 
+// Noga strani s tremi stolpci (opis, navigacija, kontakt). Statična
+// vsebina brez povezave z zaledjem.
 function Footer() {
     return (
         <footer style={styles.footer}>

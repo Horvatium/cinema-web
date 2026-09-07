@@ -7,12 +7,16 @@ const optimizeImg = (url, width) => {
     return url.replace('/original/', `/w${width}/`);
 };
 
+// Spored: filmi, razvrščeni po dnevih, z izbirnikom datuma in iskalnikom.
+// Ob vpisanem iskalnem nizu se izbira datuma prezre in išče se po vsem sporedu.
 function Program() {
     const [screenings, setScreenings] = useState([]);
     const [loading, setLoading] = useState(true);
     const [selectedDate, setSelectedDate] = useState(null);
     const [search, setSearch] = useState('');
     const navigate = useNavigate();
+    // Ključ dneva v obliki LLLL-MM-DD, sestavljen iz UTC komponent. Krajevni
+    // pas bi predvajanje pozno zvečer lahko prestavil na napačen dan.
         const utcDatumKljuc = (isoNiz) => {
         const d = new Date(isoNiz);
         return `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, '0')}-${String(d.getUTCDate()).padStart(2, '0')}`;
@@ -38,11 +42,14 @@ function Program() {
         fetchScreenings();
     }, []);
 
+    // Iz sporeda vzamemo prvih sedem različnih dni za vrstico z datumi
     // pridobi unikatne datume
         const dates = [...new Set(
         screenings.map(s => utcDatumKljuc(s.start_time))
     )].slice(0, 7);
 
+    // Prvi filter izbere dan (ali ga ob iskanju prezre), drugi pa filtrira
+    // po naslovu filma; preostanek se združi po filmih kot na domači strani
     // Združi predstave po filmih za izbrani datum
     const filmMap = {};
     screenings
@@ -77,6 +84,7 @@ Object.values(filmMap).forEach(f =>
 
     const films = Object.values(filmMap);
 
+    // Prva dva dneva izpišemo kot "Danes" in "Jutri", ostale z dnevom v tednu
         const formatDate = (dateStr) => {
         const d = new Date(dateStr);
         const zdaj = new Date();
@@ -215,6 +223,9 @@ Object.values(filmMap).forEach(f =>
                                             key={s.id}
                                             style={styles.timeChip}
                                             onClick={(e) => {
+                                                // Brez tega bi klik na uro sprožil še
+                                                // klik na celotno vrstico in odprl
+                                                // napačno predvajanje
                                                 e.stopPropagation();
                                                 navigate(
                                                     `/films/${s.id}`,

@@ -5,6 +5,10 @@ import {
 } from '../services/api';
 import { useState, useEffect } from 'react';
 
+// Skrbniška plošča. Do nje pride samo uporabnik z vlogo admin (glej
+// ProtectedRoute v App.js), pravice pa pri vsakem klicu preveri še zaledje.
+// Vsak zavihek je samostojna komponenta s svojim stanjem in svojimi klici,
+// tako da se podatki naložijo šele ob odprtju zavihka.
 function Admin() {
     const [tab, setTab] = useState('screenings');
 
@@ -14,6 +18,7 @@ function Admin() {
 
             {/* vrstica z zavihki */}
             <div style={styles.tabBar}>
+                {/* Gumbi zavihkov; slovenska imena so v preslikavi spodaj */}
                 {['screenings', 'films', 'rooms','reservations','users'].map(t => (
                     <button
                         key={t}
@@ -38,6 +43,9 @@ function Admin() {
     );
 }
 
+// ── ZAVIHEK PREDVAJANJA ──────────────────────────────────────────────────
+// Dodajanje, urejanje in brisanje predvajanj. Brisanje na zaledju samodejno
+// prekliče rezervacije, obvesti stranke in jim vrne denar.
 // vrstica s predstavami
 function ScreeningsTab() {
     const [screenings, setScreenings] = useState([]);
@@ -46,6 +54,8 @@ function ScreeningsTab() {
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
 
+    // Obrazca za dodajanje in urejanje sta ločena, da odprto urejanje ene
+    // vrstice ne pobriše vnosov v obrazcu za novo predvajanje
     // Dodaj stanje obrazca
     const [addForm, setAddForm] = useState({
         film_id: '', room_id: '', start_time: '', end_time: '', price: ''
@@ -58,6 +68,8 @@ function ScreeningsTab() {
         film_id: '', room_id: '', start_time: '', end_time: '', price: ''
     });
 
+    // Vse tri sezname naložimo vzporedno; filmi in dvorane napolnijo
+    // spustna seznama v obrazcu
        useEffect(() => {
         Promise.all([getScreenings(), getFilms(), getRooms()])
             .then(([sRes, fRes, rRes]) => {
@@ -78,6 +90,8 @@ function ScreeningsTab() {
         setAddForm({ ...addForm, [e.target.name]: e.target.value });
     };
 
+    // Dodajanje predvajanja. Zaledje zavrne prekrivanje v isti dvorani (409),
+    // zato sporočilo o napaki prikažemo takšno, kot ga vrne.
     const handleAdd = async (e) => {
         e.preventDefault();
         setError('');
@@ -95,6 +109,7 @@ function ScreeningsTab() {
         }
     };
 
+    // Brisanje je nepovratno in prizadene stranke, zato zahtevamo potrditev
     const handleDelete = async (id) => {
         if (!window.confirm('Želite izbrisati to predstavo? Vse rezervacije bodo preklicane..')) return;
         try {
@@ -115,6 +130,8 @@ function ScreeningsTab() {
 
         // Pretvori datum in čas v lokalno obliko za vnos datuma in časa
 
+        // Polje datetime-local pričakuje obliko LLLL-MM-DDTuu:mm brez oznake
+        // časovnega pasu, zato odmik odštejemo, preden vrednost obrežemo
         const toLocalInput = (dateStr) => {
             const d = new Date(dateStr);
             const offset = d.getTimezoneOffset();
@@ -148,6 +165,8 @@ function ScreeningsTab() {
         setError('');
         setSuccess('');
         try {
+            // Zaledje sporoči, koliko potrjenih rezervacij sprememba prizadene,
+            // da lahko skrbnika na to opozorimo
             const response = await updateScreening(editingId, editForm);
             const affected = response.data.affectedReservations;
             setSuccess(
@@ -398,6 +417,9 @@ const PRAZEN_FILM = {
     imdb_url: '', trailer_url: '', cast_members: ''
 };
 
+// ── ZAVIHEK FILMI ────────────────────────────────────────────────────────
+// Isti obrazec služi dodajanju in urejanju: če je editingId nastavljen,
+// gre za popravek obstoječega filma, sicer za novega.
 function FilmsTab() {
     const [uploading, setUploading] = useState(false);
     const [posterPreview, setPosterPreview] = useState('');
@@ -421,6 +443,8 @@ function FilmsTab() {
         setForm({ ...form, [e.target.name]: e.target.value });
     };
 
+// Nalaganje pasice (ozadja). Uporablja isto pot kot plakat, zato je ime
+// polja v obrazcu prav tako "poster"; razlikuje se le, kam se naslov shrani.
 const handleBackdropUpload = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -440,6 +464,8 @@ const handleBackdropUpload = async (e) => {
     }
 };
 
+// Nalaganje plakata: datoteko pošljemo kot FormData, zaledje jo preveri in
+// shrani, nazaj pa vrne javni naslov, ki ga zapišemo v obrazec
 const handlePosterUpload = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -484,6 +510,8 @@ const handlePosterUpload = async (e) => {
         }
     };
 
+    // Vsa polja nastavimo na prazen niz namesto null, ker React sicer
+    // opozori na prehod iz neupravljanega v upravljano vnosno polje
     // Napolni obrazec s podatki izbranega filma
     const handleEdit = (film) => {
         setEditingId(film.id);
@@ -753,6 +781,9 @@ const handlePosterUpload = async (e) => {
 }
 
 // zavihek dvoran
+// ── ZAVIHEK DVORANE ──────────────────────────────────────────────────────
+// Ob ustvarjanju dvorane zaledje samodejno zgenerira tudi vse sedeže po
+// vrstah (A, B, C ...), zato tu vnašamo le ime in kapaciteto.
 function RoomsTab() {
     const [rooms, setRooms] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -761,6 +792,7 @@ function RoomsTab() {
     const [form, setForm] = useState({ name: '', capacity: '' });
     const [editingId, setEditingId] = useState(null);
 
+    // Seznam naložimo ob prvem izrisu in po vsaki spremembi
     const nalozi = () => {
         getRooms()
             .then(res => setRooms(res.data))
@@ -884,6 +916,9 @@ function RoomsTab() {
 }
 
 // zavihek rezervacij
+// ── ZAVIHEK REZERVACIJE ──────────────────────────────────────────────────
+// Samo pregled vseh rezervacij vseh strank; skrbnik jih tu ne more
+// spreminjati. Zadržanja med plačilom ('pending') zaledje izpusti.
 function ReservationsTab() {
     const [reservations, setReservations] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -946,6 +981,9 @@ function ReservationsTab() {
     );
 }
 
+// ── ZAVIHEK UPORABNIKI ───────────────────────────────────────────────────
+// Seznam računov in brisanje. Zaledje prepreči brisanje lastnega računa in
+// zadnjega preostalega skrbnika.
 // zavihek z uporabniki
 function UsersTab() {
     const [users, setUsers] = useState([]);
@@ -959,6 +997,8 @@ function UsersTab() {
             .finally(() => setLoading(false));
     }, []);
 
+    // Brisanje uporabnika zaradi tujih ključev (ON DELETE CASCADE) odnese
+    // tudi vse njegove rezervacije
     const handleDelete = async (id) => {
         if (!window.confirm('Izbrišete tega uporabnika? Izbrisane bodo tudi vse njegove rezervacije.')) return;
         try {

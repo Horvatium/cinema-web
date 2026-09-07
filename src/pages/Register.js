@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { register } from '../services/api';
 
+// Registracijska stran. Po uspešni oddaji uporabnika ne prijavi — račun je
+// treba najprej potrditi prek povezave, ki jo zaledje pošlje po e-pošti.
 function Register() {
     const [form, setForm] = useState({
         first_name: '',
@@ -17,6 +19,7 @@ function Register() {
 
     const navigate = useNavigate();
 
+    // En sam rokovalnik za vsa polja: ime polja (name) določa ključ v obrazcu
     const handleChange = (e) => {
         setForm({ ...form, [e.target.name]: e.target.value });
     };
@@ -25,6 +28,8 @@ function Register() {
         e.preventDefault();
         setError('');
 
+        // Preverjanje na odjemalcu je le za hitrejši odziv; zaledje svoja
+        // preverjanja opravi neodvisno
         if (form.password !== form.confirmPassword) {
             return setError('Gesli se ne ujemata.');
         }
@@ -35,6 +40,7 @@ function Register() {
         setLoading(true);
 
         try {
+            // Potrditve gesla ne pošiljamo — zaledju ne koristi
             await register({
                 first_name: form.first_name,
                 last_name: form.last_name,
@@ -61,6 +67,7 @@ function Register() {
 
                 {error && <div className="error">{error}</div>}
 
+                {/* Po uspešni registraciji obrazec zamenja navodilo za potrditev naslova */}
                 {success ? (
                     <div>
                         <div className="success">{success}</div>

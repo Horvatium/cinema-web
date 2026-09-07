@@ -3,11 +3,16 @@ import { Link, useNavigate } from 'react-router-dom';
 import { login, resendVerification } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 
+// Prijavna stran. Ob uspehu shrani sejo prek AuthContext in uporabnika
+// preusmeri na domačo stran; ob nepotrjenem naslovu ponudi ponovno
+// pošiljanje potrditvene povezave.
 function Login() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
+    // Zastavico postavi zaledje (odgovor 403 z requiresVerification), kadar
+    // račun obstaja in je geslo pravilno, naslov pa še ni potrjen
     const [needsVerification, setNeedsVerification] = useState(false);
     const [resendMessage, setResendMessage] = useState('');
     const [resending, setResending] = useState(false);
@@ -15,6 +20,7 @@ function Login() {
     const { loginUser } = useAuth();
     const navigate = useNavigate();
 
+    // Pošiljanje prijavnega obrazca
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
@@ -23,6 +29,8 @@ function Login() {
         setLoading(true);
 
         try {
+            // Žeton in podatke o uporabniku prevzame kontekst, ki ju shrani
+            // v localStorage; od tod naprej jih api.js pripenja vsakemu klicu
             const response = await login({ email, password });
             loginUser(response.data.user, response.data.token);
             navigate('/');
@@ -36,6 +44,8 @@ function Login() {
         }
     };
 
+    // Ponovno pošiljanje potrditvene povezave. Zaledje vrne enako sporočilo
+    // ne glede na izid, zato ga samo prikažemo.
     const handleResend = async () => {
         setResending(true);
         setResendMessage('');
@@ -57,6 +67,7 @@ function Login() {
 
                 {error && <div className="error">{error}</div>}
 
+                {/* Gumb za ponovno pošiljanje se pokaže samo ob nepotrjenem naslovu */}
                 {needsVerification && (
                     <div style={styles.resendBox}>
                         {resendMessage ? (

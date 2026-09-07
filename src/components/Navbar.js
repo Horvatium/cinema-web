@@ -2,10 +2,15 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import logo from '../logo-transparent.png';
 
+// Navigacijska vrstica, prilepljena na vrh vseh strani. Vsebina se prilagodi
+// stanju prijave: gost vidi gumba za prijavo in registracijo, prijavljeni
+// pozdrav in odjavo, skrbnik pa še povezavo na skrbniško ploščo.
 function Navbar() {
     const { user, logoutUser } = useAuth();
     const navigate = useNavigate();
 
+    // Po odjavi uporabnika vrnemo na domačo stran, ker so nekatere
+    // strani brez prijave nedostopne
     const handleLogout = () => {
         logoutUser();
         navigate('/');
@@ -32,6 +37,8 @@ function Navbar() {
                             Moje vstopnice
                         </Link>
                     )}
+                    {/* Povezava na skrbniško ploščo je zgolj skrita, ne zaščitena —
+                        za dostop skrbi ProtectedRoute, za pravice pa zaledje */}
                     {user?.role === 'admin' && (
     <Link to="/admin" style={{ ...styles.link, ...styles.adminLink }}>Admin</Link>
     

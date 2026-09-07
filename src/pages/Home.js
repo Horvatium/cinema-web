@@ -8,9 +8,12 @@ const optimizeImg = (url, width) => {
     return url.replace('/original/', `/w${width}/`);
 };
 
+// Domača stran: vrtiljak izpostavljenih filmov, trak s plakati in
+// predogled prvih štirih filmov s sporeda.
 function Home() {
     const [screenings, setScreenings] = useState([]);
     const [loading, setLoading] = useState(true);
+    // Zaporedna številka filma, prikazanega v vrtiljaku
     const [heroIndex, setHeroIndex] = useState(0);
     const navigate = useNavigate();
 
@@ -30,6 +33,9 @@ function Home() {
         fetchScreenings();
     }, []);
 
+    // Zaledje vrne po eno vrstico na predvajanje, prikazati pa hočemo film z
+    // vsemi njegovimi urami. Zato zapise združimo po naslovu filma: prvi zapis
+    // določi podatke o filmu, vsi pa se zberejo v polju screenings.
     const filmMap = {};
     screenings.forEach(s => {
         if (!filmMap[s.film_title]) {
@@ -54,6 +60,9 @@ function Home() {
     });
     const films = Object.values(filmMap);
 
+    // Samodejno vrtenje vrtiljaka na pet sekund. Ob odstranitvi komponente
+    // interval počistimo, sicer bi tekel naprej in poskušal osveževati
+    // stanje neobstoječe komponente.
     useEffect(() => {
         if (films.length <= 1) return;
         const interval = setInterval(() => {
@@ -162,6 +171,7 @@ function Home() {
                         </div>
                         <div style={styles.posterStrip}>
                             {films.map((film, index) => (
+    // Premik miške čez plakat prestavi vrtiljak na ta film
     <div
         key={film.title}
         style={styles.posterCard}
@@ -222,6 +232,8 @@ function Home() {
                             </button>
                         </div>
 
+                        {/* Na domači strani pokažemo le prve štiri filme,
+                            celoten spored je na strani /program */}
                         {films.slice(0, 4).map(film => (
                             <div
                                 key={film.title}

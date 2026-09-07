@@ -6,6 +6,8 @@ import { getScreeningSeats, createPaymentIntent, cancelPaymentIntent } from '../
 import { useAuth } from '../context/AuthContext';
 import PaymentForm from '../components/PaymentForm';
 
+// Plakati s TMDB so v izvirniku zelo veliki; z zamenjavo /original/ za
+// /w342/ naložimo bistveno manjšo različico iste slike.
 const optimizeImg = (url, width) => {
     if (!url) return url;
     return url.replace('/original/', `/w${width}/`);
@@ -50,6 +52,8 @@ const clearPaymentHold = () => {
     }
 };
 
+// Stran s podrobnostmi filma in izbiro sedežev. Tu poteka celoten nakup:
+// izbira sedežev -> zadržanje in namera plačila -> plačilni obrazec.
 function FilmDetail() {
     const { id } = useParams();
     const { state } = useLocation();
@@ -71,6 +75,8 @@ function FilmDetail() {
     const [showPayment, setShowPayment] = useState(false);
     const [creatingIntent, setCreatingIntent] = useState(false);
 
+    // Podatke o filmu prejmemo ob navigaciji (location.state), da jih ni
+    // treba znova nalagati; sedeže pa vedno pridobimo sveže iz zaledja
     const film = state?.film;
     const screening = state?.screening || film?.screenings?.[0];
 
@@ -119,6 +125,7 @@ function FilmDetail() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [id]);
 
+    // Klik na sedež ga doda med izbrane ali odstrani; zasedeni se ne odzivajo
     const toggleSeat = (seat) => {
         if (seat.status === 'taken') return;
         setSelectedSeats(prev => {
@@ -128,6 +135,8 @@ function FilmDetail() {
         });
     };
 
+    // Priprava plačila: zaledje ustvari desetminutno zadržanje sedežev in
+    // namero plačila, mi pa z vrnjenim ključem naložimo Stripe
     const handleProceedToPayment = async () => {
         if (!user) return navigate('/login');
         if (selectedSeats.length === 0) {
@@ -181,6 +190,7 @@ function FilmDetail() {
         fetchSeats();
     };
 
+    // Ob preklicu sedeže takoj sprostimo, namesto da bi čakali na iztek
     const handlePaymentCancel = async () => {
         // Sprosti zadržane sedeže, da niso blokirani do izteka desetih minut
         if (reservationId) {
@@ -209,6 +219,7 @@ function FilmDetail() {
         fetchSeats();
     }, [fetchSeats]);
 
+    // Zemljevid izrisujemo po vrstah, zaledje pa vrne raven seznam sedežev
     // grupiraj sedeže po vrstah
     const rows = {};
     seats.forEach(seat => {
@@ -343,6 +354,8 @@ function FilmDetail() {
             {error && <div className="error">{error}</div>}
             {success && <div className="success">{success}</div>}
 
+            {/* Med plačilom izbire ni več mogoče spreminjati, saj so sedeži
+                že zadržani na strani zaledja */}
             {/* skrij zemljevid sedeže ko se prikaže plačilni obrazec */}
             {!showPayment && (
                 <>

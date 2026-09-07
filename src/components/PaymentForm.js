@@ -6,6 +6,9 @@ import {
 } from '@stripe/react-stripe-js';
 import { confirmPayment } from '../services/api';
 
+// Plačilni obrazec, ki ga FilmDetail prikaže znotraj ovojnice <Elements>.
+// Podatkov o kartici nikoli ne vidimo — vnosna polja izriše Stripe znotraj
+// svojega okvira, mi dobimo le izid plačila.
 function PaymentForm({ screeningId, seatIds, totalPrice, expiresAt, onSuccess, onCancel, onExpire }) {
     const stripe = useStripe();
     const elements = useElements();
@@ -40,11 +43,14 @@ function PaymentForm({ screeningId, seatIds, totalPrice, expiresAt, onSuccess, o
         return () => clearInterval(id);
     }, [expiresAt]);
 
+    // Sekunde v zapis mm:ss
     const zapisiCas = (s) =>
         `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
 
     const potekel = preostalo === 0;
 
+    // Oddaja obrazca poteka v dveh korakih: najprej plačilo pri Stripu,
+    // nato potrditev rezervacije pri našem zaledju
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (!stripe || !elements || potekel) return;
@@ -54,6 +60,8 @@ function PaymentForm({ screeningId, seatIds, totalPrice, expiresAt, onSuccess, o
 
         try {
             // Potrdi plačilo s Stripe
+            // redirect: 'if_required' zadrži uporabnika na strani pri običajnem
+            // kartičnem plačilu, preusmeri pa ga, kadar banka zahteva 3-D Secure
             const { error: stripeError, paymentIntent } = await stripe.confirmPayment({
                 elements,
                 redirect: 'if_required',
@@ -65,6 +73,8 @@ function PaymentForm({ screeningId, seatIds, totalPrice, expiresAt, onSuccess, o
                 return;
             }
 
+            // Denar je vzet, sedeži pa še niso zapisani kot potrjeni —
+            // to stori šele zaledje, ki plačilo pri Stripu tudi samo preveri
             if (paymentIntent.status === 'succeeded') {
                 // Zaledni sistem naj potrdi rezervacijo
                 const response = await confirmPayment({
