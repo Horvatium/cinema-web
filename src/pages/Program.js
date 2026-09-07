@@ -47,6 +47,9 @@ const [search, setSearch] = useState(searchParams.get('q') || '');
         };
         fetchScreenings();
     }, []);
+    useEffect(() => {
+    window.scrollTo(0, 0);
+}, []);
 
     // Iz sporeda vzamemo prvih sedem različnih dni za vrstico z datumi
     // pridobi unikatne datume
