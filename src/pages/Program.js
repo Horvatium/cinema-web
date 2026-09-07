@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { getScreenings } from '../services/api';
+
+
 
 const optimizeImg = (url, width) => {
     if (!url) return url;
@@ -13,13 +15,17 @@ function Program() {
     const [screenings, setScreenings] = useState([]);
     const [loading, setLoading] = useState(true);
     const [selectedDate, setSelectedDate] = useState(null);
-    const [search, setSearch] = useState('');
+    const [searchParams] = useSearchParams();
+
+const [search, setSearch] = useState(searchParams.get('q') || '');
+    
     const navigate = useNavigate();
     // Ključ dneva v obliki LLLL-MM-DD, sestavljen iz UTC komponent. Krajevni
     // pas bi predvajanje pozno zvečer lahko prestavil na napačen dan.
         const utcDatumKljuc = (isoNiz) => {
         const d = new Date(isoNiz);
         return `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, '0')}-${String(d.getUTCDate()).padStart(2, '0')}`;
+        
     };
 
     useEffect(() => {
@@ -53,9 +59,13 @@ function Program() {
     // Združi predstave po filmih za izbrani datum
     const filmMap = {};
     screenings
-    .filter(s => search || utcDatumKljuc(s.start_time) === selectedDate)
-.filter(s => !search || s.film_title?.toLowerCase()
-    .includes(search.toLowerCase()))
+    .filter(s => search || new Date(s.start_time).toDateString() === selectedDate)
+    .filter(s => {
+        if (!search) return true;
+        const q = search.toLowerCase();
+        return s.film_title?.toLowerCase().includes(q) ||
+            s.film_title_sl?.toLowerCase().includes(q);
+    })
         .forEach(s => {
             if (!filmMap[s.film_title]) {
                 filmMap[s.film_title] = {

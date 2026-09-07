@@ -16,7 +16,13 @@ function Home() {
     // Zaporedna številka filma, prikazanega v vrtiljaku
     const [heroIndex, setHeroIndex] = useState(0);
     const navigate = useNavigate();
+    const [homeSearch, setHomeSearch] = useState('');
 
+    const handleHomeSearch = (e) => {
+    e.preventDefault();
+    if (!homeSearch.trim()) return;
+    navigate(`/program?q=${encodeURIComponent(homeSearch.trim())}`);
+};
     useEffect(() => {
         const fetchScreenings = async () => {
             try {
@@ -216,6 +222,15 @@ function Home() {
         </p>
     </div>
 </div>
+<form onSubmit={handleHomeSearch} style={styles.homeSearchWrap}>
+    <input
+        placeholder="🔍 Išči filme..."
+        value={homeSearch}
+        onChange={(e) => setHomeSearch(e.target.value)}
+        style={styles.homeSearchInput}
+    />
+</form>
+
                 {/* ── Predogled programa ── */}
                 {!loading && films.length > 0 && (
                     <div style={styles.section}>
@@ -695,6 +710,20 @@ promoButtons: {
 storeBadge: {
     height: '44px',
     width: 'auto',
+},
+homeSearchWrap: {
+    maxWidth: '480px',
+    margin: '0 auto 32px',
+    padding: '0 20px',
+},
+homeSearchInput: {
+    width: '100%',
+    padding: '14px 18px',
+    borderRadius: '12px',
+    border: '1px solid rgba(255,255,255,0.1)',
+    background: 'rgba(255,255,255,0.05)',
+    color: '#fff',
+    fontSize: '15px',
 },
 
     // ── Nalaganje ──
