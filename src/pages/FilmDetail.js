@@ -2,7 +2,13 @@ import { useState, useEffect, useCallback } from 'react';
 import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements } from '@stripe/react-stripe-js';
-import { getScreeningSeats, createPaymentIntent, cancelPaymentIntent } from '../services/api';
+import {
+    getScreenings,
+    getScreeningSeats,
+    createPaymentIntent,
+    cancelPaymentIntent,
+} from '../services/api';
+import { filmFromScreening } from '../utils/films';
 import { useAuth } from '../context/AuthContext';
 import PaymentForm from '../components/PaymentForm';
 
@@ -76,9 +82,31 @@ function FilmDetail() {
     const [creatingIntent, setCreatingIntent] = useState(false);
 
     // Podatke o filmu prejmemo ob navigaciji (location.state), da jih ni
-    // treba znova nalagati; sedeže pa vedno pridobimo sveže iz zaledja
-    const film = state?.film;
-    const screening = state?.screening || film?.screenings?.[0];
+    // treba znova nalagati; sedeže pa vedno pridobimo sveže iz zaledja.
+    // Ob neposrednem odprtju povezave ali osvežitvi strani stanja ni, zato
+    // predvajanje in film poiščemo v sporedu.
+    const [fromApi, setFromApi] = useState(null);
+
+    useEffect(() => {
+        if (state?.film) return;
+        let preklicano = false;
+        getScreenings()
+            .then((response) => {
+                if (preklicano) return;
+                const s = (response.data || []).find((x) => String(x.id) === String(id));
+                if (s) setFromApi({ film: filmFromScreening(s), screening: s });
+                else setError('Predstava ni več na sporedu.');
+            })
+            .catch(() => {
+                if (!preklicano) setError('Napaka pri nalaganju predstave.');
+            });
+        return () => {
+            preklicano = true;
+        };
+    }, [id, state]);
+
+    const film = state?.film || fromApi?.film;
+    const screening = state?.screening || film?.screenings?.[0] || fromApi?.screening;
 
     const fetchSeats = useCallback(async () => {
         try {

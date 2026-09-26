@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getScreenings } from '../services/api';
+import { groupByFilm } from '../utils/films';
 
 // Pomanjšaj TMDB slike za hitrejše nalaganje
 const optimizeImg = (url, width) => {
@@ -41,29 +42,7 @@ function Home() {
     // Zaledje vrne po eno vrstico na predvajanje, prikazati pa hočemo film z
     // vsemi njegovimi urami. Zato zapise združimo po naslovu filma: prvi zapis
     // določi podatke o filmu, vsi pa se zberejo v polju screenings.
-    const filmMap = {};
-    screenings.forEach((s) => {
-        if (!filmMap[s.film_title]) {
-            filmMap[s.film_title] = {
-                title: s.film_title,
-                title_sl: s.film_title_sl,
-                genre: s.genre,
-                duration_minutes: s.duration_minutes,
-                age_rating: s.age_rating,
-                poster_url: s.poster_url,
-                backdrop_url: s.backdrop_url,
-                synopsis: s.synopsis,
-                director: s.director,
-                release_year: s.release_year,
-                cast_members: s.cast_members,
-                imdb_url: s.imdb_url,
-                trailer_url: s.trailer_url,
-                screenings: [],
-            };
-        }
-        filmMap[s.film_title].screenings.push(s);
-    });
-    const films = Object.values(filmMap);
+    const films = groupByFilm(screenings);
 
     // Samodejno vrtenje vrtiljaka na pet sekund. Ob odstranitvi komponente
     // interval počistimo, sicer bi tekel naprej in poskušal osveževati
