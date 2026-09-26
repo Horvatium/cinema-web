@@ -7,30 +7,30 @@ function Footer() {
     return (
         <footer style={styles.footer}>
             <div style={styles.inner}>
-
                 {/* Stolpec 1 - Logo in opis */}
                 <div style={styles.column}>
-                    <img
-                        src={logo}
-                        alt="KinoPlex"
-                        style={styles.logo}
-                    />
+                    <img src={logo} alt="KinoPlex" style={styles.logo} />
                     <p style={styles.description}>
-                        KinoPlex je moderni kinematograf, ki vam ponuja
-                        najboljšo filmsko izkušnjo v udobnem okolju.
-                        Rezervirajte svoje sedeže po spletu in uživajte v filmih!
+                        KinoPlex je moderni kinematograf, ki vam ponuja najboljšo filmsko izkušnjo v
+                        udobnem okolju. Rezervirajte svoje sedeže po spletu in uživajte v filmih!
                     </p>
                 </div>
 
                 {/* Stolpec 2 - Navigacija */}
                 <div style={styles.column}>
                     <h4 style={styles.columnTitle}>Navigacija</h4>
-                    <Link to="/" style={styles.footerLink}>Domov</Link>
-                    <Link to="/program" style={styles.footerLink}>Program</Link>
+                    <Link to="/" style={styles.footerLink}>
+                        Domov
+                    </Link>
+                    <Link to="/program" style={styles.footerLink}>
+                        Program
+                    </Link>
                     <Link to="/my-reservations" style={styles.footerLink}>
                         Moje vstopnice
                     </Link>
-                    <Link to="/login" style={styles.footerLink}>Prijava</Link>
+                    <Link to="/login" style={styles.footerLink}>
+                        Prijava
+                    </Link>
                     <Link to="/register" style={styles.footerLink}>
                         Registracija
                     </Link>
@@ -39,43 +39,22 @@ function Footer() {
                 {/* Stolpec 3 - Kontakt */}
                 <div style={styles.column}>
                     <h4 style={styles.columnTitle}>Kontakt</h4>
-                    <p style={styles.contactItem}>
-                        Filmska ulica 1
-                    </p>
-                    <p style={styles.contactItem}>
-                        1000 Ljubljana, Slovenija
-                    </p>
-                    <p style={styles.contactItem}>
-                        Tel: +386 1 234 56 78
-                    </p>
-                    <p style={styles.contactItem}>
-                        E-pošta: info@kinoplex.si
-                    </p>
-                    <p style={styles.contactItem}>
-                        Delovni čas: vsak dan 10:00 - 23:00
-                    </p>
+                    <p style={styles.contactItem}>Filmska ulica 1</p>
+                    <p style={styles.contactItem}>1000 Ljubljana, Slovenija</p>
+                    <p style={styles.contactItem}>Tel: +386 1 234 56 78</p>
+                    <p style={styles.contactItem}>E-pošta: info@kinoplex.si</p>
+                    <p style={styles.contactItem}>Delovni čas: vsak dan 10:00 - 23:00</p>
                 </div>
 
                 {/* Stolpec 4 - Impressum */}
                 <div style={styles.column}>
                     <h4 style={styles.columnTitle}>Impressum</h4>
-                    <p style={styles.contactItem}>
-                        KinoPlex d.o.o.
-                    </p>
-                    <p style={styles.contactItem}>
-                        Matična številka: 1234567000
-                    </p>
-                    <p style={styles.contactItem}>
-                        Davčna številka: SI12345678
-                    </p>
-                    <p style={styles.contactItem}>
-                        Transakcijski račun: SI56 1234 5678 9012 345
-                    </p>
-                    <p style={styles.contactItem}>
-                        Register: Okrožno sodišče v Ljubljani
-                    </p>
+                    <p style={styles.contactItem}>KinoPlex d.o.o.</p>
+                    <p style={styles.contactItem}>Matična številka: 1234567000</p>
+                    <p style={styles.contactItem}>Davčna številka: SI12345678</p>
+                    <p style={styles.contactItem}>Transakcijski račun: SI56 1234 5678 9012 345</p>
+                    <p style={styles.contactItem}>Register: Okrožno sodišče v Ljubljani</p>
                 </div>
-
             </div>
 
             {/* Spodnja vrstica */}

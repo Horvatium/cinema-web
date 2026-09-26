@@ -21,31 +21,36 @@ function App() {
             <BrowserRouter>
                 <Navbar />
                 <main>
-                <div className="container">
-                    <Routes>
-                        {/* Javne strani, dostopne brez prijave */}
-                        <Route path="/" element={<Home />} />
-                        <Route path="/login" element={<Login />} />
-                        <Route path="/register" element={<Register />} />
-                        <Route path="/films/:id" element={<FilmDetail />
-                    } />
-                        <Route path="/program" element={<Program />} />
+                    <div className="container">
+                        <Routes>
+                            {/* Javne strani, dostopne brez prijave */}
+                            <Route path="/" element={<Home />} />
+                            <Route path="/login" element={<Login />} />
+                            <Route path="/register" element={<Register />} />
+                            <Route path="/films/:id" element={<FilmDetail />} />
+                            <Route path="/program" element={<Program />} />
 
-                        {/* Zaščiteni strani: ProtectedRoute neprijavljenega
+                            {/* Zaščiteni strani: ProtectedRoute neprijavljenega
                             preusmeri na prijavo, adminOnly pa navadno stranko
                             vrne na domačo stran */}
-                        <Route path="/my-reservations" element={
-                            <ProtectedRoute>
-                                <MyReservations />
-                            </ProtectedRoute>
-                        } />
-                        <Route path="/admin" element={
-                            <ProtectedRoute adminOnly={true}>
-                                <Admin />
-                            </ProtectedRoute>
-                        } />
-                    </Routes>
-                </div>
+                            <Route
+                                path="/my-reservations"
+                                element={
+                                    <ProtectedRoute>
+                                        <MyReservations />
+                                    </ProtectedRoute>
+                                }
+                            />
+                            <Route
+                                path="/admin"
+                                element={
+                                    <ProtectedRoute adminOnly={true}>
+                                        <Admin />
+                                    </ProtectedRoute>
+                                }
+                            />
+                        </Routes>
+                    </div>
                 </main>
                 <Footer />
             </BrowserRouter>

@@ -5,7 +5,6 @@ const api = axios.create({
     //baseURL: 'http://192.168.0.17:5000/api',
 });
 
-
 //baseURL: 'http://localhost:5000/api',
 // Samodejno priloži žeton vsaki zahtevi
 api.interceptors.request.use((config) => {
@@ -60,9 +59,10 @@ export const deleteRoom = (id) => api.delete(`/rooms/${id}`);
 export const getMyReservations = () => api.get('/reservations/my');
 export const getAllReservations = () => api.get('/reservations');
 export const cancelReservation = (id) => api.put(`/reservations/${id}/cancel`);
-export const uploadPoster = (formData) => api.post('/upload/poster', formData, {
-    headers: { 'Content-Type': 'multipart/form-data' }
-});
+export const uploadPoster = (formData) =>
+    api.post('/upload/poster', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+    });
 
 // Plačila
 export const createPaymentIntent = (data) => api.post('/payments/create-intent', data);

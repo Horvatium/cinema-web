@@ -39,15 +39,24 @@ function MyReservations() {
     // Barva značke glede na stanje rezervacije
     const getStatusStyle = (status) => {
         switch (status) {
-            case 'confirmed': return { color: '#2ecc71' };
-            case 'canceled': return { color: '#e74c3c' };
-            case 'pending': return { color: '#f39c12' };
-            default: return {};
+            case 'confirmed':
+                return { color: '#2ecc71' };
+            case 'canceled':
+                return { color: '#e74c3c' };
+            case 'pending':
+                return { color: '#f39c12' };
+            default:
+                return {};
         }
     };
 
     if (loading) return <div style={styles.center}>Nalaganje rezervacij...</div>;
-    if (error) return <div className="error" style={styles.center}>{error}</div>;
+    if (error)
+        return (
+            <div className="error" style={styles.center}>
+                {error}
+            </div>
+        );
 
     return (
         <div style={styles.wrapper}>
@@ -56,42 +65,32 @@ function MyReservations() {
             {reservations.length === 0 ? (
                 <div className="card" style={styles.empty}>
                     <p style={{ fontSize: '48px', marginBottom: '16px' }}>🎟️</p>
-                    <p style={{ color: '#aaa' }}>
-                        Nimate še rezervacij.
-                    </p>
+                    <p style={{ color: '#aaa' }}>Nimate še rezervacij.</p>
                 </div>
             ) : (
-                reservations.map(reservation => (
+                reservations.map((reservation) => (
                     <div key={reservation.id} className="card" style={styles.card}>
                         <div style={styles.cardHeader}>
                             <div>
-                                <h2 style={styles.filmTitle}>
-                                    {reservation.film_title}
-                                </h2>
+                                <h2 style={styles.filmTitle}>{reservation.film_title}</h2>
                                 <p style={styles.meta}>
                                     📅{' '}
-                                    {new Date(reservation.start_time)
-                                        .toLocaleDateString('sl-SI', {
-                                            weekday: 'long',
-                                            year: 'numeric',
-                                            month: 'long',
-                                            day: 'numeric',
-                                            timeZone: 'UTC',
-                                        })
-                                    }
-                                    {' '}ob{' '}
-                                    {new Date(reservation.start_time)
-                                        .toLocaleTimeString('sl-SI', {
-                                    hour: '2-digit',
-                                    minute: '2-digit',
-                                    hour12: false,
-                                    timeZone: 'UTC',
-                                        })
-                                    }
+                                    {new Date(reservation.start_time).toLocaleDateString('sl-SI', {
+                                        weekday: 'long',
+                                        year: 'numeric',
+                                        month: 'long',
+                                        day: 'numeric',
+                                        timeZone: 'UTC',
+                                    })}{' '}
+                                    ob{' '}
+                                    {new Date(reservation.start_time).toLocaleTimeString('sl-SI', {
+                                        hour: '2-digit',
+                                        minute: '2-digit',
+                                        hour12: false,
+                                        timeZone: 'UTC',
+                                    })}
                                 </p>
-                                <p style={styles.meta}>
-                                    🏛️ {reservation.room_name}
-                                </p>
+                                <p style={styles.meta}>🏛️ {reservation.room_name}</p>
                                 <p style={styles.meta}>
                                     💺 Sedeži: <strong>{reservation.seats}</strong>
                                 </p>
@@ -104,34 +103,35 @@ function MyReservations() {
                             </div>
 
                             <div style={styles.cardRight}>
-                                <span style={{
-                                    ...styles.statusBadge,
-                                    ...getStatusStyle(reservation.status)
-                                }}>
+                                <span
+                                    style={{
+                                        ...styles.statusBadge,
+                                        ...getStatusStyle(reservation.status),
+                                    }}
+                                >
                                     {reservation.status.toUpperCase()}
                                 </span>
 
                                 {/* Preklic ponudimo samo pri potrjenih rezervacijah
                                     za predvajanja, ki se še niso začela */}
                                 {reservation.status === 'confirmed' &&
-                                 new Date(reservation.start_time) > new Date() && (
-                                    <button
-                                        className="btn btn-danger"
-                                        onClick={() => handleCancel(reservation.id)}
-                                        style={{ marginTop: '12px' }}
-                                    >
-                                        Prekliči rezervacijo
-                                    </button>
-                                )}
+                                    new Date(reservation.start_time) > new Date() && (
+                                        <button
+                                            className="btn btn-danger"
+                                            onClick={() => handleCancel(reservation.id)}
+                                            style={{ marginTop: '12px' }}
+                                        >
+                                            Prekliči rezervacijo
+                                        </button>
+                                    )}
                             </div>
                         </div>
 
                         <p style={styles.bookedAt}>
                             Rezervirano dne{' '}
-                            {new Date(reservation.reserved_at)
-                                .toLocaleDateString('sl-SI',
-                                    {timeZone: 'UTC',})
-                            }
+                            {new Date(reservation.reserved_at).toLocaleDateString('sl-SI', {
+                                timeZone: 'UTC',
+                            })}
                         </p>
                     </div>
                 ))

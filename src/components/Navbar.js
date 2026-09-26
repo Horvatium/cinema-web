@@ -21,17 +21,21 @@ function Navbar() {
             <div style={styles.inner}>
                 {/* Logo */}
                 <Link to="/" style={styles.logo}>
-    <img src={logo} alt="KinoPlex" style={styles.logoImg} />
-    <div style={styles.logoTextGroup}>
-        <span style={styles.logoText}>KinoPlex</span>
-        <span style={styles.logoSlogan}>Kino v vaših rokah</span>
-    </div>
-</Link>
-{/*🎬*/}
+                    <img src={logo} alt="KinoPlex" style={styles.logoImg} />
+                    <div style={styles.logoTextGroup}>
+                        <span style={styles.logoText}>KinoPlex</span>
+                        <span style={styles.logoSlogan}>Kino v vaših rokah</span>
+                    </div>
+                </Link>
+                {/*🎬*/}
                 {/* navigacija povezave */}
                 <div style={styles.links}>
-                    <Link to="/" style={styles.link}>Domov</Link>
-                    <Link to="/program" style={styles.link}>Program</Link>
+                    <Link to="/" style={styles.link}>
+                        Domov
+                    </Link>
+                    <Link to="/program" style={styles.link}>
+                        Program
+                    </Link>
                     {user && (
                         <Link to="/my-reservations" style={styles.link}>
                             Moje vstopnice
@@ -40,19 +44,17 @@ function Navbar() {
                     {/* Povezava na skrbniško ploščo je zgolj skrita, ne zaščitena —
                         za dostop skrbi ProtectedRoute, za pravice pa zaledje */}
                     {user?.role === 'admin' && (
-    <Link to="/admin" style={{ ...styles.link, ...styles.adminLink }}>Admin</Link>
-    
-)}
-
+                        <Link to="/admin" style={{ ...styles.link, ...styles.adminLink }}>
+                            Admin
+                        </Link>
+                    )}
                 </div>
 
                 {/* Avtorizacija */}
                 <div style={styles.auth}>
                     {user ? (
                         <>
-                            <span style={styles.greeting}>
-                                Pozdravljeni, {user.first_name}
-                            </span>
+                            <span style={styles.greeting}>Pozdravljeni, {user.first_name}</span>
                             <button
                                 onClick={handleLogout}
                                 className="btn btn-secondary"
@@ -121,21 +123,21 @@ const styles = {
         letterSpacing: '-0.5px',
     },
     logoImg: {
-    height: '36px',
-    width: 'auto',
-    objectFit: 'contain',
-},
-logoTextGroup: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '1px',
-},
-logoSlogan: {
-    fontSize: '10px',
-    color: 'rgba(255,255,255,0.4)',
-    letterSpacing: '0.5px',
-    fontWeight: '400',
-},
+        height: '36px',
+        width: 'auto',
+        objectFit: 'contain',
+    },
+    logoTextGroup: {
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '1px',
+    },
+    logoSlogan: {
+        fontSize: '10px',
+        color: 'rgba(255,255,255,0.4)',
+        letterSpacing: '0.5px',
+        fontWeight: '400',
+    },
     links: {
         display: 'flex',
         gap: '32px',
@@ -149,9 +151,9 @@ logoSlogan: {
         transition: 'color 0.2s',
     },
     adminLink: {
-    color: '#e50914',
-    fontWeight: '700',
-},
+        color: '#e50914',
+        fontWeight: '700',
+    },
     auth: {
         display: 'flex',
         alignItems: 'center',

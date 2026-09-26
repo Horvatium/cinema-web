@@ -1,7 +1,20 @@
 import {
-    getFilms, addFilm, updateFilm, deleteFilm,
-    getScreenings, addScreening, updateScreening, deleteScreening, getRooms, addRoom, updateRoom, deleteRoom,
-    getAllReservations, uploadPoster, getUsers, deleteUser
+    getFilms,
+    addFilm,
+    updateFilm,
+    deleteFilm,
+    getScreenings,
+    addScreening,
+    updateScreening,
+    deleteScreening,
+    getRooms,
+    addRoom,
+    updateRoom,
+    deleteRoom,
+    getAllReservations,
+    uploadPoster,
+    getUsers,
+    deleteUser,
 } from '../services/api';
 import { useState, useEffect } from 'react';
 
@@ -19,7 +32,7 @@ function Admin() {
             {/* vrstica z zavihki */}
             <div style={styles.tabBar}>
                 {/* Gumbi zavihkov; slovenska imena so v preslikavi spodaj */}
-                {['screenings', 'films', 'rooms','reservations','users'].map(t => (
+                {['screenings', 'films', 'rooms', 'reservations', 'users'].map((t) => (
                     <button
                         key={t}
                         onClick={() => setTab(t)}
@@ -29,7 +42,15 @@ function Admin() {
                             background: tab === t ? '#e50914' : '#222',
                         }}
                     >
-                        {{ screenings: 'Predvajanja', films: 'Filmi', rooms: 'Dvorane', reservations: 'Rezervacije', users: 'Uporabniki' }[t]}
+                        {
+                            {
+                                screenings: 'Predvajanja',
+                                films: 'Filmi',
+                                rooms: 'Dvorane',
+                                reservations: 'Rezervacije',
+                                users: 'Uporabniki',
+                            }[t]
+                        }
                     </button>
                 ))}
             </div>
@@ -58,19 +79,27 @@ function ScreeningsTab() {
     // vrstice ne pobriše vnosov v obrazcu za novo predvajanje
     // Dodaj stanje obrazca
     const [addForm, setAddForm] = useState({
-        film_id: '', room_id: '', start_time: '', end_time: '', price: ''
+        film_id: '',
+        room_id: '',
+        start_time: '',
+        end_time: '',
+        price: '',
     });
-        const [rooms, setRooms] = useState([]);
+    const [rooms, setRooms] = useState([]);
 
     // Uredi stanje
     const [editingId, setEditingId] = useState(null);
     const [editForm, setEditForm] = useState({
-        film_id: '', room_id: '', start_time: '', end_time: '', price: ''
+        film_id: '',
+        room_id: '',
+        start_time: '',
+        end_time: '',
+        price: '',
     });
 
     // Vse tri sezname naložimo vzporedno; filmi in dvorane napolnijo
     // spustna seznama v obrazcu
-       useEffect(() => {
+    useEffect(() => {
         Promise.all([getScreenings(), getFilms(), getRooms()])
             .then(([sRes, fRes, rRes]) => {
                 setScreenings(sRes.data);
@@ -100,8 +129,11 @@ function ScreeningsTab() {
             await addScreening(addForm);
             setSuccess('Predstava je bila uspešno dodana!');
             setAddForm({
-                film_id: '', room_id: '',
-                start_time: '', end_time: '', price: ''
+                film_id: '',
+                room_id: '',
+                start_time: '',
+                end_time: '',
+                price: '',
             });
             await refreshScreenings();
         } catch (err) {
@@ -111,10 +143,11 @@ function ScreeningsTab() {
 
     // Brisanje je nepovratno in prizadene stranke, zato zahtevamo potrditev
     const handleDelete = async (id) => {
-        if (!window.confirm('Želite izbrisati to predstavo? Vse rezervacije bodo preklicane..')) return;
+        if (!window.confirm('Želite izbrisati to predstavo? Vse rezervacije bodo preklicane..'))
+            return;
         try {
             await deleteScreening(id);
-            setScreenings(screenings.filter(s => s.id !== id));
+            setScreenings(screenings.filter((s) => s.id !== id));
             setSuccess('Predstava izbrisana.');
         } catch (_err) {
             setError('Predstave ni bilo mogoče izbrisati.');
@@ -151,8 +184,11 @@ function ScreeningsTab() {
     const cancelEdit = () => {
         setEditingId(null);
         setEditForm({
-            film_id: '', room_id: '',
-            start_time: '', end_time: '', price: ''
+            film_id: '',
+            room_id: '',
+            start_time: '',
+            end_time: '',
+            price: '',
         });
     };
 
@@ -170,15 +206,14 @@ function ScreeningsTab() {
             const response = await updateScreening(editingId, editForm);
             const affected = response.data.affectedReservations;
             setSuccess(
-                `Predstava posodobljena!${affected > 0
-                    ? ` Opomba: ${affected} obstoječe rezervacije so prizadete.`
-                    : ''
+                `Predstava posodobljena!${
+                    affected > 0 ? ` Opomba: ${affected} obstoječe rezervacije so prizadete.` : ''
                 }`
             );
             setEditingId(null);
             await refreshScreenings();
         } catch (err) {
-             setError(err.response?.data?.message || 'Predstave ni bilo mogoče posodobiti.');
+            setError(err.response?.data?.message || 'Predstave ni bilo mogoče posodobiti.');
         }
     };
 
@@ -207,8 +242,10 @@ function ScreeningsTab() {
                         required
                     >
                         <option value="">Izberi film...</option>
-                        {films.map(f => (
-                            <option key={f.id} value={f.id}>{f.title}</option>
+                        {films.map((f) => (
+                            <option key={f.id} value={f.id}>
+                                {f.title}
+                            </option>
                         ))}
                     </select>
 
@@ -220,8 +257,10 @@ function ScreeningsTab() {
                         required
                     >
                         <option value="">Izberi dvorano...</option>
-                        {rooms.map(r => (
-                            <option key={r.id} value={r.id}>{r.name}</option>
+                        {rooms.map((r) => (
+                            <option key={r.id} value={r.id}>
+                                {r.name}
+                            </option>
                         ))}
                     </select>
 
@@ -271,9 +310,8 @@ function ScreeningsTab() {
             {screenings.length === 0 ? (
                 <p style={{ color: '#aaa' }}>Ni prihajajočih predvajanj..</p>
             ) : (
-                screenings.map(s => (
+                screenings.map((s) => (
                     <div key={s.id} className="card" style={{ marginBottom: '12px' }}>
-
                         {/* ── Uredi obrazec (prikazano v vrstici med urejanjem) ── */}
                         {editingId === s.id ? (
                             <form onSubmit={handleEditSubmit}>
@@ -289,7 +327,7 @@ function ScreeningsTab() {
                                     required
                                 >
                                     <option value="">Izberi film...</option>
-                                    {films.map(f => (
+                                    {films.map((f) => (
                                         <option key={f.id} value={f.id}>
                                             {f.title}
                                         </option>
@@ -304,7 +342,7 @@ function ScreeningsTab() {
                                     required
                                 >
                                     <option value="">Izberi dvorano...</option>
-                                    {rooms.map(r => (
+                                    {rooms.map((r) => (
                                         <option key={r.id} value={r.id}>
                                             {r.name}
                                         </option>
@@ -345,45 +383,41 @@ function ScreeningsTab() {
                                     required
                                 />
 
-                                <div style={{ display: 'flex', gap: '10px', flexDirection: 'column' }}>
-    {error && (
-        <div className="error">{error}</div>
-    )}
-    <div style={{ display: 'flex', gap: '10px' }}>
-        <button
-            type="submit"
-            className="btn btn-primary"
-        >
-            Shrani spremembe
-        </button>
-        <button
-            type="button"
-            className="btn btn-secondary"
-            onClick={cancelEdit}
-        >
-            Prekliči
-        </button>
-    </div>
-</div>
+                                <div
+                                    style={{
+                                        display: 'flex',
+                                        gap: '10px',
+                                        flexDirection: 'column',
+                                    }}
+                                >
+                                    {error && <div className="error">{error}</div>}
+                                    <div style={{ display: 'flex', gap: '10px' }}>
+                                        <button type="submit" className="btn btn-primary">
+                                            Shrani spremembe
+                                        </button>
+                                        <button
+                                            type="button"
+                                            className="btn btn-secondary"
+                                            onClick={cancelEdit}
+                                        >
+                                            Prekliči
+                                        </button>
+                                    </div>
+                                </div>
                             </form>
-
                         ) : (
-
                             /* ── Normalna vrsta ── */
                             <div style={styles.listItem}>
                                 <div>
                                     <strong>{s.film_title}</strong>
                                     <p style={styles.meta}>
                                         📅{' '}
-                                        {new Date(s.start_time).toLocaleString(
-                                            'sl-SI', {
-                                                dateStyle: 'medium',
-                                                timeStyle: 'short',
-                                                timeZone: 'UTC',
-                                            }
-                                        )}
-                                        {' '}· 🏛️ {s.room_name}
-                                        {' '}· 🎟️ €{s.price}
+                                        {new Date(s.start_time).toLocaleString('sl-SI', {
+                                            dateStyle: 'medium',
+                                            timeStyle: 'short',
+                                            timeZone: 'UTC',
+                                        })}{' '}
+                                        · 🏛️ {s.room_name} · 🎟️ €{s.price}
                                     </p>
                                 </div>
                                 <div style={{ display: 'flex', gap: '8px' }}>
@@ -411,10 +445,19 @@ function ScreeningsTab() {
 
 // Zavihek s filmi
 const PRAZEN_FILM = {
-    title: '', title_sl: '', genre: '', duration_minutes: '',
-    age_rating: '', synopsis: '', director: '',
-    release_year: '', poster_url: '', backdrop_url: '',
-    imdb_url: '', trailer_url: '', cast_members: ''
+    title: '',
+    title_sl: '',
+    genre: '',
+    duration_minutes: '',
+    age_rating: '',
+    synopsis: '',
+    director: '',
+    release_year: '',
+    poster_url: '',
+    backdrop_url: '',
+    imdb_url: '',
+    trailer_url: '',
+    cast_members: '',
 };
 
 // ── ZAVIHEK FILMI ────────────────────────────────────────────────────────
@@ -434,7 +477,7 @@ function FilmsTab() {
 
     useEffect(() => {
         getFilms()
-            .then(res => setFilms(res.data))
+            .then((res) => setFilms(res.data))
             .catch(() => setError('Filmov ni bilo mogoče naložiti.'))
             .finally(() => setLoading(false));
     }, []);
@@ -443,48 +486,47 @@ function FilmsTab() {
         setForm({ ...form, [e.target.name]: e.target.value });
     };
 
-// Nalaganje pasice (ozadja). Uporablja isto pot kot plakat, zato je ime
-// polja v obrazcu prav tako "poster"; razlikuje se le, kam se naslov shrani.
-const handleBackdropUpload = async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
+    // Nalaganje pasice (ozadja). Uporablja isto pot kot plakat, zato je ime
+    // polja v obrazcu prav tako "poster"; razlikuje se le, kam se naslov shrani.
+    const handleBackdropUpload = async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
 
-    setUploadingBackdrop(true);
-    try {
-        const formData = new FormData();
-        formData.append('poster', file);
-        const response = await uploadPoster(formData);
-        setForm(prev => ({ ...prev, backdrop_url: response.data.url }));
-        setBackdropPreview(response.data.url);
-        setSuccess('Pasica naložena!');
-    } catch (_err) {
-        setError('Napaka pri nalaganju pasice.');
-    } finally {
-        setUploadingBackdrop(false);
-    }
-};
+        setUploadingBackdrop(true);
+        try {
+            const formData = new FormData();
+            formData.append('poster', file);
+            const response = await uploadPoster(formData);
+            setForm((prev) => ({ ...prev, backdrop_url: response.data.url }));
+            setBackdropPreview(response.data.url);
+            setSuccess('Pasica naložena!');
+        } catch (_err) {
+            setError('Napaka pri nalaganju pasice.');
+        } finally {
+            setUploadingBackdrop(false);
+        }
+    };
 
-// Nalaganje plakata: datoteko pošljemo kot FormData, zaledje jo preveri in
-// shrani, nazaj pa vrne javni naslov, ki ga zapišemo v obrazec
-const handlePosterUpload = async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
+    // Nalaganje plakata: datoteko pošljemo kot FormData, zaledje jo preveri in
+    // shrani, nazaj pa vrne javni naslov, ki ga zapišemo v obrazec
+    const handlePosterUpload = async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
 
-    setUploading(true);
-    try {
-        const formData = new FormData();
-        formData.append('poster', file);
-        const response = await uploadPoster(formData);
-        setForm({ ...form, poster_url: response.data.url });
-        setPosterPreview(response.data.url);
-        setSuccess('Plakat naložen!');
-    } catch (_err) {
-         setError('Napaka pri nalaganju plakata.');
-    } finally {
-        setUploading(false);
-    }
-};
-
+        setUploading(true);
+        try {
+            const formData = new FormData();
+            formData.append('poster', file);
+            const response = await uploadPoster(formData);
+            setForm({ ...form, poster_url: response.data.url });
+            setPosterPreview(response.data.url);
+            setSuccess('Plakat naložen!');
+        } catch (_err) {
+            setError('Napaka pri nalaganju plakata.');
+        } finally {
+            setUploading(false);
+        }
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -505,8 +547,10 @@ const handlePosterUpload = async (e) => {
             const response = await getFilms();
             setFilms(response.data);
         } catch (err) {
-            setError(err.response?.data?.message ||
-                (editingId ? 'Filma ni bilo možno posodobiti.' : 'Filma ni bilo možno dodati.'));
+            setError(
+                err.response?.data?.message ||
+                    (editingId ? 'Filma ni bilo možno posodobiti.' : 'Filma ni bilo možno dodati.')
+            );
         }
     };
 
@@ -528,7 +572,7 @@ const handlePosterUpload = async (e) => {
             backdrop_url: film.backdrop_url || '',
             imdb_url: film.imdb_url || '',
             trailer_url: film.trailer_url || '',
-            cast_members: film.cast_members || ''
+            cast_members: film.cast_members || '',
         });
         setPosterPreview(film.poster_url || '');
         setBackdropPreview(film.backdrop_url || '');
@@ -550,7 +594,7 @@ const handlePosterUpload = async (e) => {
         if (!window.confirm('Izbrišete ta film?')) return;
         try {
             await deleteFilm(id);
-            setFilms(films.filter(f => f.id !== id));
+            setFilms(films.filter((f) => f.id !== id));
         } catch (err) {
             setError(err.response?.data?.message || 'Filma ni bilo možno izbrisati.');
         }
@@ -562,9 +606,7 @@ const handlePosterUpload = async (e) => {
         <div>
             {/* Dodaj filmski obrazec */}
             <div className="card" style={{ marginBottom: '30px' }}>
-                <h2 style={styles.sectionTitle}>
-                    {editingId ? 'Uredi film' : 'Dodaj nov film'}
-                </h2>
+                <h2 style={styles.sectionTitle}>{editingId ? 'Uredi film' : 'Dodaj nov film'}</h2>
                 {error && <div className="error">{error}</div>}
                 {success && <div className="success">{success}</div>}
 
@@ -580,12 +622,12 @@ const handlePosterUpload = async (e) => {
                                 required
                             />
                             <label>Slovensko ime filma</label>
-<input
-    name="title_sl"
-    value={form.title_sl}
-    onChange={handleChange}
-    placeholder="Npr. Temni vitez"
-/>
+                            <input
+                                name="title_sl"
+                                value={form.title_sl}
+                                onChange={handleChange}
+                                placeholder="Npr. Temni vitez"
+                            />
                         </div>
                         <div style={styles.half}>
                             <label>Žanr</label>
@@ -659,78 +701,76 @@ const handlePosterUpload = async (e) => {
                         rows={3}
                     />
                     <label>IMDB povezava</label>
-<input
-    name="imdb_url"
-    value={form.imdb_url}
-    onChange={handleChange}
-    placeholder="https://www.imdb.com/title/tt1375666/"
-/>
+                    <input
+                        name="imdb_url"
+                        value={form.imdb_url}
+                        onChange={handleChange}
+                        placeholder="https://www.imdb.com/title/tt1375666/"
+                    />
 
-<label>YouTube trailer povezava</label>
-<input
-    name="trailer_url"
-    value={form.trailer_url}
-    onChange={handleChange}
-    placeholder="https://www.youtube.com/watch?v=..."
-/>
+                    <label>YouTube trailer povezava</label>
+                    <input
+                        name="trailer_url"
+                        value={form.trailer_url}
+                        onChange={handleChange}
+                        placeholder="https://www.youtube.com/watch?v=..."
+                    />
 
-<label>Glavne vloge</label>
-<input
-    name="cast_members"
-    value={form.cast_members}
-    onChange={handleChange}
-    placeholder="Leonardo DiCaprio, Joseph Gordon-Levitt, Ellen Page"
-/>
+                    <label>Glavne vloge</label>
+                    <input
+                        name="cast_members"
+                        value={form.cast_members}
+                        onChange={handleChange}
+                        placeholder="Leonardo DiCaprio, Joseph Gordon-Levitt, Ellen Page"
+                    />
 
                     <label>Slika plakata</label>
-<input
-    type="file"
-    accept="image/*"
-    onChange={handlePosterUpload}
-    disabled={uploading}
-    style={{ marginBottom: '8px' }}
-/>
-{uploading && <p style={{ color: '#aaa', fontSize: '13px' }}>
-    Nalaganje...
-</p>}
-{posterPreview && (
-    <img
-        src={posterPreview}
-        alt="Predogled plakata"
-        style={{
-            width: '120px',
-            height: '180px',
-            objectFit: 'cover',
-            borderRadius: '6px',
-            marginBottom: '12px'
-        }}
-    />
-)}
+                    <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handlePosterUpload}
+                        disabled={uploading}
+                        style={{ marginBottom: '8px' }}
+                    />
+                    {uploading && <p style={{ color: '#aaa', fontSize: '13px' }}>Nalaganje...</p>}
+                    {posterPreview && (
+                        <img
+                            src={posterPreview}
+                            alt="Predogled plakata"
+                            style={{
+                                width: '120px',
+                                height: '180px',
+                                objectFit: 'cover',
+                                borderRadius: '6px',
+                                marginBottom: '12px',
+                            }}
+                        />
+                    )}
 
-<label>Slika pasice (širokoformatna, za naslovnico)</label>
-<input
-    type="file"
-    accept="image/*"
-    onChange={handleBackdropUpload}
-    disabled={uploadingBackdrop}
-    style={{ marginBottom: '8px' }}
-/>
-{uploadingBackdrop && <p style={{ color: '#aaa', fontSize: '13px' }}>
-    Nalaganje...
-</p>}
-{backdropPreview && (
-    <img
-        src={backdropPreview}
-        alt="Predogled pasice"
-        style={{
-            width: '260px',
-            height: '146px',
-            objectFit: 'cover',
-            borderRadius: '6px',
-            marginBottom: '12px'
-        }}
-    />
-)}
+                    <label>Slika pasice (širokoformatna, za naslovnico)</label>
+                    <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleBackdropUpload}
+                        disabled={uploadingBackdrop}
+                        style={{ marginBottom: '8px' }}
+                    />
+                    {uploadingBackdrop && (
+                        <p style={{ color: '#aaa', fontSize: '13px' }}>Nalaganje...</p>
+                    )}
+                    {backdropPreview && (
+                        <img
+                            src={backdropPreview}
+                            alt="Predogled pasice"
+                            style={{
+                                width: '260px',
+                                height: '146px',
+                                objectFit: 'cover',
+                                borderRadius: '6px',
+                                marginBottom: '12px',
+                            }}
+                        />
+                    )}
 
                     <div style={{ display: 'flex', gap: '10px' }}>
                         <button type="submit" className="btn btn-primary">
@@ -751,26 +791,20 @@ const handlePosterUpload = async (e) => {
 
             {/* lista filmov */}
             <h2 style={styles.sectionTitle}>Vsi filmi</h2>
-            {films.map(film => (
+            {films.map((film) => (
                 <div key={film.id} className="card" style={styles.listItem}>
                     <div>
                         <strong>{film.title}</strong>
                         <p style={styles.meta}>
-                            {film.genre} · {film.duration_minutes} min ·{' '}
-                            {film.age_rating} · {film.release_year}
+                            {film.genre} · {film.duration_minutes} min · {film.age_rating} ·{' '}
+                            {film.release_year}
                         </p>
                     </div>
                     <div style={{ display: 'flex', gap: '8px' }}>
-                        <button
-                            className="btn btn-secondary"
-                            onClick={() => handleEdit(film)}
-                        >
+                        <button className="btn btn-secondary" onClick={() => handleEdit(film)}>
                             Uredi
                         </button>
-                        <button
-                            className="btn btn-danger"
-                            onClick={() => handleDelete(film.id)}
-                        >
+                        <button className="btn btn-danger" onClick={() => handleDelete(film.id)}>
                             Izbriši
                         </button>
                     </div>
@@ -795,12 +829,14 @@ function RoomsTab() {
     // Seznam naložimo ob prvem izrisu in po vsaki spremembi
     const nalozi = () => {
         getRooms()
-            .then(res => setRooms(res.data))
+            .then((res) => setRooms(res.data))
             .catch(() => setError('Dvoran ni bilo možno naložiti.'))
             .finally(() => setLoading(false));
     };
 
-    useEffect(() => { nalozi(); }, []);
+    useEffect(() => {
+        nalozi();
+    }, []);
 
     const handleChange = (e) => {
         setForm({ ...form, [e.target.name]: e.target.value });
@@ -822,8 +858,12 @@ function RoomsTab() {
             setEditingId(null);
             nalozi();
         } catch (err) {
-            setError(err.response?.data?.message ||
-                (editingId ? 'Dvorane ni bilo možno posodobiti.' : 'Dvorane ni bilo možno dodati.'));
+            setError(
+                err.response?.data?.message ||
+                    (editingId
+                        ? 'Dvorane ni bilo možno posodobiti.'
+                        : 'Dvorane ni bilo možno dodati.')
+            );
         }
     };
 
@@ -864,12 +904,7 @@ function RoomsTab() {
                 <div style={styles.row}>
                     <div style={styles.half}>
                         <label>Ime dvorane</label>
-                        <input
-                            name="name"
-                            value={form.name}
-                            onChange={handleChange}
-                            required
-                        />
+                        <input name="name" value={form.name} onChange={handleChange} required />
                     </div>
                     <div style={styles.half}>
                         <label>Število sedežev</label>
@@ -887,7 +922,11 @@ function RoomsTab() {
                         {editingId ? 'Shrani spremembe' : 'Dodaj dvorano'}
                     </button>
                     {editingId && (
-                        <button type="button" className="btn btn-secondary" onClick={handleCancelEdit}>
+                        <button
+                            type="button"
+                            className="btn btn-secondary"
+                            onClick={handleCancelEdit}
+                        >
                             Prekliči
                         </button>
                     )}
@@ -895,7 +934,7 @@ function RoomsTab() {
             </form>
 
             <h2 style={styles.sectionTitle}>Seznam dvoran ({rooms.length})</h2>
-            {rooms.map(r => (
+            {rooms.map((r) => (
                 <div key={r.id} className="card" style={styles.listItem}>
                     <div>
                         <strong>{r.name}</strong>
@@ -926,7 +965,7 @@ function ReservationsTab() {
 
     useEffect(() => {
         getAllReservations()
-            .then(res => setReservations(res.data))
+            .then((res) => setReservations(res.data))
             .catch(() => setError('Rezervacij ni bilo možno naložiti.'))
             .finally(() => setLoading(false));
     }, []);
@@ -936,14 +975,12 @@ function ReservationsTab() {
 
     return (
         <div>
-            <h2 style={styles.sectionTitle}>
-                Vse rezervacije ({reservations.length})
-            </h2>
+            <h2 style={styles.sectionTitle}>Vse rezervacije ({reservations.length})</h2>
 
             {reservations.length === 0 ? (
                 <p style={{ color: '#aaa' }}>Še ni rezervacij.</p>
             ) : (
-                reservations.map(r => (
+                reservations.map((r) => (
                     <div key={r.id} className="card" style={styles.listItem}>
                         <div>
                             <strong>{r.film_title}</strong>
@@ -956,22 +993,25 @@ function ReservationsTab() {
                                     dateStyle: 'medium',
                                     timeStyle: 'short',
                                     timeZone: 'UTC',
-                                })}
-                                {' '}· 🏛️ {r.room_name}
+                                })}{' '}
+                                · 🏛️ {r.room_name}
                             </p>
                             <p style={styles.meta}>
                                 💺 {r.seats} · 💰 {r.total_price} €
                             </p>
                         </div>
-                        <span style={{
-                            fontSize: '13px',
-                            fontWeight: 'bold',
-                            color: r.status === 'confirmed'
-                                ? '#2ecc71'
-                                : r.status === 'canceled'
-                                ? '#e74c3c'
-                                : '#f39c12'
-                        }}>
+                        <span
+                            style={{
+                                fontSize: '13px',
+                                fontWeight: 'bold',
+                                color:
+                                    r.status === 'confirmed'
+                                        ? '#2ecc71'
+                                        : r.status === 'canceled'
+                                          ? '#e74c3c'
+                                          : '#f39c12',
+                            }}
+                        >
                             {r.status.toUpperCase()}
                         </span>
                     </div>
@@ -992,7 +1032,7 @@ function UsersTab() {
 
     useEffect(() => {
         getUsers()
-            .then(res => setUsers(res.data))
+            .then((res) => setUsers(res.data))
             .catch(() => setError('Uporabnikov ni bilo mogoče naložiti.'))
             .finally(() => setLoading(false));
     }, []);
@@ -1000,10 +1040,15 @@ function UsersTab() {
     // Brisanje uporabnika zaradi tujih ključev (ON DELETE CASCADE) odnese
     // tudi vse njegove rezervacije
     const handleDelete = async (id) => {
-        if (!window.confirm('Izbrišete tega uporabnika? Izbrisane bodo tudi vse njegove rezervacije.')) return;
+        if (
+            !window.confirm(
+                'Izbrišete tega uporabnika? Izbrisane bodo tudi vse njegove rezervacije.'
+            )
+        )
+            return;
         try {
             await deleteUser(id);
-            setUsers(users.filter(u => u.id !== id));
+            setUsers(users.filter((u) => u.id !== id));
         } catch (err) {
             setError(err.response?.data?.message || 'Uporabnika ni bilo možno izbrisati.');
         }
@@ -1014,14 +1059,21 @@ function UsersTab() {
     return (
         <div>
             {error && <div className="error">{error}</div>}
-            {users.map(u => (
+            {users.map((u) => (
                 <div
                     key={u.id}
                     className="card"
-                    style={{ marginBottom: '10px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
+                    style={{
+                        marginBottom: '10px',
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                    }}
                 >
                     <div>
-                        <strong>{u.first_name} {u.last_name}</strong>{' '}
+                        <strong>
+                            {u.first_name} {u.last_name}
+                        </strong>{' '}
                         ({u.role === 'admin' ? 'skrbnik' : 'stranka'})
                         <div style={{ fontSize: '13px', color: '#aaa' }}>{u.email}</div>
                     </div>

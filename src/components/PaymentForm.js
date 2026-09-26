@@ -1,15 +1,19 @@
 import { useState, useEffect, useRef } from 'react';
-import {
-    PaymentElement,
-    useStripe,
-    useElements
-} from '@stripe/react-stripe-js';
+import { PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import { confirmPayment } from '../services/api';
 
 // Plačilni obrazec, ki ga FilmDetail prikaže znotraj ovojnice <Elements>.
 // Podatkov o kartici nikoli ne vidimo — vnosna polja izriše Stripe znotraj
 // svojega okvira, mi dobimo le izid plačila.
-function PaymentForm({ screeningId, seatIds, totalPrice, expiresAt, onSuccess, onCancel, onExpire }) {
+function PaymentForm({
+    screeningId,
+    seatIds,
+    totalPrice,
+    expiresAt,
+    onSuccess,
+    onCancel,
+    onExpire,
+}) {
     const stripe = useStripe();
     const elements = useElements();
     const [error, setError] = useState('');
@@ -44,8 +48,7 @@ function PaymentForm({ screeningId, seatIds, totalPrice, expiresAt, onSuccess, o
     }, [expiresAt]);
 
     // Sekunde v zapis mm:ss
-    const zapisiCas = (s) =>
-        `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
+    const zapisiCas = (s) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
 
     const potekel = preostalo === 0;
 
@@ -85,7 +88,6 @@ function PaymentForm({ screeningId, seatIds, totalPrice, expiresAt, onSuccess, o
 
                 onSuccess(response.data);
             }
-
         } catch (err) {
             setError(err.response?.data?.message || 'Plačilo ni uspelo.');
             setProcessing(false);

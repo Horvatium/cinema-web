@@ -2,8 +2,6 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { getScreenings } from '../services/api';
 
-
-
 const optimizeImg = (url, width) => {
     if (!url) return url;
     return url.replace('/original/', `/w${width}/`);
@@ -17,15 +15,14 @@ function Program() {
     const [selectedDate, setSelectedDate] = useState(null);
     const [searchParams] = useSearchParams();
 
-const [search, setSearch] = useState(searchParams.get('q') || '');
-    
+    const [search, setSearch] = useState(searchParams.get('q') || '');
+
     const navigate = useNavigate();
     // Ključ dneva v obliki LLLL-MM-DD, sestavljen iz UTC komponent. Krajevni
     // pas bi predvajanje pozno zvečer lahko prestavil na napačen dan.
-        const utcDatumKljuc = (isoNiz) => {
+    const utcDatumKljuc = (isoNiz) => {
         const d = new Date(isoNiz);
         return `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, '0')}-${String(d.getUTCDate()).padStart(2, '0')}`;
-        
     };
 
     useEffect(() => {
@@ -34,11 +31,10 @@ const [search, setSearch] = useState(searchParams.get('q') || '');
                 const response = await getScreenings();
                 const data = Array.isArray(response.data) ? response.data : [];
                 setScreenings(data);
-                 if (data.length > 0) {
-                const firstDate = utcDatumKljuc(data[0].start_time);
+                if (data.length > 0) {
+                    const firstDate = utcDatumKljuc(data[0].start_time);
                     setSelectedDate(firstDate);
                 }
-                
             } catch (_err) {
                 setScreenings([]);
             } finally {
@@ -48,57 +44,57 @@ const [search, setSearch] = useState(searchParams.get('q') || '');
         fetchScreenings();
     }, []);
     useEffect(() => {
-    window.scrollTo(0, 0);
-}, []);
+        window.scrollTo(0, 0);
+    }, []);
 
     // Iz sporeda vzamemo prvih sedem različnih dni za vrstico z datumi
     // pridobi unikatne datume
-        const dates = [...new Set(
-        screenings.map(s => utcDatumKljuc(s.start_time))
-    )].slice(0, 7);
+    const dates = [...new Set(screenings.map((s) => utcDatumKljuc(s.start_time)))].slice(0, 7);
 
     // Prvi filter izbere dan (ali ga ob iskanju prezre), drugi pa filtrira
     // po naslovu filma; preostanek se združi po filmih kot na domači strani
     // Združi predstave po filmih za izbrani datum
     const filmMap = {};
     screenings
-    .filter(s => search || utcDatumKljuc(s.start_time) === selectedDate)
-    .filter(s => {
-        if (!search) return true;
-        const q = search.toLowerCase();
-        return s.film_title?.toLowerCase().includes(q) ||
-            s.film_title_sl?.toLowerCase().includes(q);
-    })
-        .forEach(s => {
+        .filter((s) => search || utcDatumKljuc(s.start_time) === selectedDate)
+        .filter((s) => {
+            if (!search) return true;
+            const q = search.toLowerCase();
+            return (
+                s.film_title?.toLowerCase().includes(q) ||
+                s.film_title_sl?.toLowerCase().includes(q)
+            );
+        })
+        .forEach((s) => {
             if (!filmMap[s.film_title]) {
                 filmMap[s.film_title] = {
-                     title: s.film_title,
-                     title_sl: s.film_title_sl,
-    genre: s.genre,
-    duration_minutes: s.duration_minutes,
-    age_rating: s.age_rating,
-    poster_url: s.poster_url,
-    backdrop_url: s.backdrop_url,
-    synopsis: s.synopsis,
-    director: s.director,
-    release_year: s.release_year,
-    cast_members: s.cast_members,
-    imdb_url: s.imdb_url,
-    trailer_url: s.trailer_url,
-    screenings: [],
+                    title: s.film_title,
+                    title_sl: s.film_title_sl,
+                    genre: s.genre,
+                    duration_minutes: s.duration_minutes,
+                    age_rating: s.age_rating,
+                    poster_url: s.poster_url,
+                    backdrop_url: s.backdrop_url,
+                    synopsis: s.synopsis,
+                    director: s.director,
+                    release_year: s.release_year,
+                    cast_members: s.cast_members,
+                    imdb_url: s.imdb_url,
+                    trailer_url: s.trailer_url,
+                    screenings: [],
                 };
             }
             filmMap[s.film_title].screenings.push(s);
         });
 
-Object.values(filmMap).forEach(f =>
-    f.screenings.sort((a, b) => new Date(a.start_time) - new Date(b.start_time))
-);
+    Object.values(filmMap).forEach((f) =>
+        f.screenings.sort((a, b) => new Date(a.start_time) - new Date(b.start_time))
+    );
 
     const films = Object.values(filmMap);
 
     // Prva dva dneva izpišemo kot "Danes" in "Jutri", ostale z dnevom v tednu
-        const formatDate = (dateStr) => {
+    const formatDate = (dateStr) => {
         const d = new Date(dateStr);
         const zdaj = new Date();
         const today = `${zdaj.getFullYear()}-${String(zdaj.getMonth() + 1).padStart(2, '0')}-${String(zdaj.getDate()).padStart(2, '0')}`;
@@ -109,8 +105,10 @@ Object.values(filmMap).forEach(f =>
         return {
             day: d.toLocaleDateString('sl-SI', { weekday: 'short', timeZone: 'UTC' }),
             date: d.toLocaleDateString('sl-SI', {
-                day: 'numeric', month: 'short', timeZone: 'UTC',
-            })
+                day: 'numeric',
+                month: 'short',
+                timeZone: 'UTC',
+            }),
         };
     };
 
@@ -133,7 +131,7 @@ Object.values(filmMap).forEach(f =>
                 {/* ── izbirnik datuma ── */}
                 <div style={styles.dateBar}>
                     <div style={styles.dateBarInner}>
-                        {dates.map(date => {
+                        {dates.map((date) => {
                             const { day, date: dateNum } = formatDate(date);
                             const isActive = selectedDate === date;
                             return (
@@ -142,15 +140,11 @@ Object.values(filmMap).forEach(f =>
                                     onClick={() => setSelectedDate(date)}
                                     style={{
                                         ...styles.dateBtn,
-                                        ...(isActive ? styles.dateBtnActive : {})
+                                        ...(isActive ? styles.dateBtnActive : {}),
                                     }}
                                 >
                                     <span style={styles.dateBtnDay}>{day}</span>
-                                    {dateNum && (
-                                        <span style={styles.dateBtnDate}>
-                                            {dateNum}
-                                        </span>
-                                    )}
+                                    {dateNum && <span style={styles.dateBtnDate}>{dateNum}</span>}
                                 </button>
                             );
                         })}
@@ -166,72 +160,58 @@ Object.values(filmMap).forEach(f =>
                     </div>
                 ) : films.length === 0 ? (
                     <div style={styles.center}>
-                        <p style={{ fontSize: '48px', marginBottom: '16px' }}>
-                            🎬
-                        </p>
+                        <p style={{ fontSize: '48px', marginBottom: '16px' }}>🎬</p>
                         <p style={{ color: '#555' }}>
                             {search ? 'Ni zadetkov za to iskanje.' : 'Ni predvajanj za ta dan.'}
                         </p>
                     </div>
                 ) : (
-                    films.map(film => (
+                    films.map((film) => (
                         <div
                             key={film.title}
                             style={styles.filmRow}
-                            onClick={() => navigate(
-                                `/films/${film.screenings[0].id}`,
-                                { state: {
-                                    film,
-                                    screening: film.screenings[0]
-                                }}
-                            )}
+                            onClick={() =>
+                                navigate(`/films/${film.screenings[0].id}`, {
+                                    state: {
+                                        film,
+                                        screening: film.screenings[0],
+                                    },
+                                })
+                            }
                         >
                             {/* Poster */}
                             <div style={styles.poster}>
                                 {film.poster_url ? (
                                     <img
-    src={optimizeImg(film.poster_url, 342)}
-    alt={film.title_sl || film.title}
-    style={styles.posterImg}
-    width={130}
-    height={195}
-    loading="lazy"
-/>
+                                        src={optimizeImg(film.poster_url, 342)}
+                                        alt={film.title_sl || film.title}
+                                        style={styles.posterImg}
+                                        width={130}
+                                        height={195}
+                                        loading="lazy"
+                                    />
                                 ) : (
-                                    <div style={styles.posterPlaceholder}>
-                                        🎬
-                                    </div>
+                                    <div style={styles.posterPlaceholder}>🎬</div>
                                 )}
                             </div>
 
                             {/* Info */}
                             <div style={styles.filmInfo}>
                                 <div style={{ marginBottom: '10px' }}>
-                                    <span className="genre-tag">
-                                        {film.genre}
-                                    </span>
-                                    <span
-                                        className="genre-tag"
-                                        style={styles.ratingTag}
-                                    >
+                                    <span className="genre-tag">{film.genre}</span>
+                                    <span className="genre-tag" style={styles.ratingTag}>
                                         {film.age_rating}
                                     </span>
                                 </div>
-                                <h2 style={styles.filmTitle}>
-                                    {film.title_sl || film.title}
-                                    </h2>
-                                    {film.title_sl && film.title_sl !== film.title && (
-    <p style={styles.originalTitle}>
-        {film.title}
-    </p>
-)}
-                                <p style={styles.filmMeta}>
-                                    {film.duration_minutes} min
-                                </p>
+                                <h2 style={styles.filmTitle}>{film.title_sl || film.title}</h2>
+                                {film.title_sl && film.title_sl !== film.title && (
+                                    <p style={styles.originalTitle}>{film.title}</p>
+                                )}
+                                <p style={styles.filmMeta}>{film.duration_minutes} min</p>
 
                                 {/* Časi predstav */}
                                 <div style={styles.timesRow}>
-                                    {film.screenings.map(s => (
+                                    {film.screenings.map((s) => (
                                         <button
                                             key={s.id}
                                             style={styles.timeChip}
@@ -240,32 +220,35 @@ Object.values(filmMap).forEach(f =>
                                                 // klik na celotno vrstico in odprl
                                                 // napačno predvajanje
                                                 e.stopPropagation();
-                                                navigate(
-                                                    `/films/${s.id}`,
-                                                    { state: { film, screening: s }}
-                                                );
+                                                navigate(`/films/${s.id}`, {
+                                                    state: { film, screening: s },
+                                                });
                                             }}
                                         >
                                             {search && (
-    <span style={styles.dateChip}>
-        {new Date(s.start_time).toLocaleDateString('sl-SI', {
-            day: 'numeric', month: 'numeric', timeZone: 'UTC',
-        })}
-    </span>
-)}
+                                                <span style={styles.dateChip}>
+                                                    {new Date(s.start_time).toLocaleDateString(
+                                                        'sl-SI',
+                                                        {
+                                                            day: 'numeric',
+                                                            month: 'numeric',
+                                                            timeZone: 'UTC',
+                                                        }
+                                                    )}
+                                                </span>
+                                            )}
                                             <span style={styles.timeText}>
-                                                {new Date(s.start_time)
-                                                    .toLocaleTimeString('sl-SI', {
-                                                    hour: '2-digit',
-                                                    minute: '2-digit',
-                                                    hour12: false,
-                                                    timeZone: 'UTC',
-                                                    })
-                                                }
+                                                {new Date(s.start_time).toLocaleTimeString(
+                                                    'sl-SI',
+                                                    {
+                                                        hour: '2-digit',
+                                                        minute: '2-digit',
+                                                        hour12: false,
+                                                        timeZone: 'UTC',
+                                                    }
+                                                )}
                                             </span>
-                                            <span style={styles.roomText}>
-                                                {s.room_name}
-                                            </span>
+                                            <span style={styles.roomText}>{s.room_name}</span>
                                         </button>
                                     ))}
                                 </div>
@@ -274,21 +257,18 @@ Object.values(filmMap).forEach(f =>
                             {/* cena */}
                             <div style={styles.priceCol}>
                                 <span style={styles.priceFrom}>od</span>
-                                <span style={styles.price}>
-                                    €{film.screenings[0].price}
-                                </span>
+                                <span style={styles.price}>€{film.screenings[0].price}</span>
                                 <button
                                     className="btn btn-primary"
                                     style={styles.bookBtn}
                                     onClick={(e) => {
                                         e.stopPropagation();
-                                        navigate(
-                                            `/films/${film.screenings[0].id}`,
-                                            { state: {
+                                        navigate(`/films/${film.screenings[0].id}`, {
+                                            state: {
                                                 film,
-                                                screening: film.screenings[0]
-                                            }}
-                                        );
+                                                screening: film.screenings[0],
+                                            },
+                                        });
                                     }}
                                 >
                                     Rezerviraj
@@ -407,12 +387,12 @@ const styles = {
         letterSpacing: '-0.3px',
     },
     originalTitle: {
-    color: 'rgba(255,255,255,0.35)',
-    fontSize: '12px',
-    fontStyle: 'italic',
-    marginTop: '-4px',
-    marginBottom: '8px',
-},
+        color: 'rgba(255,255,255,0.35)',
+        fontSize: '12px',
+        fontStyle: 'italic',
+        marginTop: '-4px',
+        marginBottom: '8px',
+    },
     filmMeta: {
         color: 'rgba(255,255,255,0.4)',
         fontSize: '13px',
@@ -447,10 +427,10 @@ const styles = {
         opacity: 0.7,
     },
     dateChip: {
-    fontSize: '10px',
-    fontWeight: '700',
-    opacity: 0.85,
-},
+        fontSize: '10px',
+        fontWeight: '700',
+        opacity: 0.85,
+    },
     priceCol: {
         flexShrink: 0,
         textAlign: 'center',

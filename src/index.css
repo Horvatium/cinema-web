@@ -15,7 +15,6 @@ body {
     background-repeat: no-repeat;
     color: #f0f0f0;
     min-height: 100vh;
-
 }
 body::before {
     content: '';
@@ -46,7 +45,10 @@ body::before {
     font-family: 'Inter', sans-serif;
 }
 
-.btn:hover { opacity: 0.88; transform: translateY(-1px); }
+.btn:hover {
+    opacity: 0.88;
+    transform: translateY(-1px);
+}
 
 .btn-primary {
     background: linear-gradient(135deg, #00c9b1, #0097a7);
@@ -54,9 +56,9 @@ body::before {
 }
 
 .btn-secondary {
-    background-color: rgba(255,255,255,0.1);
+    background-color: rgba(255, 255, 255, 0.1);
     color: white;
-    border: 1px solid rgba(255,255,255,0.15);
+    border: 1px solid rgba(255, 255, 255, 0.15);
 }
 
 .btn-danger {
@@ -66,8 +68,8 @@ body::before {
 
 /* ── Kartice ── */
 .card {
-    background: rgba(255,255,255,0.05);
-    border: 1px solid rgba(255,255,255,0.08);
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 12px;
     padding: 20px;
     margin-bottom: 16px;
@@ -77,8 +79,8 @@ body::before {
 /* ── Opozorila ── */
 .error {
     color: #ff6b6b;
-    background: rgba(255,107,107,0.1);
-    border: 1px solid rgba(255,107,107,0.3);
+    background: rgba(255, 107, 107, 0.1);
+    border: 1px solid rgba(255, 107, 107, 0.3);
     padding: 12px 16px;
     border-radius: 8px;
     margin-bottom: 12px;
@@ -87,8 +89,8 @@ body::before {
 
 .success {
     color: #00c9b1;
-    background: rgba(0,201,177,0.1);
-    border: 1px solid rgba(0,201,177,0.3);
+    background: rgba(0, 201, 177, 0.1);
+    border: 1px solid rgba(0, 201, 177, 0.3);
     padding: 12px 16px;
     border-radius: 8px;
     margin-bottom: 12px;
@@ -96,25 +98,31 @@ body::before {
 }
 
 /* ── Elementi obrazca ── */
-input, select, textarea {
+input,
+select,
+textarea {
     width: 100%;
     padding: 11px 14px;
     margin-bottom: 12px;
     border-radius: 8px;
-    border: 1px solid rgba(255,255,255,0.12);
-    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: rgba(255, 255, 255, 0.06);
     color: #f0f0f0;
     font-size: 14px;
     font-family: 'Inter', sans-serif;
     transition: border-color 0.2s;
 }
 
-input:focus, select:focus, textarea:focus {
+input:focus,
+select:focus,
+textarea:focus {
     outline: none;
     border-color: #00c9b1;
 }
 
-input::placeholder { color: #555; }
+input::placeholder {
+    color: #555;
+}
 
 label {
     display: block;
@@ -138,9 +146,9 @@ label {
     border-radius: 20px;
     font-size: 11px;
     font-weight: 600;
-    background: rgba(0,201,177,0.15);
+    background: rgba(0, 201, 177, 0.15);
     color: #00c9b1;
-    border: 1px solid rgba(0,201,177,0.3);
+    border: 1px solid rgba(0, 201, 177, 0.3);
     margin-right: 6px;
     margin-bottom: 4px;
 }
@@ -168,10 +176,14 @@ select:focus {
 }
 
 /* ── Scrollbar ── */
-::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: #080b1a; }
+::-webkit-scrollbar {
+    width: 6px;
+}
+::-webkit-scrollbar-track {
+    background: #080b1a;
+}
 ::-webkit-scrollbar-thumb {
-    background: rgba(255,255,255,0.15);
+    background: rgba(255, 255, 255, 0.15);
     border-radius: 3px;
 }
 .parallax-section {
@@ -214,7 +226,7 @@ select:focus {
     .promo-banner {
         flex-direction: column !important;
     }
-    
+
     .promo-banner img:first-child {
         width: 100% !important;
         height: 200px !important;

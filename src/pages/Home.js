@@ -19,16 +19,15 @@ function Home() {
     const [homeSearch, setHomeSearch] = useState('');
 
     const handleHomeSearch = (e) => {
-    e.preventDefault();
-    if (!homeSearch.trim()) return;
-    navigate(`/program?q=${encodeURIComponent(homeSearch.trim())}`);
-};
+        e.preventDefault();
+        if (!homeSearch.trim()) return;
+        navigate(`/program?q=${encodeURIComponent(homeSearch.trim())}`);
+    };
     useEffect(() => {
         const fetchScreenings = async () => {
             try {
                 const response = await getScreenings();
-                const screeningData = Array.isArray(response.data)
-                    ? response.data : [];
+                const screeningData = Array.isArray(response.data) ? response.data : [];
                 setScreenings(screeningData);
             } catch (_err) {
                 setScreenings([]);
@@ -43,23 +42,23 @@ function Home() {
     // vsemi njegovimi urami. Zato zapise združimo po naslovu filma: prvi zapis
     // določi podatke o filmu, vsi pa se zberejo v polju screenings.
     const filmMap = {};
-    screenings.forEach(s => {
+    screenings.forEach((s) => {
         if (!filmMap[s.film_title]) {
             filmMap[s.film_title] = {
-                 title: s.film_title,
-                 title_sl: s.film_title_sl,
-    genre: s.genre,
-    duration_minutes: s.duration_minutes,
-    age_rating: s.age_rating,
-    poster_url: s.poster_url,
-    backdrop_url: s.backdrop_url,
-    synopsis: s.synopsis,
-    director: s.director,
-    release_year: s.release_year,
-    cast_members: s.cast_members,
-    imdb_url: s.imdb_url,
-    trailer_url: s.trailer_url,
-    screenings: [],
+                title: s.film_title,
+                title_sl: s.film_title_sl,
+                genre: s.genre,
+                duration_minutes: s.duration_minutes,
+                age_rating: s.age_rating,
+                poster_url: s.poster_url,
+                backdrop_url: s.backdrop_url,
+                synopsis: s.synopsis,
+                director: s.director,
+                release_year: s.release_year,
+                cast_members: s.cast_members,
+                imdb_url: s.imdb_url,
+                trailer_url: s.trailer_url,
+                screenings: [],
             };
         }
         filmMap[s.film_title].screenings.push(s);
@@ -72,7 +71,7 @@ function Home() {
     useEffect(() => {
         if (films.length <= 1) return;
         const interval = setInterval(() => {
-            setHeroIndex(prev => (prev + 1) % films.length);
+            setHeroIndex((prev) => (prev + 1) % films.length);
         }, 5000);
         return () => clearInterval(interval);
     }, [films.length]);
@@ -81,24 +80,22 @@ function Home() {
 
     return (
         <div style={styles.page}>
-            
             {/* ── Hero pasica ── */}
-                {!loading && featuredFilm && (
-                
-                <div className="hero-banner"
-                style={{
-                    ...styles.hero,
-                    backgroundImage: featuredFilm.backdrop_url
-    ? `url(${optimizeImg(featuredFilm.backdrop_url, 780)})`
-    : featuredFilm.poster_url
-    ? `url(${optimizeImg(featuredFilm.poster_url, 500)})`
-    : 'none',
-                }}>
+            {!loading && featuredFilm && (
+                <div
+                    className="hero-banner"
+                    style={{
+                        ...styles.hero,
+                        backgroundImage: featuredFilm.backdrop_url
+                            ? `url(${optimizeImg(featuredFilm.backdrop_url, 780)})`
+                            : featuredFilm.poster_url
+                              ? `url(${optimizeImg(featuredFilm.poster_url, 500)})`
+                              : 'none',
+                    }}
+                >
                     <div style={styles.heroOverlay}>
                         <div style={styles.heroContent}>
-                            <span className="genre-tag">
-                                {featuredFilm.genre}
-                            </span>
+                            <span className="genre-tag">{featuredFilm.genre}</span>
                             <h1 style={styles.heroTitle}>
                                 {featuredFilm.title_sl || featuredFilm.title}
                             </h1>
@@ -110,22 +107,21 @@ function Home() {
                             {featuredFilm.synopsis && (
                                 <p style={styles.heroSynopsis}>
                                     {featuredFilm.synopsis.length > 160
-                                        ? featuredFilm.synopsis
-                                            .substring(0, 160) + '...'
-                                        : featuredFilm.synopsis
-                                    }
+                                        ? featuredFilm.synopsis.substring(0, 160) + '...'
+                                        : featuredFilm.synopsis}
                                 </p>
                             )}
                             <button
                                 className="btn btn-primary"
                                 style={styles.heroBtn}
-                                onClick={() => navigate(
-                                    `/films/${featuredFilm.screenings[0].id}`,
-                                    { state: {
-                                        film: featuredFilm,
-                                        screening: featuredFilm.screenings[0]
-                                    }}
-                                )}
+                                onClick={() =>
+                                    navigate(`/films/${featuredFilm.screenings[0].id}`, {
+                                        state: {
+                                            film: featuredFilm,
+                                            screening: featuredFilm.screenings[0],
+                                        },
+                                    })
+                                }
                             >
                                 → Rezerviraj vstopnice
                             </button>
@@ -136,70 +132,68 @@ function Home() {
                     <div style={styles.heroDots}>
                         {films.map((_, i) => (
                             <button
-    key={i}
-    onClick={() => setHeroIndex(i)}
-    style={{
-        ...styles.heroDot,
-        ...(i === heroIndex ? styles.heroDotActive : {})
-    }}
-    aria-label={`Film ${i + 1}`}
-/>
+                                key={i}
+                                onClick={() => setHeroIndex(i)}
+                                style={{
+                                    ...styles.heroDot,
+                                    ...(i === heroIndex ? styles.heroDotActive : {}),
+                                }}
+                                aria-label={`Film ${i + 1}`}
+                            />
                         ))}
                     </div>
 
                     {/* Puščice */}
                     <button
-    style={{...styles.heroArrow, left: '20px'}}
-    onClick={() => setHeroIndex(
-        prev => (prev - 1 + films.length) % films.length
-    )}
-    aria-label="Prejšnji film"
->{'<'}</button>
-<button
-    style={{...styles.heroArrow, right: '20px'}}
-    onClick={() => setHeroIndex(
-        prev => (prev + 1) % films.length
-    )}
-    aria-label="Naslednji film"
->{'>'}</button>
+                        style={{ ...styles.heroArrow, left: '20px' }}
+                        onClick={() =>
+                            setHeroIndex((prev) => (prev - 1 + films.length) % films.length)
+                        }
+                        aria-label="Prejšnji film"
+                    >
+                        {'<'}
+                    </button>
+                    <button
+                        style={{ ...styles.heroArrow, right: '20px' }}
+                        onClick={() => setHeroIndex((prev) => (prev + 1) % films.length)}
+                        aria-label="Naslednji film"
+                    >
+                        {'>'}
+                    </button>
                 </div>
             )}
 
             <div className="container">
-
                 {/* ── Poster trak ── */}
                 {!loading && films.length > 0 && (
                     <div style={styles.section}>
                         <div style={styles.sectionHeader}>
-                            <span style={styles.sectionLabel}>
-                                V KINODVORANAH
-                            </span>
+                            <span style={styles.sectionLabel}>V KINODVORANAH</span>
                         </div>
                         <div style={styles.posterStrip}>
                             {films.map((film, index) => (
-    // Premik miške čez plakat prestavi vrtiljak na ta film
-    <div
-        key={film.title}
-        style={styles.posterCard}
-        onMouseEnter={() => setHeroIndex(index)}
-        onClick={() => navigate(
-            `/films/${film.screenings[0].id}`,
-            { state: { film, screening: film.screenings[0] }}
-        )}
-    >
+                                // Premik miške čez plakat prestavi vrtiljak na ta film
+                                <div
+                                    key={film.title}
+                                    style={styles.posterCard}
+                                    onMouseEnter={() => setHeroIndex(index)}
+                                    onClick={() =>
+                                        navigate(`/films/${film.screenings[0].id}`, {
+                                            state: { film, screening: film.screenings[0] },
+                                        })
+                                    }
+                                >
                                     {film.poster_url ? (
                                         <img
-    src={optimizeImg(film.poster_url, 342)}
-    alt={film.title_sl || film.title}
-    style={styles.posterImg}
-    width={130}
-    height={195}
-    loading="lazy"
-/>
+                                            src={optimizeImg(film.poster_url, 342)}
+                                            alt={film.title_sl || film.title}
+                                            style={styles.posterImg}
+                                            width={130}
+                                            height={195}
+                                            loading="lazy"
+                                        />
                                     ) : (
-                                        <div style={styles.posterPlaceholder}>
-                                            🎬
-                                        </div>
+                                        <div style={styles.posterPlaceholder}>🎬</div>
                                     )}
                                     <div style={styles.posterOverlay}>
                                         <p style={styles.posterTitle}>
@@ -212,33 +206,26 @@ function Home() {
                     </div>
                 )}
                 {/* Paralax slika */}
-<div className="parallax-section">
-    <div style={styles.parallaxOverlay}>
-        <h2 style={styles.parallaxText}>
-            Doživetje, ki ga ne boste pozabili
-        </h2>
-        <p style={styles.parallaxSubtext}>
-            Rezervirajte svoje sedeže že danes
-        </p>
-    </div>
-</div>
-
+                <div className="parallax-section">
+                    <div style={styles.parallaxOverlay}>
+                        <h2 style={styles.parallaxText}>Doživetje, ki ga ne boste pozabili</h2>
+                        <p style={styles.parallaxSubtext}>Rezervirajte svoje sedeže že danes</p>
+                    </div>
+                </div>
 
                 {/* ── Predogled programa ── */}
                 {!loading && films.length > 0 && (
                     <div style={styles.section}>
                         <form onSubmit={handleHomeSearch} style={styles.homeSearchWrap}>
-    <input
-        placeholder="🔍 Išči filme..."
-        value={homeSearch}
-        onChange={(e) => setHomeSearch(e.target.value)}
-        style={styles.homeSearchInput}
-    />
-</form>
+                            <input
+                                placeholder="🔍 Išči filme..."
+                                value={homeSearch}
+                                onChange={(e) => setHomeSearch(e.target.value)}
+                                style={styles.homeSearchInput}
+                            />
+                        </form>
                         <div style={styles.sectionHeader}>
-                            <span style={styles.sectionLabel}>
-                                TRENUTNO NA SPOREDU
-                            </span>
+                            <span style={styles.sectionLabel}>TRENUTNO NA SPOREDU</span>
                             <button
                                 className="btn btn-secondary"
                                 style={{ fontSize: '13px', padding: '8px 16px' }}
@@ -250,87 +237,79 @@ function Home() {
 
                         {/* Na domači strani pokažemo le prve štiri filme,
                             celoten spored je na strani /program */}
-                        {films.slice(0, 4).map(film => (
+                        {films.slice(0, 4).map((film) => (
                             <div
                                 key={film.title}
                                 style={styles.programRow}
-                                onClick={() => navigate(
-                                    `/films/${film.screenings[0].id}`,
-                                    { state: {
-                                        film,
-                                        screening: film.screenings[0]
-                                    }}
-                                )}
+                                onClick={() =>
+                                    navigate(`/films/${film.screenings[0].id}`, {
+                                        state: {
+                                            film,
+                                            screening: film.screenings[0],
+                                        },
+                                    })
+                                }
                             >
                                 <div style={styles.programThumb}>
                                     {film.poster_url ? (
                                         <img
-    src={optimizeImg(film.poster_url, 342)}
-    alt={film.title_sl || film.title}
-    style={styles.programThumbImg}
-    width={100}
-    height={140}
-    loading="lazy"
-/>
+                                            src={optimizeImg(film.poster_url, 342)}
+                                            alt={film.title_sl || film.title}
+                                            style={styles.programThumbImg}
+                                            width={100}
+                                            height={140}
+                                            loading="lazy"
+                                        />
                                     ) : (
-                                        <div style={styles.programThumbPlaceholder}>
-                                            🎬
-                                        </div>
+                                        <div style={styles.programThumbPlaceholder}>🎬</div>
                                     )}
                                 </div>
 
                                 <div style={styles.programInfo}>
                                     <div style={styles.programTags}>
-                                        <span className="genre-tag">
-                                            {film.genre}
-                                        </span>
-                                        <span
-                                            className="genre-tag"
-                                            style={styles.ratingTag}
-                                        >
+                                        <span className="genre-tag">{film.genre}</span>
+                                        <span className="genre-tag" style={styles.ratingTag}>
                                             {film.age_rating}
                                         </span>
                                     </div>
                                     <h3 style={styles.programTitle}>
                                         {film.title_sl || film.title}
                                     </h3>
-                                    <p style={styles.programMeta}>
-                                        {film.duration_minutes} minut
-                                    </p>
+                                    <p style={styles.programMeta}>{film.duration_minutes} minut</p>
                                     <div style={styles.timesRow}>
-                                        {film.screenings.map(s => (
-    <button
-        key={s.id}
-        style={styles.timeChip}
-        onClick={(e) => {
-            e.stopPropagation();
-            navigate(
-                `/films/${s.id}`,
-                { state: {
-                    film,
-                    screening: s
-                }}
-            );
-        }}
-    >
-        {new Date(s.start_time)
-            .toLocaleDateString('sl-SI', {
-                day: '2-digit',
-                month: '2-digit',
-                timeZone: 'UTC',
-            })
-        }
-        {' '}
-        {new Date(s.start_time)
-            .toLocaleTimeString('sl-SI', {
-                hour: '2-digit',
-                minute: '2-digit',
-                hour12: false,
-                timeZone: 'UTC',
-            })
-        }
-    </button>
-))}
+                                        {film.screenings.map((s) => (
+                                            <button
+                                                key={s.id}
+                                                style={styles.timeChip}
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    navigate(`/films/${s.id}`, {
+                                                        state: {
+                                                            film,
+                                                            screening: s,
+                                                        },
+                                                    });
+                                                }}
+                                            >
+                                                {new Date(s.start_time).toLocaleDateString(
+                                                    'sl-SI',
+                                                    {
+                                                        day: '2-digit',
+                                                        month: '2-digit',
+                                                        timeZone: 'UTC',
+                                                    }
+                                                )}{' '}
+                                                {new Date(s.start_time).toLocaleTimeString(
+                                                    'sl-SI',
+                                                    {
+                                                        hour: '2-digit',
+                                                        minute: '2-digit',
+                                                        hour12: false,
+                                                        timeZone: 'UTC',
+                                                    }
+                                                )}
+                                            </button>
+                                        ))}
                                     </div>
                                 </div>
 
@@ -356,33 +335,31 @@ function Home() {
                     </div>
                 )}
 
-{/* ── Promo baner aplikacije ── */}
-{!loading && (
-    <div className="promo-banner" 
-    style={styles.promoBanner}>
-        <div style={styles.promoImgWrapper}>
-            <img
-                src="https://cineamo-cdn.b-cdn.net/images/pictures/im-smartphoneWithCineamoAppAndPopcornBackground.png?width=1080"
-                alt="KinoPlex mobilna aplikacija"
-                style={styles.promoImg}
-                width={340}
-                height={280}
-                loading="lazy"
-            />
-            <div style={styles.promoImgFade} />
-        </div>
-        <div style={styles.promoContent}>
-             <h3 style={styles.promoTitle}>
-                                Kino v vaših rokah - z aplikacijo KinoPlex 
+                {/* ── Promo baner aplikacije ── */}
+                {!loading && (
+                    <div className="promo-banner" style={styles.promoBanner}>
+                        <div style={styles.promoImgWrapper}>
+                            <img
+                                src="https://cineamo-cdn.b-cdn.net/images/pictures/im-smartphoneWithCineamoAppAndPopcornBackground.png?width=1080"
+                                alt="KinoPlex mobilna aplikacija"
+                                style={styles.promoImg}
+                                width={340}
+                                height={280}
+                                loading="lazy"
+                            />
+                            <div style={styles.promoImgFade} />
+                        </div>
+                        <div style={styles.promoContent}>
+                            <h3 style={styles.promoTitle}>
+                                Kino v vaših rokah - z aplikacijo KinoPlex
                             </h3>
-            <p style={styles.promoText}>
-                Odkrijte vse, kar ponuja vaš kino. Z aplikacijo KinoPlex
-                ne morete le rezervirati kina, temveč tudi odkriti
-                trenutni program in nove dogodke v kinu. Najdete jo zdaj
-                v trgovini z aplikacijami!
-            </p>
-            <div style={styles.promoButtons}>
-                {/*<button
+                            <p style={styles.promoText}>
+                                Odkrijte vse, kar ponuja vaš kino. Z aplikacijo KinoPlex ne morete
+                                le rezervirati kina, temveč tudi odkriti trenutni program in nove
+                                dogodke v kinu. Najdete jo zdaj v trgovini z aplikacijami!
+                            </p>
+                            <div style={styles.promoButtons}>
+                                {/*<button
                     className="btn btn-secondary"
                     style={{ padding: 0, background: 'none', border: 'none' }}
                     onClick={() => window.open('https://apps.apple.com', '_blank')}
@@ -393,30 +370,27 @@ function Home() {
                         style={styles.storeBadge}
                     />
                 </button>*/}
-                <button
-    style={{ padding: 0, background: 'none', border: 'none' }}
-    onClick={() => window.open('https://play.google.com', '_blank')}
-    aria-label="Prenesi na Google Play"
->
-                    <img
-                        src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg"
-                        alt="Google Play"
-                        style={styles.storeBadge}
-                    />
-                </button>
-            </div>
-        </div>
-    </div>
-)}
-
-                {loading && (
-                    <div style={styles.center}>
-                        <p style={{ color: '#555' }}>
-                            Nalaganje programa...
-                        </p>
+                                <button
+                                    style={{ padding: 0, background: 'none', border: 'none' }}
+                                    onClick={() => window.open('https://play.google.com', '_blank')}
+                                    aria-label="Prenesi na Google Play"
+                                >
+                                    <img
+                                        src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg"
+                                        alt="Google Play"
+                                        style={styles.storeBadge}
+                                    />
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 )}
 
+                {loading && (
+                    <div style={styles.center}>
+                        <p style={{ color: '#555' }}>Nalaganje programa...</p>
+                    </div>
+                )}
             </div>
         </div>
     );
@@ -427,13 +401,13 @@ const styles = {
 
     // ── Hero ──
     hero: {
-    height: '520px',
-    backgroundSize: 'cover',
-    backgroundPosition: 'center center',
-    position: 'relative',
-    backgroundColor: '#1a0a3e',
-    transition: 'background-image 0.8s ease-in-out',
-},
+        height: '520px',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center center',
+        position: 'relative',
+        backgroundColor: '#1a0a3e',
+        transition: 'background-image 0.8s ease-in-out',
+    },
     heroOverlay: {
         position: 'absolute',
         inset: 0,
@@ -468,22 +442,22 @@ const styles = {
         gap: '8px',
     },
     heroDot: {
-    width: '12px',
-    height: '12px',
-    borderRadius: '50%',
-    background: 'rgba(255,255,255,0.3)',
-    border: 'none',
-    cursor: 'pointer',
-    padding: '8px',
-    backgroundClip: 'content-box',
-},
-heroDotActive: {
-    background: '#00c9b1',
-    width: '28px',
-    borderRadius: '4px',
-    padding: '8px',
-    backgroundClip: 'content-box',
-},
+        width: '12px',
+        height: '12px',
+        borderRadius: '50%',
+        background: 'rgba(255,255,255,0.3)',
+        border: 'none',
+        cursor: 'pointer',
+        padding: '8px',
+        backgroundClip: 'content-box',
+    },
+    heroDotActive: {
+        background: '#00c9b1',
+        width: '28px',
+        borderRadius: '4px',
+        padding: '8px',
+        backgroundClip: 'content-box',
+    },
     heroArrow: {
         position: 'absolute',
         top: '50%',
@@ -535,21 +509,21 @@ heroDotActive: {
         cursor: 'pointer',
         background: '#1a1a2e',
     },
-    posterImg: { 
-        width: '100%', 
-        height: '100%', 
-        objectFit: 'cover' 
+    posterImg: {
+        width: '100%',
+        height: '100%',
+        objectFit: 'cover',
     },
 
     posterPlaceholder: {
-    width: '130px',
-    height: '195px',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    fontSize: '36px',
-    background: '#1a1a2e',
-},
+        width: '130px',
+        height: '195px',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        fontSize: '36px',
+        background: '#1a1a2e',
+    },
     posterOverlay: {
         position: 'absolute',
         bottom: 0,
@@ -572,28 +546,28 @@ heroDotActive: {
     margin: '0 -20px',
     marginBottom: '0',
 },*/
-parallaxOverlay: {
-    position: 'absolute',
-    inset: 0,
-    background: 'rgba(8,11,26,0.6)',
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: '12px',
-},
-parallaxText: {
-    fontSize: '32px',
-    fontWeight: '700',
-    color: '#fff',
-    textAlign: 'center',
-    letterSpacing: '-0.5px',
-},
-parallaxSubtext: {
-    color: 'rgba(255,255,255,0.7)',
-    fontSize: '16px',
-    textAlign: 'center',
-},
+    parallaxOverlay: {
+        position: 'absolute',
+        inset: 0,
+        background: 'rgba(8,11,26,0.6)',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: '12px',
+    },
+    parallaxText: {
+        fontSize: '32px',
+        fontWeight: '700',
+        color: '#fff',
+        textAlign: 'center',
+        letterSpacing: '-0.5px',
+    },
+    parallaxSubtext: {
+        color: 'rgba(255,255,255,0.7)',
+        fontSize: '16px',
+        textAlign: 'center',
+    },
     // ── Program vrstice ──
     programRow: {
         display: 'flex',
@@ -645,87 +619,92 @@ parallaxSubtext: {
         fontFamily: 'Inter, sans-serif',
     },
     programPrice: { flexShrink: 0, textAlign: 'right', paddingRight: '8px' },
-    priceLabel: { display: 'block', color: 'rgba(255,255,255,0.4)', fontSize: '11px', marginBottom: '2px' },
+    priceLabel: {
+        display: 'block',
+        color: 'rgba(255,255,255,0.4)',
+        fontSize: '11px',
+        marginBottom: '2px',
+    },
     priceValue: { fontSize: '22px', fontWeight: '700', color: '#fff' },
 
     // ── Promocijska pasica aplikacije ──
-promoBanner: {
-    display: 'flex',
-    alignItems: 'stretch',
-    borderRadius: '20px',
-    overflow: 'hidden',
-    marginTop: '48px',
-    marginBottom: '48px',
-    background: 'linear-gradient(135deg, #1a0a3e 0%, #0a1628 50%, #003d3d 100%)',
-    minHeight: '220px',
-},
-promoImgWrapper: {
-    position: 'relative',
-    width: '380px',
-    flexShrink: 0,
-},
-promoImg: {
-    width: '100%',
-    height: '100%',
-    objectFit: 'cover',
-    display: 'block',
-},
-promoImgFade: {
-    position: 'absolute',
-    top: 0,
-    right: 0,
-    bottom: 0,
-    width: '60%',
-    background: 'linear-gradient(to right, transparent, #1a0a3e)',
-},
-promoContent: {
-    flex: 1,
-    padding: '40px 48px',
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'flex-end',
-    textAlign: 'right',
-},
-promoTitle: {
-    fontSize: '24px',
-    fontWeight: '700',
-    marginBottom: '16px',
-    letterSpacing: '-0.3px',
-    color: '#fff',
-},
-promoText: {
-    color: 'rgba(255,255,255,0.7)',
-    fontSize: '14px',
-    lineHeight: 1.7,
-    marginBottom: '24px',
-    maxWidth: '480px',
-},
-promoButtons: {
-    display: 'flex',
-    gap: '16px',
-    flexWrap: 'wrap',
-    justifyContent: 'flex-end',
-    alignItems: 'center',
-},
-storeBadge: {
-    height: '44px',
-    width: 'auto',
-},
-homeSearchWrap: {
-    maxWidth: '480px',
-    margin: '0 0 12px',
-    padding: '0 20px',
-},
-homeSearchInput: {
-    width: '100%',
-    padding: '14px 18px',
-    borderRadius: '12px',
-    border: '1px solid rgba(255,255,255,0.1)',
-    background: 'rgba(255,255,255,0.05)',
-    color: '#fff',
-    fontSize: '15px',
-},
+    promoBanner: {
+        display: 'flex',
+        alignItems: 'stretch',
+        borderRadius: '20px',
+        overflow: 'hidden',
+        marginTop: '48px',
+        marginBottom: '48px',
+        background: 'linear-gradient(135deg, #1a0a3e 0%, #0a1628 50%, #003d3d 100%)',
+        minHeight: '220px',
+    },
+    promoImgWrapper: {
+        position: 'relative',
+        width: '380px',
+        flexShrink: 0,
+    },
+    promoImg: {
+        width: '100%',
+        height: '100%',
+        objectFit: 'cover',
+        display: 'block',
+    },
+    promoImgFade: {
+        position: 'absolute',
+        top: 0,
+        right: 0,
+        bottom: 0,
+        width: '60%',
+        background: 'linear-gradient(to right, transparent, #1a0a3e)',
+    },
+    promoContent: {
+        flex: 1,
+        padding: '40px 48px',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'flex-end',
+        textAlign: 'right',
+    },
+    promoTitle: {
+        fontSize: '24px',
+        fontWeight: '700',
+        marginBottom: '16px',
+        letterSpacing: '-0.3px',
+        color: '#fff',
+    },
+    promoText: {
+        color: 'rgba(255,255,255,0.7)',
+        fontSize: '14px',
+        lineHeight: 1.7,
+        marginBottom: '24px',
+        maxWidth: '480px',
+    },
+    promoButtons: {
+        display: 'flex',
+        gap: '16px',
+        flexWrap: 'wrap',
+        justifyContent: 'flex-end',
+        alignItems: 'center',
+    },
+    storeBadge: {
+        height: '44px',
+        width: 'auto',
+    },
+    homeSearchWrap: {
+        maxWidth: '480px',
+        margin: '0 0 12px',
+        padding: '0 20px',
+    },
+    homeSearchInput: {
+        width: '100%',
+        padding: '14px 18px',
+        borderRadius: '12px',
+        border: '1px solid rgba(255,255,255,0.1)',
+        background: 'rgba(255,255,255,0.05)',
+        color: '#fff',
+        fontSize: '15px',
+    },
 
     // ── Nalaganje ──
     center: { textAlign: 'center', padding: '80px 20px' },

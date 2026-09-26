@@ -50,7 +50,7 @@ function Register() {
             });
             setSuccess(
                 'Registracija je uspela. Na vaš elektronski naslov smo poslali ' +
-                'potrditveno povezavo — odprite jo, nato se lahko prijavite.'
+                    'potrditveno povezavo — odprite jo, nato se lahko prijavite.'
             );
         } catch (err) {
             setError(err.response?.data?.message || 'Prišlo je do napake.');
@@ -80,77 +80,77 @@ function Register() {
                         </button>
                     </div>
                 ) : (
-                <form onSubmit={handleSubmit}>
-                    <div style={styles.row}>
-                        <div style={styles.half}>
-                            <label>Ime</label>
-                            <input
-                                name="first_name"
-                                value={form.first_name}
-                                onChange={handleChange}
-                                placeholder="Janez"
-                                required
-                            />
+                    <form onSubmit={handleSubmit}>
+                        <div style={styles.row}>
+                            <div style={styles.half}>
+                                <label>Ime</label>
+                                <input
+                                    name="first_name"
+                                    value={form.first_name}
+                                    onChange={handleChange}
+                                    placeholder="Janez"
+                                    required
+                                />
+                            </div>
+                            <div style={styles.half}>
+                                <label>Priimek</label>
+                                <input
+                                    name="last_name"
+                                    value={form.last_name}
+                                    onChange={handleChange}
+                                    placeholder="Novak"
+                                    required
+                                />
+                            </div>
                         </div>
-                        <div style={styles.half}>
-                            <label>Priimek</label>
-                            <input
-                                name="last_name"
-                                value={form.last_name}
-                                onChange={handleChange}
-                                placeholder="Novak"
-                                required
-                            />
-                        </div>
-                    </div>
 
-                    <label>E-poštni naslov</label>
-                    <input
-                        type="email"
-                        name="email"
-                        value={form.email}
-                        onChange={handleChange}
-                        placeholder="janez@gmail.com"
-                        required
-                    />
+                        <label>E-poštni naslov</label>
+                        <input
+                            type="email"
+                            name="email"
+                            value={form.email}
+                            onChange={handleChange}
+                            placeholder="janez@gmail.com"
+                            required
+                        />
 
-                    <label>Telefonska številka (neobvezno)</label>
-                    <input
-                        name="phone"
-                        value={form.phone}
-                        onChange={handleChange}
-                        placeholder="041 234 567"
-                    />
+                        <label>Telefonska številka (neobvezno)</label>
+                        <input
+                            name="phone"
+                            value={form.phone}
+                            onChange={handleChange}
+                            placeholder="041 234 567"
+                        />
 
-                    <label>Geslo</label>
-                    <input
-                        type="password"
-                        name="password"
-                        value={form.password}
-                        onChange={handleChange}
-                        placeholder="Vsaj 6 znakov"
-                        required
-                    />
+                        <label>Geslo</label>
+                        <input
+                            type="password"
+                            name="password"
+                            value={form.password}
+                            onChange={handleChange}
+                            placeholder="Vsaj 6 znakov"
+                            required
+                        />
 
-                    <label>Potrdi geslo</label>
-                    <input
-                        type="password"
-                        name="confirmPassword"
-                        value={form.confirmPassword}
-                        onChange={handleChange}
-                        placeholder="Ponovite geslo"
-                        required
-                    />
+                        <label>Potrdi geslo</label>
+                        <input
+                            type="password"
+                            name="confirmPassword"
+                            value={form.confirmPassword}
+                            onChange={handleChange}
+                            placeholder="Ponovite geslo"
+                            required
+                        />
 
-                    <button
-                        type="submit"
-                        className="btn btn-primary"
-                        style={{ width: '100%', marginTop: '8px' }}
-                        disabled={loading}
-                    >
-                        {loading ? 'Ustvarjanje računa...' : 'Ustvari račun'}
-                    </button>
-                </form>
+                        <button
+                            type="submit"
+                            className="btn btn-primary"
+                            style={{ width: '100%', marginTop: '8px' }}
+                            disabled={loading}
+                        >
+                            {loading ? 'Ustvarjanje računa...' : 'Ustvari račun'}
+                        </button>
+                    </form>
                 )}
 
                 <p style={styles.switchText}>

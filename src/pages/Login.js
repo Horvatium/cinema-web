@@ -73,7 +73,7 @@ function Login() {
                         {resendMessage ? (
                             <p style={styles.resendMessage}>{resendMessage}</p>
                         ) : (
-                                                        <button
+                            <button
                                 type="button"
                                 className="btn"
                                 style={styles.resendBtn}
@@ -153,7 +153,7 @@ const styles = {
         fontSize: '14px',
         textAlign: 'center',
     },
-        resendBtn: {
+    resendBtn: {
         width: '100%',
         background: 'rgba(123,97,255,0.15)',
         color: '#7b61ff',
