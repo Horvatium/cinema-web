@@ -35,3 +35,24 @@ jobs:
     steps:
       - uses: actions/checkout@v5
       - run: docker build --build-arg REACT_APP_API_URL=http://localhost:5000/api -t cinema-web .
+
+  deploy:
+    name: Deploy to Vercel
+    # Production deploys only from main, and only after every check passed.
+    # Automatic Git deploys for main are disabled in vercel.json.
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: [build, docker]
+    runs-on: ubuntu-latest
+    environment: production
+    env:
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+      - run: npm install --global vercel@latest
+      - run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
+      - run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
+      - run: vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
