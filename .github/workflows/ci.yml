@@ -15,7 +15,7 @@ jobs:
     name: Lint, test & build
     runs-on: ubuntu-latest
     env:
-      # Makes Jest run once instead of watching, and the build fail on warnings
+      # Jest se zažene enkrat (brez opazovanja), gradnja pa pade ob opozorilih
       CI: true
     steps:
       - uses: actions/checkout@v5
@@ -38,8 +38,8 @@ jobs:
 
   deploy:
     name: Deploy to Vercel
-    # Production deploys only from main, and only after every check passed.
-    # Automatic Git deploys for main are disabled in vercel.json.
+    # Produkcijska objava samo z veje main in šele, ko uspejo vsa preverjanja.
+    # Vercelova samodejna objava za main je izklopljena v vercel.json.
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     needs: [build, docker]
     runs-on: ubuntu-latest

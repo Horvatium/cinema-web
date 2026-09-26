@@ -1,11 +1,11 @@
-# Build the React app, then serve the static files with nginx
+# Zgradi aplikacijo React, nato statične datoteke streži z nginx
 FROM node:22-alpine AS build
 WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm ci
 COPY public ./public
 COPY src ./src
-# CRA inlines REACT_APP_* variables at build time
+# CRA spremenljivke REACT_APP_* vpiše v kodo ob gradnji
 ARG REACT_APP_API_URL
 ENV REACT_APP_API_URL=$REACT_APP_API_URL
 RUN npm run build
