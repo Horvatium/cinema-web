@@ -1,53 +1,52 @@
-# KinoPlex Web
+# KinoPlex – spletna aplikacija
 
 [![CI](https://github.com/Horvatium/cinema-web/actions/workflows/ci.yml/badge.svg)](https://github.com/Horvatium/cinema-web/actions/workflows/ci.yml)
 
-React web app for **KinoPlex**, a cinema ticket booking system. Customers browse the
-programme, pick seats on an interactive seat map and pay online with Stripe. Admins manage
-films, screenings, rooms and reservations. Built as my bachelor's thesis project and running
-in production.
+Spletna aplikacija v Reactu za **KinoPlex**, sistem za rezervacijo kinovstopnic. Stranke
+pregledujejo spored, izberejo sedeže na interaktivnem zemljevidu dvorane in vstopnice plačajo
+prek Stripa. Skrbniki upravljajo filme, predvajanja, dvorane in rezervacije. Projekt je nastal
+kot diplomska naloga in deluje v produkciji.
 
-**Live site:** [kinoplex.si](https://www.kinoplex.si) ·
+**Spletna stran:** [kinoplex.si](https://www.kinoplex.si) ·
 **API:** [cinema-api](https://github.com/Horvatium/cinema-api) ·
-**Mobile app:** [cinema-mobile](https://github.com/Horvatium/cinema-mobile) ·
-[Slovenska različica](README.sl.md)
+**Mobilna aplikacija:** [cinema-mobile](https://github.com/Horvatium/cinema-mobile) ·
+[English version](README.en.md)
 
-![Home page](docs/screenshots/home.png)
+![Domača stran](docs/screenshots/home.png)
 
-| Programme                                         | Seat selection                                                  |
-| ------------------------------------------------- | --------------------------------------------------------------- |
-| ![Programme by day](docs/screenshots/program.png) | ![Seat map with two selected seats](docs/screenshots/seats.png) |
+| Spored                                            | Izbira sedežev                                                      |
+| ------------------------------------------------- | ------------------------------------------------------------------- |
+| ![Spored po dnevih](docs/screenshots/program.png) | ![Zemljevid z dvema izbranima sedežema](docs/screenshots/seats.png) |
 
-## Features
+## Funkcionalnosti
 
-- Film programme by day, with search
-- Film details: synopsis, cast, director, IMDb link and trailer
-- Interactive seat map showing free, selected and taken seats
-- Online payment with Stripe Elements. Seats are held for 10 minutes while the customer pays,
-  and the hold survives a page refresh.
-- Registration with email verification, login with JWT
-- "My tickets": view and cancel your own reservations
-- Admin dashboard: films (with poster upload), screenings, rooms and all reservations
+- Spored po dnevih z iskanjem
+- Podrobnosti filma: opis, igralska zasedba, režiser, povezava na IMDb in napovednik
+- Interaktivni zemljevid dvorane s prostimi, izbranimi in zasedenimi sedeži
+- Spletno plačilo s Stripe Elements. Med plačevanjem so sedeži zadržani 10 minut, zadržanje
+  pa preživi tudi osvežitev strani.
+- Registracija s potrditvijo e-poštnega naslova, prijava z JWT
+- »Moje vstopnice«: pregled in preklic lastnih rezervacij
+- Skrbniška plošča: filmi (z nalaganjem plakatov), predvajanja, dvorane in vse rezervacije
 
-The booking logic, including the protection against two customers buying the same seat at once,
-lives in the API. See the
-[cinema-api README](https://github.com/Horvatium/cinema-api#the-double-booking-bug).
+Logika rezervacij, vključno z zaščito pred tem, da bi dve stranki hkrati kupili isti sedež, je
+v API-ju. Glej [README za cinema-api](https://github.com/Horvatium/cinema-api#napaka-z-dvojno-rezervacijo).
 
-## Tech stack
+## Tehnologije
 
-| Area           | Technology                                  |
-| -------------- | ------------------------------------------- |
-| UI             | React 19, React Router 7                    |
-| API client     | Axios with a JWT interceptor                |
-| Payments       | Stripe Elements (`@stripe/react-stripe-js`) |
-| Build          | Create React App                            |
-| Tooling        | ESLint, Prettier, Jest and Testing Library  |
-| Infrastructure | Docker (nginx), GitHub Actions, Vercel      |
+| Področje            | Tehnologija                                 |
+| ------------------- | ------------------------------------------- |
+| Uporabniški vmesnik | React 19, React Router 7                    |
+| Odjemalec za API    | Axios s prestreznikom za JWT                |
+| Plačila             | Stripe Elements (`@stripe/react-stripe-js`) |
+| Gradnja             | Create React App                            |
+| Orodja              | ESLint, Prettier, Jest in Testing Library   |
+| Infrastruktura      | Docker (nginx), GitHub Actions, Vercel      |
 
-## Getting started
+## Zagon
 
-Requires Node.js 22 and a running [cinema-api](https://github.com/Horvatium/cinema-api).
-The easiest way to get a local API with demo data is its Docker Compose setup.
+Potrebuješ Node.js 22 in zagnan [cinema-api](https://github.com/Horvatium/cinema-api).
+Lokalni API z demo podatki najlažje zaženeš z njegovo nastavitvijo za Docker Compose.
 
 ```bash
 git clone https://github.com/Horvatium/cinema-web.git
@@ -57,49 +56,59 @@ cp .env.example .env    # REACT_APP_API_URL=http://localhost:5000/api
 npm start
 ```
 
-The app runs on <http://localhost:3000>. Without `REACT_APP_API_URL` it uses the production
+Aplikacija teče na <http://localhost:3000>. Brez `REACT_APP_API_URL` uporablja produkcijski
 API.
 
-With a local API from the seed data, you can log in as `admin@kinoplex.test` / `Admin123!`
-(admin) or `demo@kinoplex.test` / `Demo123!` (customer). These accounts exist only in the
-local seed database.
+Z lokalnim API-jem in podatki iz seeda se lahko prijaviš kot `admin@kinoplex.test` /
+`Admin123!` (skrbnik) ali `demo@kinoplex.test` / `Demo123!` (stranka). Računa obstajata samo
+v lokalni bazi s seed podatki.
 
 ### Docker
 
-The image builds the app and serves it with nginx. The API URL is baked in at build time.
+Slika zgradi aplikacijo in jo streže z nginx. Naslov API-ja se vpiše ob gradnji.
 
 ```bash
 docker build --build-arg REACT_APP_API_URL=http://localhost:5000/api -t cinema-web .
 docker run -p 3000:80 cinema-web
 ```
 
-The API repository's `docker compose --profile web up` builds and starts this app together
-with the API and database.
+Ukaz `docker compose --profile web up` v repozitoriju API-ja zgradi in zažene to aplikacijo
+skupaj z API-jem in bazo.
 
-### Scripts
+### Testi
 
-| Command                           | Description                                  |
-| --------------------------------- | -------------------------------------------- |
-| `npm start`                       | Development server                           |
-| `npm run build`                   | Production build                             |
-| `npm test`                        | Jest tests (watch mode; `CI=true` runs once) |
-| `npm run lint`                    | ESLint, fails on warnings                    |
-| `npm run format` / `format:check` | Prettier                                     |
+20 testov komponent z Jestom in React Testing Library pokriva prijavno stran, zaščitene poti,
+upravljanje seje v `AuthContext` (tudi odjavo ob poteku JWT) in izbiro sedežev na strani
+filma. Odjemalec za API je v testih nadomeščen, zato testi ne potrebujejo zagnanega API-ja.
+
+```bash
+CI=true npm test
+```
+
+### Skripte
+
+| Ukaz                              | Opis                                            |
+| --------------------------------- | ----------------------------------------------- |
+| `npm start`                       | Razvojni strežnik                               |
+| `npm run build`                   | Produkcijska gradnja                            |
+| `npm test`                        | Testi z Jestom (s `CI=true` se zaženejo enkrat) |
+| `npm run lint`                    | ESLint, pade ob opozorilih                      |
+| `npm run format` / `format:check` | Prettier                                        |
 
 ## CI/CD
 
-Every push and pull request runs [the CI workflow](.github/workflows/ci.yml): lint, Prettier
-check, tests, a production build that fails on warnings, and a Docker image build.
+Ob vsakem pushu in pull requestu se zažene [CI workflow](.github/workflows/ci.yml): lint,
+preverjanje s Prettierjem, testi, produkcijska gradnja, ki pade ob opozorilih, in gradnja Docker
+slike.
 
-Production deploys to Vercel **only after all of these pass**. Vercel's automatic Git deploys
-for `main` are turned off in [`vercel.json`](vercel.json), and the workflow's deploy job
-publishes with the Vercel CLI. Preview deployments for other branches still work as usual.
+Na Vercel se objavi **šele, ko vse to uspe**. Vercelova samodejna objava ob pushu na `main` je
+izklopljena v [`vercel.json`](vercel.json), objavo pa opravi posel v workflowu z Vercel CLI.
+Predogledi za druge veje delujejo kot prej.
 
-## Roadmap
+## Načrti
 
-- Migrate from Create React App, which is no longer maintained, to Vite
-- Add component tests for login, protected routes and seat selection
+- Selitev s Create React App, ki ni več vzdrževan, na Vite
 
-## Author
+## Avtor
 
-**Vid Gudič** · bachelor's thesis, CPU, 2026
+**Vid Gudič** · diplomska naloga, CPU, 2026
