@@ -402,18 +402,21 @@ function FilmDetail() {
                     </div>
 
                     {/* Zemljevid sedežev */}
-                    <div style={styles.seatMap}>
+                    <div className="seat-map" style={styles.seatMap}>
                         {/* Zaslon znotraj zemljevida */}
                         <div style={styles.screen}>ZASLON</div>
                         {Object.entries(rows).map(([rowLabel, rowSeats]) => (
-                            <div key={rowLabel} style={styles.row}>
-                                <span style={styles.rowLabel}>{rowLabel}</span>
+                            <div key={rowLabel} className="seat-row" style={styles.row}>
+                                <span className="seat-row-label" style={styles.rowLabel}>
+                                    {rowLabel}
+                                </span>
                                 {rowSeats.map((seat) => {
                                     const isSelected = selectedSeats.find((s) => s.id === seat.id);
                                     const isTaken = seat.status === 'taken';
                                     return (
                                         <div
                                             key={seat.id}
+                                            className="seat"
                                             onClick={() => toggleSeat(seat)}
                                             style={{
                                                 ...styles.seat,
@@ -432,7 +435,9 @@ function FilmDetail() {
                                         </div>
                                     );
                                 })}
-                                <span style={styles.rowLabel}>{rowLabel}</span>
+                                <span className="seat-row-label" style={styles.rowLabel}>
+                                    {rowLabel}
+                                </span>
                             </div>
                         ))}
                     </div>

@@ -1,13 +1,23 @@
-import { Link, useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import logo from '../logo-transparent.png';
+import './Navbar.css';
 
 // Navigacijska vrstica, prilepljena na vrh vseh strani. Vsebina se prilagodi
 // stanju prijave: gost vidi gumba za prijavo in registracijo, prijavljeni
-// pozdrav in odjavo, skrbnik pa še povezavo na skrbniško ploščo.
+// pozdrav in odjavo, skrbnik pa še povezavo na skrbniško ploščo. Na ozkih
+// zaslonih se povezave in gumbi skrijejo v meni, ki ga odpre gumb ☰.
 function Navbar() {
     const { user, logoutUser } = useAuth();
     const navigate = useNavigate();
+    const { pathname } = useLocation();
+    const [menuOpen, setMenuOpen] = useState(false);
+
+    // Ob prehodu na drugo stran se meni zapre
+    useEffect(() => {
+        setMenuOpen(false);
+    }, [pathname]);
 
     // Po odjavi uporabnika vrnemo na domačo stran, ker so nekatere
     // strani brez prijave nedostopne
@@ -18,7 +28,7 @@ function Navbar() {
 
     return (
         <nav style={styles.nav}>
-            <div style={styles.inner}>
+            <div className="nav-inner">
                 {/* Logo */}
                 <Link to="/" style={styles.logo}>
                     <img src={logo} alt="KinoPlex" style={styles.logoImg} />
@@ -27,62 +37,74 @@ function Navbar() {
                         <span style={styles.logoSlogan}>Kino v vaših rokah</span>
                     </div>
                 </Link>
-                {/*🎬*/}
-                {/* navigacija povezave */}
-                <div style={styles.links}>
-                    <Link to="/" style={styles.link}>
-                        Domov
-                    </Link>
-                    <Link to="/program" style={styles.link}>
-                        Program
-                    </Link>
-                    {user && (
-                        <Link to="/my-reservations" style={styles.link}>
-                            Moje vstopnice
-                        </Link>
-                    )}
-                    {/* Povezava na skrbniško ploščo je zgolj skrita, ne zaščitena —
-                        za dostop skrbi ProtectedRoute, za pravice pa zaledje */}
-                    {user?.role === 'admin' && (
-                        <Link to="/admin" style={{ ...styles.link, ...styles.adminLink }}>
-                            Admin
-                        </Link>
-                    )}
-                </div>
+                <button
+                    type="button"
+                    className="nav-toggle"
+                    aria-label={menuOpen ? 'Zapri meni' : 'Odpri meni'}
+                    aria-expanded={menuOpen}
+                    aria-controls="nav-menu"
+                    onClick={() => setMenuOpen((open) => !open)}
+                >
+                    {menuOpen ? '✕' : '☰'}
+                </button>
 
-                {/* Avtorizacija */}
-                <div style={styles.auth}>
-                    {user ? (
-                        <>
-                            <span style={styles.greeting}>Pozdravljeni, {user.first_name}</span>
-                            <button
-                                onClick={handleLogout}
-                                className="btn btn-secondary"
-                                style={{ padding: '8px 16px', fontSize: '13px' }}
-                            >
-                                Odjava
-                            </button>
-                        </>
-                    ) : (
-                        <>
-                            <Link to="/login">
+                <div id="nav-menu" className={menuOpen ? 'nav-menu open' : 'nav-menu'}>
+                    {/* navigacija povezave */}
+                    <div className="nav-links">
+                        <Link to="/" style={styles.link}>
+                            Domov
+                        </Link>
+                        <Link to="/program" style={styles.link}>
+                            Program
+                        </Link>
+                        {user && (
+                            <Link to="/my-reservations" style={styles.link}>
+                                Moje vstopnice
+                            </Link>
+                        )}
+                        {/* Povezava na skrbniško ploščo je zgolj skrita, ne zaščitena —
+                        za dostop skrbi ProtectedRoute, za pravice pa zaledje */}
+                        {user?.role === 'admin' && (
+                            <Link to="/admin" style={{ ...styles.link, ...styles.adminLink }}>
+                                Admin
+                            </Link>
+                        )}
+                    </div>
+
+                    {/* Avtorizacija */}
+                    <div className="nav-auth">
+                        {user ? (
+                            <>
+                                <span style={styles.greeting}>Pozdravljeni, {user.first_name}</span>
                                 <button
+                                    onClick={handleLogout}
                                     className="btn btn-secondary"
                                     style={{ padding: '8px 16px', fontSize: '13px' }}
                                 >
-                                    Prijava
+                                    Odjava
                                 </button>
-                            </Link>
-                            <Link to="/register">
-                                <button
-                                    className="btn btn-primary"
-                                    style={{ padding: '8px 16px', fontSize: '13px' }}
-                                >
-                                    Registracija
-                                </button>
-                            </Link>
-                        </>
-                    )}
+                            </>
+                        ) : (
+                            <>
+                                <Link to="/login">
+                                    <button
+                                        className="btn btn-secondary"
+                                        style={{ padding: '8px 16px', fontSize: '13px' }}
+                                    >
+                                        Prijava
+                                    </button>
+                                </Link>
+                                <Link to="/register">
+                                    <button
+                                        className="btn btn-primary"
+                                        style={{ padding: '8px 16px', fontSize: '13px' }}
+                                    >
+                                        Registracija
+                                    </button>
+                                </Link>
+                            </>
+                        )}
+                    </div>
                 </div>
             </div>
         </nav>
@@ -98,22 +120,12 @@ const styles = {
         top: 0,
         zIndex: 100,
     },
-    inner: {
-        maxWidth: '1200px',
-        margin: '0 auto',
-        padding: '0 20px',
-        height: '64px',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-    },
     logo: {
         display: 'flex',
         alignItems: 'center',
         gap: '10px',
         textDecoration: 'none',
     },
-    logoIcon: { fontSize: '24px' },
     logoText: {
         fontSize: '20px',
         fontWeight: '700',
@@ -138,11 +150,6 @@ const styles = {
         letterSpacing: '0.5px',
         fontWeight: '400',
     },
-    links: {
-        display: 'flex',
-        gap: '32px',
-        alignItems: 'center',
-    },
     link: {
         color: 'rgba(255,255,255,0.75)',
         textDecoration: 'none',
@@ -153,11 +160,6 @@ const styles = {
     adminLink: {
         color: '#e50914',
         fontWeight: '700',
-    },
-    auth: {
-        display: 'flex',
-        alignItems: 'center',
-        gap: '12px',
     },
     greeting: {
         color: 'rgba(255,255,255,0.5)',

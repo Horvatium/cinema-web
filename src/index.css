@@ -239,3 +239,30 @@ select:focus {
         background-size: auto 100vh;
     }
 }
+
+/* Zemljevid sedežev: na telefonu manjši sedeži, da vrsta z 10 sedeži ne
+   preseže širine zaslona; pri širših dvoranah se zemljevid vodoravno
+   pomika, "safe center" pa prepreči, da bi se levi rob odrezal */
+.seat-map {
+    max-width: 100%;
+    overflow-x: auto;
+    align-items: safe center !important;
+}
+
+@media (max-width: 768px) {
+    .seat-row {
+        gap: 4px !important;
+    }
+
+    .seat {
+        width: 27px !important;
+        height: 27px !important;
+        font-size: 11px !important;
+        border-radius: 5px !important;
+    }
+
+    .seat-row-label {
+        width: 14px !important;
+        font-size: 12px !important;
+    }
+}
