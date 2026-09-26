@@ -98,8 +98,7 @@ publishes with the Vercel CLI. Preview deployments for other branches still work
 ## Roadmap
 
 - Migrate from Create React App, which is no longer maintained, to Vite
-- Make the layout fully responsive on phones
-- Load film details from the API when a film page is opened directly by URL
+- Add component tests for login, protected routes and seat selection
 
 ## Author
 
