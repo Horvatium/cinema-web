@@ -47,5 +47,11 @@
     "devDependencies": {
         "eslint-config-prettier": "^9.1.2",
         "prettier": "^3.9.9"
+    },
+    "jest": {
+        "moduleNameMapper": {
+            "^react-router-dom$": "<rootDir>/node_modules/react-router-dom/dist/index.js",
+            "^react-router/dom$": "<rootDir>/node_modules/react-router/dist/development/dom-export.js"
+        }
     }
 }
