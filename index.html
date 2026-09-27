@@ -11,21 +11,14 @@
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="preconnect" href="https://image.tmdb.org" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <!-- Navaden slogovni list: CSP ne dovoli vrstičnih skript, zato trik s
+             preload in onload pisave nikoli ni vklopil; display=swap med
+             nalaganjem prikaže nadomestno pisavo -->
         <link
-            rel="preload"
+            rel="stylesheet"
             href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
-            as="style"
-            onload="
-                this.onload = null;
-                this.rel = 'stylesheet';
-            "
         />
-        <noscript>
-            <link
-                rel="stylesheet"
-                href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
-            />
-        </noscript>
         <!-- Content-Security-Policy se pošilja kot glava HTTP (vercel.json, nginx.conf) -->
         <link rel="apple-touch-icon" href="/kinoplex_logo_android.png" />
         <link rel="manifest" href="/manifest.json" />
