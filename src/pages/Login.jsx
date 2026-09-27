@@ -29,10 +29,10 @@ function Login() {
         setLoading(true);
 
         try {
-            // Žeton in podatke o uporabniku prevzame kontekst, ki ju shrani
-            // v localStorage; od tod naprej jih api.js pripenja vsakemu klicu
+            // API nastavi piškotek seje, ki ga brskalnik odslej pošilja sam;
+            // kontekstu predamo le uporabnika in rok seje
             const response = await login({ email, password });
-            loginUser(response.data.user, response.data.token);
+            loginUser(response.data.user, response.data.expiresAt);
             navigate('/');
         } catch (err) {
             setError(err.response?.data?.message || 'Prišlo je do napake.');

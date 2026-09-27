@@ -1,31 +1,30 @@
 import axios from 'axios';
 
 // Naslov API-ja se določi ob gradnji (VITE_API_URL), npr. v Dockerju
-// http://localhost:5000/api. Brez nastavitve se uporabi produkcijski API.
+// http://localhost:5000/api. Brez nastavitve se uporabi produkcijski API na
+// poddomeni api.kinoplex.si, ki je na istem mestu kot spletna stran, zato
+// brskalnik piškotek seje pošilja kot piškotek prve osebe.
 const api = axios.create({
-    baseURL:
-        import.meta.env.VITE_API_URL || 'https://cinema-api-production-a533.up.railway.app/api',
+    baseURL: import.meta.env.VITE_API_URL || 'https://api.kinoplex.si/api',
+    // Seja je v piškotku httpOnly, ki ga nastavi API; JavaScript žetona ne vidi
+    withCredentials: true,
 });
 
-// Samodejno priloži žeton vsaki zahtevi
-api.interceptors.request.use((config) => {
-    const token = localStorage.getItem('token');
-    if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
-});
+// Poti, pri katerih odgovor 401 ne pomeni, da je seja potekla: /auth/me
+// neprijavljenemu obiskovalcu vedno vrne 401, prijava pa ob napačnem geslu
+const BREZ_PREUSMERITVE = ['/auth/me', '/auth/login'];
 
-// Ob poteku ali neveljavnem žetonu uporabnika odjavi
+// Ob poteku ali neveljavni seji uporabnika pošlji na prijavo
 api.interceptors.response.use(
     (response) => response,
     (error) => {
-        if (error.response?.status === 401 || error.response?.status === 403) {
-            localStorage.removeItem('token');
-            localStorage.removeItem('user');
-            if (window.location.pathname !== '/login') {
-                window.location.href = '/login';
-            }
+        const status = error.response?.status;
+        if (
+            (status === 401 || status === 403) &&
+            !BREZ_PREUSMERITVE.includes(error.config?.url) &&
+            window.location.pathname !== '/login'
+        ) {
+            window.location.href = '/login';
         }
         return Promise.reject(error);
     }
@@ -34,6 +33,8 @@ api.interceptors.response.use(
 // Avtorizacija
 export const register = (data) => api.post('/auth/register', data);
 export const login = (data) => api.post('/auth/login', data);
+export const getMe = () => api.get('/auth/me');
+export const logout = () => api.post('/auth/logout');
 export const resendVerification = (email) => api.post('/auth/resend-verification', { email });
 
 // Filmi
