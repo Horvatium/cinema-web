@@ -500,8 +500,9 @@ function FilmsTab() {
             setForm((prev) => ({ ...prev, backdrop_url: response.data.url }));
             setBackdropPreview(response.data.url);
             setSuccess('Pasica naložena!');
-        } catch (_err) {
-            setError('Napaka pri nalaganju pasice.');
+        } catch (err) {
+            // Sporočilo zaledja pove, zakaj (npr. napačna vrsta ali prevelika datoteka)
+            setError(err.response?.data?.message || 'Napaka pri nalaganju pasice.');
         } finally {
             setUploadingBackdrop(false);
         }
@@ -521,8 +522,8 @@ function FilmsTab() {
             setForm({ ...form, poster_url: response.data.url });
             setPosterPreview(response.data.url);
             setSuccess('Plakat naložen!');
-        } catch (_err) {
-            setError('Napaka pri nalaganju plakata.');
+        } catch (err) {
+            setError(err.response?.data?.message || 'Napaka pri nalaganju plakata.');
         } finally {
             setUploading(false);
         }
