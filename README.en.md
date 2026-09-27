@@ -25,7 +25,8 @@ in production.
 - Interactive seat map showing free, selected and taken seats
 - Online payment with Stripe Elements. Seats are held for 10 minutes while the customer pays,
   and the hold survives a page refresh.
-- Registration with email verification, login with JWT
+- Registration with email verification; the session lives in an httpOnly cookie that JavaScript
+  cannot read (no token in `localStorage`)
 - "My tickets": view and cancel your own reservations
 - Admin dashboard: films (with poster upload), screenings, rooms and all reservations
 
@@ -35,14 +36,14 @@ lives in the API. See the
 
 ## Tech stack
 
-| Area           | Technology                                   |
-| -------------- | -------------------------------------------- |
-| UI             | React 19, React Router 7                     |
-| API client     | Axios with a JWT interceptor                 |
-| Payments       | Stripe Elements (`@stripe/react-stripe-js`)  |
-| Build          | Vite                                         |
-| Tooling        | ESLint, Prettier, Vitest and Testing Library |
-| Infrastructure | Docker (nginx), GitHub Actions, Vercel       |
+| Area           | Technology                                        |
+| -------------- | ------------------------------------------------- |
+| UI             | React 19, React Router 7                          |
+| API client     | Axios with the session cookie (`withCredentials`) |
+| Payments       | Stripe Elements (`@stripe/react-stripe-js`)       |
+| Build          | Vite                                              |
+| Tooling        | ESLint, Prettier, Vitest and Testing Library      |
+| Infrastructure | Docker (nginx), GitHub Actions, Vercel            |
 
 ## Getting started
 
@@ -58,7 +59,11 @@ npm run dev
 ```
 
 The app runs on <http://localhost:3000>. Without `VITE_API_URL` it uses the production
-API.
+API at `https://api.kinoplex.si`.
+
+Login does not work on Vercel preview deployments (`*.vercel.app`): they are not on the same site
+as `api.kinoplex.si`, so the browser does not send the session cookie. Test login locally or on
+kinoplex.si.
 
 With a local API from the seed data, you can log in as `admin@kinoplex.test` / `Admin123!`
 (admin) or `demo@kinoplex.test` / `Demo123!` (customer). These accounts exist only in the
@@ -78,8 +83,8 @@ with the API and database.
 
 ### Tests
 
-20 component tests with Vitest and React Testing Library cover the login page, protected routes,
-session handling in `AuthContext` (including logout when the JWT expires) and seat selection
+25 tests with Vitest and React Testing Library cover the login page, protected routes,
+session handling in `AuthContext` (restoring the session via /auth/me, logout on expiry) and seat selection
 on the film page. The API client is mocked, so the tests need no running API.
 
 ```bash

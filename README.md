@@ -25,7 +25,8 @@ kot diplomska naloga in deluje v produkciji.
 - Interaktivni zemljevid dvorane s prostimi, izbranimi in zasedenimi sedeži
 - Spletno plačilo s Stripe Elements. Med plačevanjem so sedeži zadržani 10 minut, zadržanje
   pa preživi tudi osvežitev strani.
-- Registracija s potrditvijo e-poštnega naslova, prijava z JWT
+- Registracija s potrditvijo e-poštnega naslova; seja v piškotku httpOnly, ki ga JavaScript ne more
+  prebrati (žetona ni v `localStorage`)
 - »Moje vstopnice«: pregled in preklic lastnih rezervacij
 - Skrbniška plošča: filmi (z nalaganjem plakatov), predvajanja, dvorane in vse rezervacije
 
@@ -37,7 +38,7 @@ v API-ju. Glej [README za cinema-api](https://github.com/Horvatium/cinema-api#na
 | Področje            | Tehnologija                                 |
 | ------------------- | ------------------------------------------- |
 | Uporabniški vmesnik | React 19, React Router 7                    |
-| Odjemalec za API    | Axios s prestreznikom za JWT                |
+| Odjemalec za API    | Axios s piškotkom seje (`withCredentials`)  |
 | Plačila             | Stripe Elements (`@stripe/react-stripe-js`) |
 | Gradnja             | Vite                                        |
 | Orodja              | ESLint, Prettier, Vitest in Testing Library |
@@ -57,7 +58,11 @@ npm run dev
 ```
 
 Aplikacija teče na <http://localhost:3000>. Brez `VITE_API_URL` uporablja produkcijski
-API.
+API na `https://api.kinoplex.si`.
+
+Na Vercelovih predogledih (`*.vercel.app`) prijava ne deluje: predogled ni na istem mestu kot
+`api.kinoplex.si`, zato brskalnik piškotka seje ne pošlje. Prijavo preveri lokalno ali na
+kinoplex.si.
 
 Z lokalnim API-jem in podatki iz seeda se lahko prijaviš kot `admin@kinoplex.test` /
 `Admin123!` (skrbnik) ali `demo@kinoplex.test` / `Demo123!` (stranka). Računa obstajata samo
@@ -77,8 +82,8 @@ skupaj z API-jem in bazo.
 
 ### Testi
 
-20 testov komponent z Vitestom in React Testing Library pokriva prijavno stran, zaščitene poti,
-upravljanje seje v `AuthContext` (tudi odjavo ob poteku JWT) in izbiro sedežev na strani
+25 testov z Vitestom in React Testing Library pokriva prijavno stran, zaščitene poti,
+upravljanje seje v `AuthContext` (obnova seje z /auth/me, odjava ob poteku seje) in izbiro sedežev na strani
 filma. Odjemalec za API je v testih nadomeščen, zato testi ne potrebujejo zagnanega API-ja.
 
 ```bash
