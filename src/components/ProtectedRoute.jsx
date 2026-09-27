@@ -6,7 +6,7 @@ import { useAuth } from '../context/AuthContext';
 function ProtectedRoute({ children, adminOnly = false }) {
     const { user, loading } = useAuth();
 
-    // Dokler se seja obnavlja iz localStorage, uporabnika še ne poznamo.
+    // Dokler API ne odgovori, ali seja velja, uporabnika še ne poznamo.
     // Brez tega koraka bi prijavljenega uporabnika ob osvežitvi strani
     // za trenutek videli kot neprijavljenega in ga vrgli na prijavo.
     if (loading) return <div>Nalaganje...</div>;

@@ -1,9 +1,10 @@
 import { act, render, screen } from '@testing-library/react';
 import { AuthProvider, useAuth } from './AuthContext';
+import { getMe, logout } from '../services/api';
 
-// Neveljaven podpis ne moti: kontekst prebere samo polje exp
-const zeton = (expSekunde) => `glava.${btoa(JSON.stringify({ exp: expSekunde }))}.podpis`;
-const cezSekund = (s) => Math.floor(Date.now() / 1000) + s;
+vi.mock('../services/api', () => ({ getMe: vi.fn(), logout: vi.fn() }));
+
+const cezSekund = (s) => new Date(Date.now() + s * 1000).toISOString();
 
 // Komponenta, ki izpiše stanje konteksta in ponudi prijavo
 let auth;
@@ -20,47 +21,79 @@ const prikazi = () =>
         </AuthProvider>
     );
 
-beforeEach(() => localStorage.clear());
+const neprijavljen = () => getMe.mockRejectedValue({ response: { status: 401 } });
+
+beforeEach(() => {
+    vi.clearAllMocks();
+    logout.mockResolvedValue({});
+});
 afterEach(() => vi.useRealTimers());
 
 describe('AuthContext', () => {
-    it('obnovi sejo iz localStorage, če žeton še velja', () => {
-        localStorage.setItem('user', JSON.stringify({ first_name: 'Demo' }));
-        localStorage.setItem('token', zeton(cezSekund(3600)));
+    it('obnovi sejo, ki jo API potrdi (piškotek še velja)', async () => {
+        getMe.mockResolvedValue({
+            data: { user: { first_name: 'Demo' }, expiresAt: cezSekund(3600) },
+        });
 
         prikazi();
 
-        expect(screen.getByText('prijavljen: Demo')).toBeInTheDocument();
+        expect(await screen.findByText('prijavljen: Demo')).toBeInTheDocument();
     });
 
-    it('potekel žeton ob zagonu zavrže in počisti localStorage', () => {
-        localStorage.setItem('user', JSON.stringify({ first_name: 'Demo' }));
-        localStorage.setItem('token', zeton(cezSekund(-60)));
+    it('brez veljavne seje pokaže neprijavljenega obiskovalca', async () => {
+        neprijavljen();
 
         prikazi();
 
-        expect(screen.getByText('neprijavljen')).toBeInTheDocument();
+        expect(await screen.findByText('neprijavljen')).toBeInTheDocument();
+    });
+
+    it('pobriše žeton, ki so ga v localStorage pustile starejše različice', async () => {
+        localStorage.setItem('token', 'star-zeton');
+        localStorage.setItem('user', '{}');
+        neprijavljen();
+
+        prikazi();
+
+        await screen.findByText('neprijavljen');
+        expect(localStorage.getItem('token')).toBeNull();
+        expect(localStorage.getItem('user')).toBeNull();
+    });
+
+    it('po prijavi prikaže uporabnika, žetona pa ne shrani v localStorage', async () => {
+        neprijavljen();
+        prikazi();
+        await screen.findByText('neprijavljen');
+
+        act(() => auth.loginUser({ first_name: 'Ana' }, cezSekund(3600)));
+
+        expect(screen.getByText('prijavljen: Ana')).toBeInTheDocument();
         expect(localStorage.getItem('token')).toBeNull();
     });
 
-    it('ob prijavi shrani sejo, da preživi osvežitev strani', () => {
+    it('odjava počisti stanje in API pobriše piškotek', async () => {
+        neprijavljen();
         prikazi();
-        const token = zeton(cezSekund(3600));
+        await screen.findByText('neprijavljen');
+        act(() => auth.loginUser({ first_name: 'Ana' }, cezSekund(3600)));
 
-        act(() => auth.loginUser({ first_name: 'Ana' }, token));
+        await act(() => auth.logoutUser());
 
-        expect(screen.getByText('prijavljen: Ana')).toBeInTheDocument();
-        expect(localStorage.getItem('token')).toBe(token);
+        expect(screen.getByText('neprijavljen')).toBeInTheDocument();
+        expect(logout).toHaveBeenCalledTimes(1);
     });
 
-    it('uporabnika odjavi v trenutku, ko žeton poteče', () => {
-        vi.useFakeTimers();
+    it('uporabnika odjavi v trenutku, ko seja poteče', async () => {
+        neprijavljen();
         prikazi();
+        await screen.findByText('neprijavljen');
+        vi.useFakeTimers();
 
-        act(() => auth.loginUser({ first_name: 'Ana' }, zeton(cezSekund(60))));
+        act(() => auth.loginUser({ first_name: 'Ana' }, cezSekund(60)));
         expect(screen.getByText('prijavljen: Ana')).toBeInTheDocument();
 
-        act(() => vi.advanceTimersByTime(61 * 1000));
+        await act(() => vi.advanceTimersByTime(61 * 1000));
         expect(screen.getByText('neprijavljen')).toBeInTheDocument();
+        expect(logout).toHaveBeenCalled();
     });
 });

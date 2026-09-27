@@ -31,14 +31,16 @@ beforeEach(() => vi.clearAllMocks());
 
 describe('Login', () => {
     it('ob uspešni prijavi shrani sejo in preusmeri na domačo stran', async () => {
-        login.mockResolvedValue({ data: { user: { first_name: 'Demo' }, token: 'zeton' } });
+        login.mockResolvedValue({
+            data: { user: { first_name: 'Demo' }, expiresAt: '2030-01-01T00:00:00.000Z' },
+        });
         prikazi();
 
         vpisiInPrijavi('demo@kinoplex.test', 'Demo123!');
 
         expect(await screen.findByText('Domača stran')).toBeInTheDocument();
         expect(login).toHaveBeenCalledWith({ email: 'demo@kinoplex.test', password: 'Demo123!' });
-        expect(loginUser).toHaveBeenCalledWith({ first_name: 'Demo' }, 'zeton');
+        expect(loginUser).toHaveBeenCalledWith({ first_name: 'Demo' }, '2030-01-01T00:00:00.000Z');
     });
 
     it('ob napačnem geslu prikaže sporočilo zaledja in ostane na prijavi', async () => {
