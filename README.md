@@ -39,8 +39,8 @@ v API-ju. Glej [README za cinema-api](https://github.com/Horvatium/cinema-api#na
 | Uporabniški vmesnik | React 19, React Router 7                    |
 | Odjemalec za API    | Axios s prestreznikom za JWT                |
 | Plačila             | Stripe Elements (`@stripe/react-stripe-js`) |
-| Gradnja             | Create React App                            |
-| Orodja              | ESLint, Prettier, Jest in Testing Library   |
+| Gradnja             | Vite                                        |
+| Orodja              | ESLint, Prettier, Vitest in Testing Library |
 | Infrastruktura      | Docker (nginx), GitHub Actions, Vercel      |
 
 ## Zagon
@@ -52,11 +52,11 @@ Lokalni API z demo podatki najlažje zaženeš z njegovo nastavitvijo za Docker 
 git clone https://github.com/Horvatium/cinema-web.git
 cd cinema-web
 npm install
-cp .env.example .env    # REACT_APP_API_URL=http://localhost:5000/api
-npm start
+cp .env.example .env    # VITE_API_URL=http://localhost:5000/api
+npm run dev
 ```
 
-Aplikacija teče na <http://localhost:3000>. Brez `REACT_APP_API_URL` uporablja produkcijski
+Aplikacija teče na <http://localhost:3000>. Brez `VITE_API_URL` uporablja produkcijski
 API.
 
 Z lokalnim API-jem in podatki iz seeda se lahko prijaviš kot `admin@kinoplex.test` /
@@ -68,7 +68,7 @@ v lokalni bazi s seed podatki.
 Slika zgradi aplikacijo in jo streže z nginx. Naslov API-ja se vpiše ob gradnji.
 
 ```bash
-docker build --build-arg REACT_APP_API_URL=http://localhost:5000/api -t cinema-web .
+docker build --build-arg VITE_API_URL=http://localhost:5000/api -t cinema-web .
 docker run -p 3000:80 cinema-web
 ```
 
@@ -77,29 +77,29 @@ skupaj z API-jem in bazo.
 
 ### Testi
 
-20 testov komponent z Jestom in React Testing Library pokriva prijavno stran, zaščitene poti,
+20 testov komponent z Vitestom in React Testing Library pokriva prijavno stran, zaščitene poti,
 upravljanje seje v `AuthContext` (tudi odjavo ob poteku JWT) in izbiro sedežev na strani
 filma. Odjemalec za API je v testih nadomeščen, zato testi ne potrebujejo zagnanega API-ja.
 
 ```bash
-CI=true npm test
+npm test
 ```
 
 ### Skripte
 
-| Ukaz                              | Opis                                            |
-| --------------------------------- | ----------------------------------------------- |
-| `npm start`                       | Razvojni strežnik                               |
-| `npm run build`                   | Produkcijska gradnja                            |
-| `npm test`                        | Testi z Jestom (s `CI=true` se zaženejo enkrat) |
-| `npm run lint`                    | ESLint, pade ob opozorilih                      |
-| `npm run format` / `format:check` | Prettier                                        |
+| Ukaz                              | Opis                                           |
+| --------------------------------- | ---------------------------------------------- |
+| `npm run dev`                     | Razvojni strežnik                              |
+| `npm run build`                   | Produkcijska gradnja                           |
+| `npm test` / `test:watch`         | Testi z Vitestom (enkrat / ob vsaki spremembi) |
+| `npm run preview`                 | Ogled produkcijske gradnje                     |
+| `npm run lint`                    | ESLint, pade ob opozorilih                     |
+| `npm run format` / `format:check` | Prettier                                       |
 
 ## CI/CD
 
 Ob vsakem pushu in pull requestu se zažene [CI workflow](.github/workflows/ci.yml): lint,
-preverjanje s Prettierjem, testi, produkcijska gradnja, ki pade ob opozorilih, in gradnja Docker
-slike.
+preverjanje s Prettierjem, testi, produkcijska gradnja in gradnja Docker slike.
 
 Na Vercel se objavi **šele, ko vse to uspe**. Vercelova samodejna objava ob pushu na `main` je
 izklopljena v [`vercel.json`](vercel.json), objavo pa opravi posel v workflowu z Vercel CLI.
@@ -107,7 +107,7 @@ Predogledi za druge veje delujejo kot prej.
 
 ## Načrti
 
-- Selitev s Create React App, ki ni več vzdrževan, na Vite
+- Vklop strožjih pravil ESLint za React Compiler (`react-hooks/purity`, `immutability` ...)
 
 ## Avtor
 

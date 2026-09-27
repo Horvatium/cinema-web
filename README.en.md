@@ -35,14 +35,14 @@ lives in the API. See the
 
 ## Tech stack
 
-| Area           | Technology                                  |
-| -------------- | ------------------------------------------- |
-| UI             | React 19, React Router 7                    |
-| API client     | Axios with a JWT interceptor                |
-| Payments       | Stripe Elements (`@stripe/react-stripe-js`) |
-| Build          | Create React App                            |
-| Tooling        | ESLint, Prettier, Jest and Testing Library  |
-| Infrastructure | Docker (nginx), GitHub Actions, Vercel      |
+| Area           | Technology                                   |
+| -------------- | -------------------------------------------- |
+| UI             | React 19, React Router 7                     |
+| API client     | Axios with a JWT interceptor                 |
+| Payments       | Stripe Elements (`@stripe/react-stripe-js`)  |
+| Build          | Vite                                         |
+| Tooling        | ESLint, Prettier, Vitest and Testing Library |
+| Infrastructure | Docker (nginx), GitHub Actions, Vercel       |
 
 ## Getting started
 
@@ -53,11 +53,11 @@ The easiest way to get a local API with demo data is its Docker Compose setup.
 git clone https://github.com/Horvatium/cinema-web.git
 cd cinema-web
 npm install
-cp .env.example .env    # REACT_APP_API_URL=http://localhost:5000/api
-npm start
+cp .env.example .env    # VITE_API_URL=http://localhost:5000/api
+npm run dev
 ```
 
-The app runs on <http://localhost:3000>. Without `REACT_APP_API_URL` it uses the production
+The app runs on <http://localhost:3000>. Without `VITE_API_URL` it uses the production
 API.
 
 With a local API from the seed data, you can log in as `admin@kinoplex.test` / `Admin123!`
@@ -69,7 +69,7 @@ local seed database.
 The image builds the app and serves it with nginx. The API URL is baked in at build time.
 
 ```bash
-docker build --build-arg REACT_APP_API_URL=http://localhost:5000/api -t cinema-web .
+docker build --build-arg VITE_API_URL=http://localhost:5000/api -t cinema-web .
 docker run -p 3000:80 cinema-web
 ```
 
@@ -78,28 +78,29 @@ with the API and database.
 
 ### Tests
 
-20 component tests with Jest and React Testing Library cover the login page, protected routes,
+20 component tests with Vitest and React Testing Library cover the login page, protected routes,
 session handling in `AuthContext` (including logout when the JWT expires) and seat selection
 on the film page. The API client is mocked, so the tests need no running API.
 
 ```bash
-CI=true npm test
+npm test
 ```
 
 ### Scripts
 
-| Command                           | Description                                  |
-| --------------------------------- | -------------------------------------------- |
-| `npm start`                       | Development server                           |
-| `npm run build`                   | Production build                             |
-| `npm test`                        | Jest tests (watch mode; `CI=true` runs once) |
-| `npm run lint`                    | ESLint, fails on warnings                    |
-| `npm run format` / `format:check` | Prettier                                     |
+| Command                           | Description                      |
+| --------------------------------- | -------------------------------- |
+| `npm run dev`                     | Development server               |
+| `npm run build`                   | Production build                 |
+| `npm test` / `test:watch`         | Vitest (single run / watch mode) |
+| `npm run preview`                 | Preview the production build     |
+| `npm run lint`                    | ESLint, fails on warnings        |
+| `npm run format` / `format:check` | Prettier                         |
 
 ## CI/CD
 
 Every push and pull request runs [the CI workflow](.github/workflows/ci.yml): lint, Prettier
-check, tests, a production build that fails on warnings, and a Docker image build.
+check, tests, a production build and a Docker image build.
 
 Production deploys to Vercel **only after all of these pass**. Vercel's automatic Git deploys
 for `main` are turned off in [`vercel.json`](vercel.json), and the workflow's deploy job
@@ -107,7 +108,7 @@ publishes with the Vercel CLI. Preview deployments for other branches still work
 
 ## Roadmap
 
-- Migrate from Create React App, which is no longer maintained, to Vite
+- Enable the stricter ESLint rules for the React Compiler (`react-hooks/purity`, `immutability`, ...)
 
 ## Author
 
