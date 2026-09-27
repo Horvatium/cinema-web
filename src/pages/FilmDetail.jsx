@@ -152,7 +152,6 @@ function FilmDetail() {
         return () => {
             preklicano = true;
         };
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [id]);
 
     // Klik na sedež ga doda med izbrane ali odstrani; zasedeni se ne odzivajo
@@ -211,7 +210,7 @@ function FilmDetail() {
         }
     };
 
-    const handlePaymentSuccess = (data) => {
+    const handlePaymentSuccess = () => {
         clearPaymentHold();
         setSuccess(`Plačilo uspešno! ${selectedSeats.length} sedež/ev rezerviranih.`);
         setShowPayment(false);

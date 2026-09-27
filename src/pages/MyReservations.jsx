@@ -17,7 +17,7 @@ function MyReservations() {
         try {
             const response = await getMyReservations();
             setReservations(response.data);
-        } catch (err) {
+        } catch {
             setError('Napaka pri nalaganju rezervacij.');
         } finally {
             setLoading(false);

@@ -4,16 +4,16 @@ import FilmDetail from './FilmDetail';
 import { createPaymentIntent, getScreenings, getScreeningSeats } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 
-jest.mock('../services/api', () => ({
-    getScreenings: jest.fn(),
-    getScreeningSeats: jest.fn(),
-    createPaymentIntent: jest.fn(),
-    cancelPaymentIntent: jest.fn(),
+vi.mock('../services/api', () => ({
+    getScreenings: vi.fn(),
+    getScreeningSeats: vi.fn(),
+    createPaymentIntent: vi.fn(),
+    cancelPaymentIntent: vi.fn(),
 }));
-jest.mock('../context/AuthContext', () => ({ useAuth: jest.fn() }));
-jest.mock('@stripe/stripe-js', () => ({ loadStripe: jest.fn() }));
-jest.mock('@stripe/react-stripe-js', () => ({ Elements: ({ children }) => children }));
-jest.mock('../components/PaymentForm', () => () => null);
+vi.mock('../context/AuthContext', () => ({ useAuth: vi.fn() }));
+vi.mock('@stripe/stripe-js', () => ({ loadStripe: vi.fn() }));
+vi.mock('@stripe/react-stripe-js', () => ({ Elements: ({ children }) => children }));
+vi.mock('../components/PaymentForm', () => ({ default: () => null }));
 
 const predvajanje = {
     id: 5,
@@ -51,9 +51,9 @@ const prikazi = ({ state = { film, screening: predvajanje }, user = null } = {})
 const sedez = (vrsta, st) => screen.getByTitle(new RegExp(`Row ${vrsta},\\s+Seat ${st}$`));
 
 beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     sessionStorage.clear();
-    window.scrollTo = jest.fn();
+    window.scrollTo = vi.fn();
     getScreeningSeats.mockResolvedValue({ data: sedezi });
 });
 

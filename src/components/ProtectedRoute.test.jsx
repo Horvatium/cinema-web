@@ -3,7 +3,7 @@ import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import ProtectedRoute from './ProtectedRoute';
 import { useAuth } from '../context/AuthContext';
 
-jest.mock('../context/AuthContext', () => ({ useAuth: jest.fn() }));
+vi.mock('../context/AuthContext', () => ({ useAuth: vi.fn() }));
 
 // Zaščitena stran /admin, okoli nje pa strani, na katere lahko preusmeri
 const prikazi = (auth, adminOnly = false) => {

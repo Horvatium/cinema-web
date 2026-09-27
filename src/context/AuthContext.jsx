@@ -68,7 +68,10 @@ export function AuthProvider({ children }) {
     );
 }
 
-// Bližnjica, da komponentam ni treba uvažati konteksta in useContext posebej
+// Bližnjica, da komponentam ni treba uvažati konteksta in useContext posebej.
+// Kavelj je v isti datoteki kot ponudnik, zato Fast Refresh ob spremembi te
+// datoteke osveži celo stran; to je sprejemljivo.
+// eslint-disable-next-line react-refresh/only-export-components
 export function useAuth() {
     return useContext(AuthContext);
 }

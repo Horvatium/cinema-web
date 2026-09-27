@@ -1,10 +1,10 @@
 import axios from 'axios';
 
-// Naslov API-ja se določi ob gradnji (REACT_APP_API_URL), npr. v Dockerju
+// Naslov API-ja se določi ob gradnji (VITE_API_URL), npr. v Dockerju
 // http://localhost:5000/api. Brez nastavitve se uporabi produkcijski API.
 const api = axios.create({
     baseURL:
-        process.env.REACT_APP_API_URL || 'https://cinema-api-production-a533.up.railway.app/api',
+        import.meta.env.VITE_API_URL || 'https://cinema-api-production-a533.up.railway.app/api',
 });
 
 // Samodejno priloži žeton vsaki zahtevi
