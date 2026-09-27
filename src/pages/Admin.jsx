@@ -16,6 +16,7 @@ import {
     getUsers,
     deleteUser,
 } from '../services/api';
+import { zaVnosDatumaInUre } from '../utils/cas';
 import { useState, useEffect } from 'react';
 
 // Skrbniška plošča. Do nje pride samo uporabnik z vlogo admin (glej
@@ -161,22 +162,12 @@ function ScreeningsTab() {
         setError('');
         setSuccess('');
 
-        // Pretvori datum in čas v lokalno obliko za vnos datuma in časa
-
-        // Polje datetime-local pričakuje obliko LLLL-MM-DDTuu:mm brez oznake
-        // časovnega pasu, zato odmik odštejemo, preden vrednost obrežemo
-        const toLocalInput = (dateStr) => {
-            const d = new Date(dateStr);
-            const offset = d.getTimezoneOffset();
-            const local = new Date(d.getTime() - offset * 60000);
-            return local.toISOString().slice(0, 16);
-        };
-
         setEditForm({
             film_id: screening.film_id || '',
             room_id: screening.room_id || '',
-            start_time: toLocalInput(screening.start_time),
-            end_time: toLocalInput(screening.end_time),
+            // Stenski čas predstave brez pretvorbe v krajevni pas (glej utils/cas.js)
+            start_time: zaVnosDatumaInUre(screening.start_time),
+            end_time: zaVnosDatumaInUre(screening.end_time),
             price: screening.price,
         });
     };

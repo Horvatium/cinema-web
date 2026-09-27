@@ -33,8 +33,8 @@ export default [
         },
     },
     {
-        // Nastavitvene datoteke tečejo v Node
-        files: ['*.config.js'],
+        // Nastavitvene datoteke in priprava testov tečejo v Node
+        files: ['*.config.js', 'src/setupTests.js'],
         languageOptions: { globals: globals.node },
     },
     prettier,
