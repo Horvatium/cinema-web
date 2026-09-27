@@ -4,10 +4,10 @@ import Login from './Login';
 import { login } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 
-jest.mock('../services/api', () => ({ login: jest.fn(), resendVerification: jest.fn() }));
-jest.mock('../context/AuthContext', () => ({ useAuth: jest.fn() }));
+vi.mock('../services/api', () => ({ login: vi.fn(), resendVerification: vi.fn() }));
+vi.mock('../context/AuthContext', () => ({ useAuth: vi.fn() }));
 
-const loginUser = jest.fn();
+const loginUser = vi.fn();
 
 const prikazi = () => {
     useAuth.mockReturnValue({ loginUser });
@@ -27,7 +27,7 @@ const vpisiInPrijavi = (email, geslo) => {
     fireEvent.click(screen.getByRole('button', { name: 'Prijava' }));
 };
 
-beforeEach(() => jest.clearAllMocks());
+beforeEach(() => vi.clearAllMocks());
 
 describe('Login', () => {
     it('ob uspešni prijavi shrani sejo in preusmeri na domačo stran', async () => {

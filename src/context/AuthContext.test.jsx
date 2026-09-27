@@ -21,7 +21,7 @@ const prikazi = () =>
     );
 
 beforeEach(() => localStorage.clear());
-afterEach(() => jest.useRealTimers());
+afterEach(() => vi.useRealTimers());
 
 describe('AuthContext', () => {
     it('obnovi sejo iz localStorage, če žeton še velja', () => {
@@ -54,13 +54,13 @@ describe('AuthContext', () => {
     });
 
     it('uporabnika odjavi v trenutku, ko žeton poteče', () => {
-        jest.useFakeTimers();
+        vi.useFakeTimers();
         prikazi();
 
         act(() => auth.loginUser({ first_name: 'Ana' }, zeton(cezSekund(60))));
         expect(screen.getByText('prijavljen: Ana')).toBeInTheDocument();
 
-        act(() => jest.advanceTimersByTime(61 * 1000));
+        act(() => vi.advanceTimersByTime(61 * 1000));
         expect(screen.getByText('neprijavljen')).toBeInTheDocument();
     });
 });

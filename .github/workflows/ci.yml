@@ -14,9 +14,6 @@ jobs:
   build:
     name: Lint, test & build
     runs-on: ubuntu-latest
-    env:
-      # Jest se zažene enkrat (brez opazovanja), gradnja pa pade ob opozorilih
-      CI: true
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-node@v5
@@ -34,7 +31,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
-      - run: docker build --build-arg REACT_APP_API_URL=http://localhost:5000/api -t cinema-web .
+      - run: docker build --build-arg VITE_API_URL=http://localhost:5000/api -t cinema-web .
 
   deploy:
     name: Deploy to Vercel
